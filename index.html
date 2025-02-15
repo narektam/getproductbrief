@@ -76,19 +76,65 @@
 <body>
   <div class="container">
     <h1>Subscribe to Get Product Brief</h1>
-    <form id="subscriptionForm">
-      <label for="email">Email:</label>
-      <input type="email" id="email" name="email" placeholder="Enter your email" required>
-      
-      <div class="sources">
-        <label><input type="checkbox" name="sources" value="OpenAI"> OpenAI</label>
-        <label><input type="checkbox" name="sources" value="Lenny's Newsletter"> Lenny's Newsletter</label>
-        <label><input type="checkbox" name="sources" value="Anthropic"> Anthropic</label>
-        <!-- Add more sources as needed -->
-      </div>
-      
-      <button type="submit">Subscribe</button>
-    </form>
+<form id="subscriptionForm">
+  <label for="email">Email:</label>
+  <input type="email" id="email" name="email" placeholder="Enter your email" required>
+  
+  <div class="sources">
+    <label><input type="checkbox" name="sources" value="OpenAI"> OpenAI</label>
+    <label><input type="checkbox" name="sources" value="Anthropic"> Anthropic</label>
+    <label><input type="checkbox" name="sources" value="Reforge"> Reforge</label>
+    <!-- Add more sources as needed -->
+  </div>
+  
+  <button type="submit">Subscribe</button>
+</form>
+
+<script>
+  document.getElementById("subscriptionForm").addEventListener("submit", function(e) {
+    e.preventDefault(); // Prevent the default form submission
+
+    // Collect the email value
+    const email = document.getElementById("email").value;
+
+    // Collect the selected sources (as an array of strings)
+    const checkboxes = document.querySelectorAll('input[name="sources"]:checked');
+    const selectedSources = Array.from(checkboxes).map(checkbox => checkbox.value);
+
+    // Join the selected sources into a comma-separated string and then wrap it in an array.
+    const sources = [ selectedSources.join(",") ];
+    
+    // Build the payload with the necessary details
+    const today = new Date().toISOString().split("T")[0];
+    const payload = {
+      email: email,
+      sources: sources,
+      submission_date: today,
+      update_date: today,
+      submission_status: "Active"
+    };
+
+    // Send data to your n8n webhook endpoint
+    fetch("https://narektamoyan.app.n8n.cloud/webhook-test/ac712880-5c2c-4946-83d5-d8fca9c73d66", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(payload)
+    })
+    .then(response => {
+      if (response.ok) {
+        alert("Thank you for subscribing!");
+      } else {
+        alert("There was an error processing your subscription.");
+      }
+    })
+    .catch(error => {
+      console.error("Error submitting form:", error);
+      alert("There was an error processing your subscription.");
+    });
+  });
+</script>
     
     <div class="footer">
       <a href="privacy.html">Privacy Policy</a>
