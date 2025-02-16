@@ -2,9 +2,13 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" type="image/png" href="/assets/images/favicon.ico/favicon-96x96.png" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <link rel="manifest" href="/assets/images/site.webmanifest" />
   <title>Get Product Brief - Subscribe</title>
-  <link rel="icon" type="image/png" href="/assets/images/favicon.png" sizes="96x96">
   <style>
     body {
       margin: 0;
@@ -36,14 +40,14 @@
       border: 1px solid #ccc;
       border-radius: 4px;
     }
-    /* Container for sources checkboxes – content will be generated dynamically */
     .sources {
-      margin-bottom: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
     }
     .sources label {
       font-size: 16px;
       margin-right: 10px;
-      display: inline-block;
     }
     button {
       padding: 12px;
@@ -76,9 +80,11 @@
       <label for="email">Email:</label>
       <input type="email" id="email" name="email" placeholder="Enter your email" required>
       
-      <!-- Sources will be populated here dynamically -->
-      <div class="sources" id="sourcesContainer">
-        <!-- Dynamic content -->
+      <div class="sources">
+        <label><input type="checkbox" name="sources" value="OpenAI"> OpenAI</label>
+        <label><input type="checkbox" name="sources" value="Anthropic"> Anthropic</label>
+        <label><input type="checkbox" name="sources" value="Reforge"> Reforge</label>
+        <!-- Add more sources as needed -->
       </div>
       
       <button type="submit">Subscribe</button>
@@ -91,33 +97,22 @@
       <a href="update.html">Update your subscription</a>
     </div>
   </div>
-  
-  <script>
-    // Load sources from JSON file and dynamically generate checkboxes
-    fetch("assets/json/sources.json")
-      .then(response => response.json())
-      .then(sourcesData => {
-         const container = document.getElementById("sourcesContainer");
-         let html = "<p>Select your sources:</p>";
-         sourcesData.forEach(sourceObj => {
-           html += `<label><input type="checkbox" name="sources" value="${sourceObj.source}"> ${sourceObj.source}</label>`;
-         });
-         container.innerHTML = html;
-      })
-      .catch(error => {
-         console.error("Error loading sources:", error);
-      });
 
-    // Handle form submission (you can reuse your existing code here)
+  <script>
     document.getElementById("subscriptionForm").addEventListener("submit", function(e) {
-      e.preventDefault();
-      
+      e.preventDefault(); // Prevent the default form submission
+
+      // Collect the email value
       const email = document.getElementById("email").value;
-      // Get selected sources after dynamic population
+
+      // Collect the selected sources (as an array of strings)
       const checkboxes = document.querySelectorAll('input[name="sources"]:checked');
       const selectedSources = Array.from(checkboxes).map(checkbox => checkbox.value);
-      const sources = [ selectedSources.join(",") ];  // as required by your webhook
+
+      // Join the selected sources into a comma-separated string and then wrap it in an array.
+      const sources = [ selectedSources.join(",") ];
       
+      // Build the payload with the necessary details
       const today = new Date().toISOString().split("T")[0];
       const payload = {
         email: email,
@@ -126,16 +121,20 @@
         update_date: today,
         submission_status: "Active"
       };
-      
-      // Replace with your actual webhook URL for subscription
+
+      // Send data to your n8n webhook endpoint
       fetch("https://narektamoyan.app.n8n.cloud/webhook/add-subscription", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json"
+        },
         body: JSON.stringify(payload)
       })
       .then(response => {
         if (response.ok) {
           alert("Thank you for subscribing!");
+          // Clear the form by resetting it
+          document.getElementById("subscriptionForm").reset();
         } else {
           alert("There was an error processing your subscription.");
         }
