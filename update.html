@@ -62,8 +62,9 @@
     }
     .sources p {
       font-size: 16px;
+      margin-bottom: 8px;
     }
-    .sources label {
+    .sources .source-item {
       font-size: 16px;
       margin-right: 10px;
       display: inline-block;
@@ -112,13 +113,9 @@
       <label for="email">Email Address:</label>
       <input type="email" id="email" name="email" placeholder="Enter your email" required>
       
-      <div class="sources">
-        <p>Select your sources:</p>
-        <!-- Predefined list of available sources -->
-        <label><input type="checkbox" name="sources" value="OpenAI"> OpenAI</label>
-        <label><input type="checkbox" name="sources" value="Lenny's Newsletter"> Lenny's Newsletter</label>
-        <label><input type="checkbox" name="sources" value="Anthropic"> Anthropic</label>
-        <label><input type="checkbox" name="sources" value="Reforge"> Reforge</label>
+      <!-- Sources will be loaded dynamically -->
+      <div class="sources" id="sourcesContainer">
+        <!-- Content populated by JavaScript -->
       </div>
       
       <button type="submit">Load My Preferences</button>
@@ -135,7 +132,7 @@
   
   <script>
     document.addEventListener("DOMContentLoaded", function() {
-      // Flag to check if preferences have been loaded
+      // Global flag to check if preferences have been loaded
       let preferencesLoaded = false;
       
       // Function to get URL parameters
@@ -151,6 +148,26 @@
         // Optionally, make it read-only:
         // document.getElementById("email").readOnly = true;
       }
+      
+      // Function to load sources from JSON file and populate the sources container
+      function loadSources() {
+        fetch("assets/json/sources.json")
+          .then(response => response.json())
+          .then(sourcesData => {
+            const container = document.getElementById("sourcesContainer");
+            let html = "<p>Select your sources:</p>";
+            sourcesData.forEach(sourceObj => {
+              html += `<label class="source-item"><input type="checkbox" name="sources" value="${sourceObj.source}"> ${sourceObj.source}</label>`;
+            });
+            container.innerHTML = html;
+          })
+          .catch(error => {
+            console.error("Error loading sources:", error);
+          });
+      }
+      
+      // Load the sources dynamically on page load
+      loadSources();
       
       // Handle form submission
       document.getElementById("updateForm").addEventListener("submit", function(e) {
@@ -177,7 +194,6 @@
               selectedSources.push(checkbox.value);
             }
           });
-          // Build payload; sources is an array containing one comma-separated string
           payload = {
             email: email,
             sources: [ selectedSources.join(",") ],
@@ -220,10 +236,10 @@
                   const selectedSources = sourceString.split(",").map(s => s.trim());
                   
                   // Reveal the sources container
-                  document.querySelector(".sources").style.display = "block";
+                  document.getElementById("sourcesContainer").style.display = "block";
                   
-                  // Check appropriate checkboxes
-                  const checkboxes = document.querySelectorAll('input[name="sources"]');
+                  // Update checkboxes: use querySelectorAll on container to ensure dynamic elements are targeted
+                  const checkboxes = document.querySelectorAll('#sourcesContainer input[name="sources"]');
                   checkboxes.forEach(checkbox => {
                     checkbox.checked = selectedSources.includes(checkbox.value);
                   });
@@ -232,7 +248,7 @@
                   preferencesLoaded = true;
                   document.querySelector("button[type='submit']").textContent = "Update Preferences";
                 } else {
-                  document.querySelector(".sources").style.display = "none";
+                  document.getElementById("sourcesContainer").style.display = "none";
                   alert("No subscription preferences found for this email.");
                 }
               } else {
