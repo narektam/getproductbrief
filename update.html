@@ -167,11 +167,11 @@
           document.getElementById("loadingIndicator").style.display = "none";
           console.log("Webhook response:", data);
           
-          if (data.error) {
-            alert("Error: " + data.error);
-          } else {
-            // Check both data.Sources and data.sources
-            const sourcesData = data.Sources || data.sources;
+          // Expecting data to be an array with one object
+          if (Array.isArray(data) && data.length > 0) {
+            const userData = data[0];
+            const sourcesData = userData.Sources || userData.sources;
+            
             if (sourcesData && sourcesData.length > 0) {
               let sourceString;
               if (typeof sourcesData === 'string') {
@@ -187,7 +187,7 @@
               // Reveal the sources container
               document.querySelector(".sources").style.display = "block";
               
-              // Check appropriate checkboxes
+              // Loop over checkboxes in the sources section and check those matching selected sources
               const checkboxes = document.querySelectorAll('input[name="sources"]');
               checkboxes.forEach(checkbox => {
                 checkbox.checked = selectedSources.includes(checkbox.value);
@@ -196,6 +196,8 @@
               document.querySelector(".sources").style.display = "none";
               alert("No subscription preferences found for this email.");
             }
+          } else {
+            alert("No subscription preferences found for this email.");
           }
         })
         .catch(error => {
