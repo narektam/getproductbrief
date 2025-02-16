@@ -315,18 +315,19 @@
       Clerk.mountSignIn(document.getElementById("clerk-container"), {
         redirectUrl: window.location.href, // redirect back to the current page after sign-in
         signUpUrl: "https://www.getproductbrief.com/index.html", // change this to your desired sign-up URL
-      translations: {
-        en: {
-          signIn: {
-            title: "Welcome Back! Please Sign In",
-            subtitle: "Enter your email to get started"
-          },
-          signUp: {
-            title: "Create Your Account",
-            subtitle: "Join us and get the latest product insights"
+        defaultLocale: "en",
+        translations: {
+          en: {
+            signIn: {
+              title: "Welcome Back! Please Sign In",
+              subtitle: "Enter your email to get started"
+            },
+            signUp: {
+              title: "Create Your Account",
+              subtitle: "Join us and get the latest product insights"
+            }
           }
         }
-      }
       });
     }
   });
