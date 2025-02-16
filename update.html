@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Update Your Subscription - Get Product Brief</title>
   <style>
     body {
@@ -18,7 +18,7 @@
       margin: 50px auto;
       padding: 20px;
       border-radius: 6px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
     header {
       display: flex;
@@ -54,6 +54,14 @@
       border: 1px solid #ccc;
       border-radius: 4px;
       margin-bottom: 20px;
+    }
+    .sources {
+      margin-bottom: 20px;
+    }
+    .sources label {
+      font-size: 16px;
+      margin-right: 10px;
+      display: inline-block;
     }
     button {
       width: 100%;
@@ -91,7 +99,14 @@
       <label for="email">Email Address:</label>
       <input type="email" id="email" name="email" placeholder="Enter your email" required>
       
-      <!-- You can add more fields here for subscription preferences -->
+      <div class="sources">
+        <p>Select your sources:</p>
+        <!-- Predefined list of available sources -->
+        <label><input type="checkbox" name="sources" value="OpenAI"> OpenAI</label>
+        <label><input type="checkbox" name="sources" value="Lenny's Newsletter"> Lenny's Newsletter</label>
+        <label><input type="checkbox" name="sources" value="Anthropic"> Anthropic</label>
+        <label><input type="checkbox" name="sources" value="Reforge"> Reforge</label>
+      </div>
       
       <button type="submit">Load My Preferences</button>
     </form>
@@ -103,22 +118,68 @@
   </div>
   
   <script>
-    // Get URL parameters
-    const params = new URLSearchParams(window.location.search);
-    const emailParam = params.get('email');
+    // Function to get URL parameters
+    function getQueryParam(param) {
+      const params = new URLSearchParams(window.location.search);
+      return params.get(param);
+    }
+
+    // Auto-fill email field if "email" parameter exists
+    const emailParam = getQueryParam("email");
     if (emailParam) {
-      // Auto-fill the email field with the value from the URL parameter
-      document.getElementById('email').value = emailParam;
-      // Optionally, make the email field read-only:
-      // document.getElementById('email').readOnly = true;
+      document.getElementById("email").value = emailParam;
+      // Optionally, you can make it read-only:
+      // document.getElementById("email").readOnly = true;
     }
     
     // Handle form submission
     document.getElementById("updateForm").addEventListener("submit", function(e) {
       e.preventDefault();
-      // Here you would typically call your n8n webhook or backend to load/update preferences.
-      // For now, we'll just alert the user.
-      alert("Loading preferences for " + document.getElementById('email').value);
+      
+      const email = document.getElementById("email").value;
+      
+      // Build the payload
+      const payload = {
+        email: email
+      };
+      
+      // Call the webhook to get the subscription details
+      fetch("https://narektamoyan.app.n8n.cloud/webhook-test/get-subscription", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.error) {
+          // If there's an error, show it as a popup
+          alert("Error: " + data.error);
+        } else {
+          // Otherwise, update the form by checking the appropriate sources
+          // Assume that data.sources is in the format: ["OpenAI,Anthropic,Reforge"]
+          // We'll split that string by comma, trim each value, and then check matching checkboxes.
+          if (data.sources && data.sources.length > 0) {
+            const sourceString = data.sources[0];  // e.g., "OpenAI,Anthropic,Reforge"
+            const selectedSources = sourceString.split(",").map(s => s.trim());
+            
+            // Loop over all checkboxes in the sources section and check them if they are in the selectedSources array
+            const checkboxes = document.querySelectorAll('input[name="sources"]');
+            checkboxes.forEach(checkbox => {
+              if (selectedSources.includes(checkbox.value)) {
+                checkbox.checked = true;
+              } else {
+                checkbox.checked = false;
+              }
+            });
+          }
+        }
+      })
+      .catch(error => {
+        console.error("Error:", error);
+        alert("An error occurred while fetching your subscription details.");
+      });
     });
   </script>
 </body>
