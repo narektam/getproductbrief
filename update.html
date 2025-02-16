@@ -12,7 +12,7 @@
       padding: 0;
       color: #333;
     }
-    /* Header that stays on top */
+    /* Fixed header styling */
     header {
       position: fixed;
       top: 0;
@@ -25,13 +25,6 @@
       align-items: center;
       padding: 10px 20px;
     }
-    header h1 {
-      flex: 1;
-      text-align: center;
-      margin: 0;
-      font-size: 24px;
-      color: #007BFF;
-    }
     header a.home-btn {
       text-decoration: none;
       font-size: 14px;
@@ -40,9 +33,16 @@
       padding: 8px 16px;
       border-radius: 50px;
     }
-    /* Main container for content (below header) */
+    header h1 {
+      flex: 1;
+      text-align: center;
+      margin: 0;
+      font-size: 24px;
+      color: #007BFF;
+    }
+    /* Main content positioned below header */
     .main-content {
-      padding-top: 70px; /* leave space for the fixed header */
+      padding-top: 70px; /* Adjust if header height changes */
     }
     .container {
       max-width: 600px;
@@ -55,20 +55,41 @@
     form {
       margin-top: 20px;
     }
-    label {
+    /* Email input container (for non-authenticated users) */
+    #emailInputContainer {
+      margin-bottom: 20px;
+    }
+    #emailInputContainer label {
       display: block;
       margin-bottom: 8px;
       font-size: 16px;
     }
-    input[type="email"] {
+    #emailInputContainer input {
       width: 100%;
       padding: 10px;
       font-size: 16px;
       border: 1px solid #ccc;
       border-radius: 4px;
-      margin-bottom: 20px;
     }
-    /* Initially hide the sources container */
+    /* Email display container (for authenticated users) */
+    #emailDisplayContainer {
+      margin-bottom: 20px;
+      display: none;
+    }
+    #emailDisplayContainer label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 16px;
+    }
+    #emailDisplayContainer p {
+      font-size: 16px;
+      margin: 0;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background-color: #e9ecef;
+    }
+    /* Sources container for dynamic checkboxes */
     .sources {
       margin-bottom: 20px;
       display: none;
@@ -122,7 +143,7 @@
       height: 100%;
       background-color: #ffffff;
       z-index: 1000;
-      display: none; /* will be shown if user is not signed in */
+      display: none; /* Shown if user is not signed in */
       align-items: center;
       justify-content: center;
     }
@@ -138,23 +159,31 @@
   ></script>
 </head>
 <body>
-  <!-- Fixed header -->
+  <!-- Full-screen Clerk container overlay -->
+  <div id="clerk-container"></div>
+
   <header>
     <a href="index.html" class="home-btn">ProductBrief</a>
     <h1>Update Your Subscription</h1>
   </header>
   
-  <!-- Clerk container overlay for sign-in -->
-  <div id="clerk-container"></div>
-  
-  <!-- Main content area below header -->
   <div class="main-content">
     <div class="container">
       <form id="updateForm" style="display:none;">
-        <label for="email">Email Address:</label>
-        <input type="email" id="email" name="email" placeholder="Enter your email" required>
+        <!-- Email display for authenticated users -->
+        <div id="emailDisplayContainer">
+          <label>Email Address:</label>
+          <p id="emailDisplay"></p>
+          <!-- Hidden input to submit the email value -->
+          <input type="hidden" id="email" name="email">
+        </div>
+        <!-- Email input for non-authenticated users -->
+        <div id="emailInputContainer">
+          <label for="emailInput">Email Address:</label>
+          <input type="email" id="emailInput" name="email" placeholder="Enter your email" required>
+        </div>
         
-        <!-- Sources will be loaded dynamically -->
+        <!-- Sources container -->
         <div class="sources" id="sourcesContainer">
           <!-- Dynamic checkboxes will be inserted here -->
         </div>
@@ -179,13 +208,17 @@
       console.log('ClerkJS is loaded');
       
       if (Clerk.user) {
-        // If authenticated, hide the Clerk overlay and show the update form
+        // User is authenticated: show the email as read-only text.
         document.getElementById('clerk-container').style.display = 'none';
         document.getElementById('updateForm').style.display = 'block';
-        // Pre-fill the email field with the authenticated user's email
-        document.getElementById('email').value = Clerk.user.primaryEmailAddress.emailAddress;
+        // Hide the email input container and show the email display container.
+        document.getElementById('emailInputContainer').style.display = 'none';
+        document.getElementById('emailDisplayContainer').style.display = 'block';
+        const userEmail = Clerk.user.primaryEmailAddress.emailAddress;
+        document.getElementById('emailDisplay').textContent = userEmail;
+        document.getElementById('email').value = userEmail;
       } else {
-        // If not authenticated, show the Clerk overlay and mount the sign-in widget
+        // User is not authenticated: show the sign-in widget.
         document.getElementById('clerk-container').style.display = 'flex';
         document.getElementById('updateForm').style.display = 'none';
         Clerk.mountSignIn(document.getElementById('clerk-container'));
@@ -198,18 +231,6 @@
     document.addEventListener("DOMContentLoaded", function() {
       // Global flag to check if preferences have been loaded
       let preferencesLoaded = false;
-      
-      // Function to get URL parameters
-      function getQueryParam(param) {
-        const params = new URLSearchParams(window.location.search);
-        return params.get(param);
-      }
-      
-      // Fallback auto-fill email if "email" parameter exists (if Clerk isn't used)
-      const emailParam = getQueryParam("email");
-      if (emailParam) {
-        document.getElementById("email").value = emailParam;
-      }
       
       // Function to load sources from the JSON file and populate the sources container
       function loadSources() {
@@ -228,7 +249,7 @@
           });
       }
       
-      // Load the sources dynamically on page load
+      // Load sources dynamically on page load
       loadSources();
       
       // Handle form submission
@@ -237,14 +258,17 @@
         // Show the loading indicator
         document.getElementById("loadingIndicator").style.display = "block";
         
-        const email = document.getElementById("email").value;
+        // Determine the email from the hidden field (if authenticated) or the input field
+        const email = document.getElementById("email").value || document.getElementById("emailInput").value;
         const today = new Date().toISOString().split("T")[0];
         let payload, webhookUrl;
         
         if (!preferencesLoaded) {
+          // First submission: load preferences from get-subscription webhook
           payload = { email: email };
           webhookUrl = "https://narektamoyan.app.n8n.cloud/webhook/get-subscription";
         } else {
+          // Subsequent submission: update preferences using add-subscription webhook
           const checkboxes = document.querySelectorAll('input[name="sources"]');
           let selectedSources = [];
           checkboxes.forEach(checkbox => {
