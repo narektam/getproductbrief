@@ -162,20 +162,22 @@
             alert("Error: " + data.error);
           } else {
             let selectedSources = [];
-            if (data.sources && data.sources.length > 0) {
-              // Handle data.sources whether it's a string or an array
-              const sourceString = typeof data.sources === 'string' ? data.sources : data.sources[0];
+            // IMPORTANT: Use data.Sources with capital "S" since that’s what the webhook returns.
+            if (data.Sources && data.Sources.length > 0) {
+              // If data.Sources is a string, split it; otherwise, assume it's an array and use its first element
+              const sourceString = typeof data.Sources === 'string' ? data.Sources : data.Sources[0];
               selectedSources = sourceString.split(",").map(s => s.trim());
               
               // Reveal the sources container
               document.querySelector(".sources").style.display = "block";
               
-              // Loop over checkboxes and check those matching the selected sources
+              // Loop over checkboxes in the sources section and check those matching selected sources
               const checkboxes = document.querySelectorAll('input[name="sources"]');
               checkboxes.forEach(checkbox => {
                 checkbox.checked = selectedSources.includes(checkbox.value);
               });
             } else {
+              // If no valid sources are returned, hide the sources container and alert the user
               document.querySelector(".sources").style.display = "none";
               alert("No subscription preferences found for this email.");
             }
