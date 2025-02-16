@@ -17,7 +17,7 @@
       padding: 0;
       color: #333;
     }
-    /* Fixed header styling */
+    /* Fixed header styling now only contains navigation links */
     header {
       position: fixed;
       top: 0;
@@ -38,13 +38,6 @@
       padding: 8px 16px;
       border-radius: 50px;
     }
-    header h1 {
-      flex: 1;
-      text-align: center;
-      margin: 0;
-      font-size: 24px;
-      color: #007BFF;
-    }
     header a.update-link {
       text-decoration: none;
       font-size: 14px;
@@ -64,6 +57,13 @@
       padding: 20px;
       border-radius: 6px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    /* Title in the body */
+    .page-title {
+      text-align: center;
+      font-size: 24px;
+      color: #007BFF;
+      margin-bottom: 20px;
     }
     form {
       display: flex;
@@ -89,7 +89,7 @@
       width: 16px;
       margin-right: 8px;
     }
-    /* Email row: contains the email input and subscribe button side-by-side */
+    /* Email row: contains email input and subscribe button side-by-side */
     .email-row {
       display: none; /* initially hidden */
       flex-direction: row;
@@ -137,11 +137,11 @@
 <body>
   <header>
     <a href="index.html" class="home-btn">ProductBrief</a>
-    <h1>Subscribe to Get Product Brief</h1>
     <a href="update.html" class="update-link">Already Subscribed?</a>
   </header>
   <div class="main-content">
     <div class="container">
+      <div class="page-title">Subscribe to Get Product Brief</div>
       <form id="subscriptionForm">
         <!-- Sources container for checkboxes -->
         <div class="sources" id="sourcesContainer">
@@ -156,7 +156,6 @@
       </form>
       <div class="loading" id="loadingIndicator">Loading...</div>
       <div class="footer">
-        <!-- You can remove or adjust footer links as needed -->
         <a href="privacy.html">Privacy Policy</a>
         <a href="terms.html">Terms of Use</a>
       </div>
@@ -235,7 +234,6 @@
           } else {
             alert("Thank you for subscribing!");
             document.getElementById("subscriptionForm").reset();
-            // Hide email row again after reset
             document.getElementById("emailRow").style.display = "none";
           }
         })
