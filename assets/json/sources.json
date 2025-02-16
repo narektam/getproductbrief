@@ -1,1 +1,34 @@
-
+[
+  {
+    "source": "OpenAI",
+    "logoURL": "https://img.logo.dev/openai.com"
+  },
+  {
+    "source": "Gemini",
+    "logoURL": "https://img.logo.dev/gemini.com"
+  },
+  {
+    "source": "Anthropic",
+    "logoURL": "https://img.logo.dev/anthropic.com"
+  },
+  {
+    "source": "Figma",
+    "logoURL": "https://img.logo.dev/figma.com"
+  },
+  {
+    "source": "Lenny's Podcast",
+    "logoURL": "https://img.logo.dev/substack.com"
+  },
+  {
+    "source": "Linear",
+    "logoURL": "https://img.logo.dev/linear.app"
+  },
+  {
+    "source": "Stripe",
+    "logoURL": "https://img.logo.dev/stripe.com"
+  },
+  {
+    "source": "Reforge",
+    "logoURL": "https://img.logo.dev/reforge.com"
+  }
+]
