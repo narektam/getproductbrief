@@ -9,8 +9,6 @@
   <link rel="shortcut icon" href="/assets/images/favicon.ico" />
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
   <link rel="manifest" href="/assets/images/site.webmanifest" />
-  <!-- Include Choices.js CSS -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
   <style>
     body {
       background-color: #f2f2f2;
@@ -47,9 +45,8 @@
       font-size: 24px;
       color: #007BFF;
     }
-    /* Main content positioned below header */
     .main-content {
-      padding-top: 70px; /* Adjust to header height */
+      padding-top: 70px; /* space for header */
     }
     .container {
       max-width: 600px;
@@ -70,17 +67,24 @@
       border: 1px solid #ccc;
       border-radius: 4px;
     }
-    /* Sources container for multiselect dropdown */
+    /* Sources container for checkboxes */
     .sources {
       margin-bottom: 20px;
     }
-    /* Styles for the <select> element */
-    select#sourcesSelect {
-      width: 100%;
-      padding: 10px;
+    .sources p {
       font-size: 16px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
+      margin-bottom: 8px;
+    }
+    .sources label {
+      font-size: 16px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+    }
+    .sources label img {
+      height: 16px;
+      width: 16px;
+      margin-right: 8px;
     }
     button {
       padding: 12px;
@@ -94,7 +98,6 @@
     button:hover {
       background-color: #0056b3;
     }
-    /* Loading indicator styling */
     .loading {
       text-align: center;
       font-size: 16px;
@@ -125,10 +128,10 @@
         <label for="email">Email:</label>
         <input type="email" id="email" name="email" placeholder="Enter your email" required>
         
-        <!-- Sources container for the multiselect dropdown -->
+        <!-- Sources container for checkboxes (populated dynamically) -->
         <div class="sources" id="sourcesContainer">
-          <label for="sourcesSelect">Select your sources:</label>
-          <select id="sourcesSelect" name="sources" multiple></select>
+          <p>Select your sources:</p>
+          <!-- Dynamic checkboxes will be inserted here -->
         </div>
         
         <button type="submit">Subscribe</button>
@@ -145,51 +148,22 @@
     </div>
   </div>
   
-  <!-- Include Choices.js JavaScript -->
-  <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
   <script>
-    let sourceChoices = null; // Global variable for the Choices instance
-
     document.addEventListener("DOMContentLoaded", function() {
-      // Load sources from JSON and populate the select element
+      // Load sources from JSON and populate checkboxes
       fetch("assets/json/sources.json")
         .then(response => response.json())
         .then(sourcesData => {
-          const select = document.getElementById("sourcesSelect");
-          // Clear any existing options
-          select.innerHTML = "";
+          const container = document.getElementById("sourcesContainer");
+          let html = "<p>Select your sources:</p>";
           sourcesData.forEach(sourceObj => {
-            const option = document.createElement("option");
-            option.value = sourceObj.source;
-            option.text = sourceObj.source;
-            // Save the logo URL as a custom property (will be used in template)
-            option.setAttribute("data-custom-properties", JSON.stringify({ logoURL: sourceObj.logoURL }));
-            select.appendChild(option);
+            html += `<label>
+              <input type="checkbox" name="sources" value="${sourceObj.source}">
+              <img src="${sourceObj.logoURL}" alt="${sourceObj.source} Logo">
+              ${sourceObj.source}
+            </label>`;
           });
-          // Initialize Choices on the select element and save the instance
-          sourceChoices = new Choices(select, {
-            removeItemButton: true,
-            callbackOnCreateTemplates: function(template) {
-              return {
-                item: (data) => {
-                  return template(`
-                    <div class="item ${data.highlighted ? 'highlighted' : ''} ${data.placeholder ? 'placeholder' : ''}" data-item data-id="${data.id}" data-value="${data.value}" ${data.active ? 'aria-selected="true"' : ''} ${data.disabled ? 'aria-disabled="true"' : ''}>
-                      <img src="${JSON.parse(data.customProperties).logoURL}" alt="${data.value} Logo" style="height:16px; width:16px; margin-right:8px;">
-                      ${data.label}
-                    </div>
-                  `);
-                },
-                choice: (data) => {
-                  return template(`
-                    <div class="choice ${data.disabled ? 'disabled' : ''}" data-select-text="${this.config.itemSelectText}" data-choice data-id="${data.id}" data-value="${data.value}" ${data.disabled ? 'aria-disabled="true"' : ''}>
-                      <img src="${JSON.parse(data.customProperties).logoURL}" alt="${data.value} Logo" style="height:16px; width:16px; margin-right:8px;">
-                      ${data.label}
-                    </div>
-                  `);
-                }
-              };
-            }
-          });
+          container.innerHTML = html;
         })
         .catch(error => {
           console.error("Error loading sources:", error);
@@ -199,10 +173,9 @@
       document.getElementById("subscriptionForm").addEventListener("submit", function(e) {
         e.preventDefault();
         document.getElementById("loadingIndicator").style.display = "block";
-        
         const email = document.getElementById("email").value;
-        // Retrieve selected sources from the Choices instance
-        const selectedSources = sourceChoices ? sourceChoices.getValue(true) : [];
+        const checkboxes = document.querySelectorAll('input[name="sources"]:checked');
+        const selectedSources = Array.from(checkboxes).map(checkbox => checkbox.value);
         const sources = [ selectedSources.join(",") ];
         const today = new Date().toISOString().split("T")[0];
         const payload = {
@@ -223,8 +196,6 @@
           if (response.ok) {
             alert("Thank you for subscribing!");
             document.getElementById("subscriptionForm").reset();
-            // Reset Choices instance as well
-            if(sourceChoices) sourceChoices.clearStore();
           } else {
             alert("There was an error processing your subscription.");
           }
