@@ -81,6 +81,14 @@
     button:hover {
       background-color: #0056b3;
     }
+    /* Loading indicator styling */
+    .loading {
+      text-align: center;
+      font-size: 16px;
+      color: #007BFF;
+      margin-top: 20px;
+      display: none;
+    }
     .footer {
       text-align: center;
       margin-top: 20px;
@@ -116,6 +124,9 @@
       <button type="submit">Load My Preferences</button>
     </form>
     
+    <!-- Loading indicator -->
+    <div class="loading" id="loadingIndicator">Loading...</div>
+    
     <div class="footer">
       <a href="privacy.html">Privacy Policy</a>
       <a href="terms.html">Terms of Use</a>
@@ -129,18 +140,18 @@
         const params = new URLSearchParams(window.location.search);
         return params.get(param);
       }
-
+      
       // Auto-fill email field if "email" parameter exists
       const emailParam = getQueryParam("email");
       if (emailParam) {
         document.getElementById("email").value = emailParam;
-        // Optionally, make it read-only:
-        // document.getElementById("email").readOnly = true;
       }
       
       // Handle form submission
       document.getElementById("updateForm").addEventListener("submit", function(e) {
         e.preventDefault();
+        // Show the loading indicator
+        document.getElementById("loadingIndicator").style.display = "block";
         
         const email = document.getElementById("email").value;
         const payload = { email: email };
@@ -152,23 +163,31 @@
         })
         .then(response => response.json())
         .then(data => {
-          console.log("Webhook response:", data); // Debug log
+          // Hide the loading indicator
+          document.getElementById("loadingIndicator").style.display = "none";
+          console.log("Webhook response:", data);
           
           if (data.error) {
             alert("Error: " + data.error);
           } else {
-            // Check for both 'Sources' and 'sources'
+            // Check both data.Sources and data.sources
             const sourcesData = data.Sources || data.sources;
-            
             if (sourcesData && sourcesData.length > 0) {
-              // If sourcesData is a string, use it; otherwise, use the first element
-              const sourceString = typeof sourcesData === 'string' ? sourcesData : sourcesData[0];
+              let sourceString;
+              if (typeof sourcesData === 'string') {
+                sourceString = sourcesData;
+              } else if (Array.isArray(sourcesData) && typeof sourcesData[0] === 'string') {
+                sourceString = sourcesData[0];
+              } else {
+                console.warn("Unexpected sources format:", sourcesData);
+                sourceString = "";
+              }
               const selectedSources = sourceString.split(",").map(s => s.trim());
               
               // Reveal the sources container
               document.querySelector(".sources").style.display = "block";
               
-              // Loop over checkboxes in the sources section and check those that match selected sources
+              // Check appropriate checkboxes
               const checkboxes = document.querySelectorAll('input[name="sources"]');
               checkboxes.forEach(checkbox => {
                 checkbox.checked = selectedSources.includes(checkbox.value);
@@ -180,6 +199,7 @@
           }
         })
         .catch(error => {
+          document.getElementById("loadingIndicator").style.display = "none";
           console.error("Error:", error);
           alert("An error occurred while fetching your subscription details.");
         });
