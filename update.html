@@ -19,6 +19,8 @@
       padding: 20px;
       border-radius: 6px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      position: relative;
+      z-index: 1;
     }
     header {
       display: flex;
@@ -99,30 +101,37 @@
       text-decoration: none;
       margin: 0 10px;
     }
-    /* Styles for Clerk's sign-in widget container */
+    /* Clerk container overlay styling */
     #clerk-container {
-      margin-top: 20px;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #ffffff;
+      z-index: 1000;
+      display: none; /* will be shown if user is not signed in */
     }
   </style>
-
+  
   <!-- Clerk SDK: load Clerk from the CDN -->
   <script
     async
     crossorigin="anonymous"
-    data-clerk-publishable-key="pk_test_bmF0aXZlLWliZXgtNDQuY2xlcmsuYWNjb3VudHMuZGV2JA" 
+    data-clerk-publishable-key="pk_test_bmF0aXZlLWliZXgtNDQuY2xlcmsuYWNjb3VudHMuZGV2JA"
     src="https://native-ibex-44.clerk.accounts.dev/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"
     type="text/javascript"
   ></script>
 </head>
 <body>
+  <!-- This container will serve as the full-screen overlay for Clerk sign-in -->
+  <div id="clerk-container"></div>
+  
   <div class="container">
     <header>
       <h1>Update Your Subscription</h1>
       <a href="index.html" class="home-btn">ProductBrief</a>
     </header>
-    
-    <!-- This container will hold the Clerk sign-in widget if the user is not authenticated -->
-    <div id="clerk-container"></div>
     
     <form id="updateForm" style="display:none;">
       <label for="email">Email Address:</label>
@@ -130,7 +139,7 @@
       
       <!-- Sources will be loaded dynamically -->
       <div class="sources" id="sourcesContainer">
-        <!-- Dynamic checkboxes go here -->
+        <!-- Dynamic checkboxes will be inserted here -->
       </div>
       
       <button type="submit">Load My Preferences</button>
@@ -148,27 +157,25 @@
   <!-- Clerk Initialization Script -->
   <script>
     window.addEventListener('load', async function () {
-      // Load Clerk
       await Clerk.load();
       console.log('ClerkJS is loaded');
       
-      // Check if a user is signed in
       if (Clerk.user) {
-        // If the user is signed in, hide the Clerk container (if used) and show the update form
+        // If authenticated, hide the clerk container and show the update form
         document.getElementById('clerk-container').style.display = 'none';
         document.getElementById('updateForm').style.display = 'block';
-        
         // Pre-fill the email field with the authenticated user's email
         document.getElementById('email').value = Clerk.user.primaryEmailAddress.emailAddress;
       } else {
-        // If not signed in, mount the sign-in widget
+        // If not authenticated, show the clerk container overlay and mount the sign-in widget
+        document.getElementById('clerk-container').style.display = 'block';
         document.getElementById('updateForm').style.display = 'none';
         Clerk.mountSignIn(document.getElementById('clerk-container'));
       }
     });
   </script>
   
-  <!-- Your update form script -->
+  <!-- Update Form Script -->
   <script>
     document.addEventListener("DOMContentLoaded", function() {
       // Global flag to check if preferences have been loaded
@@ -180,7 +187,7 @@
         return params.get(param);
       }
       
-      // Auto-fill email field if "email" parameter exists (this is a fallback in case Clerk isn't used)
+      // Auto-fill email field if "email" parameter exists (fallback if Clerk isn't used)
       const emailParam = getQueryParam("email");
       if (emailParam) {
         document.getElementById("email").value = emailParam;
@@ -203,7 +210,7 @@
           });
       }
       
-      // Load sources dynamically
+      // Load the sources dynamically on page load
       loadSources();
       
       // Handle form submission
@@ -270,7 +277,7 @@
                   // Reveal the sources container
                   document.getElementById("sourcesContainer").style.display = "block";
                   
-                  // Check appropriate checkboxes (only within the dynamically loaded container)
+                  // Update checkboxes in the sources container
                   const checkboxes = document.querySelectorAll('#sourcesContainer input[name="sources"]');
                   checkboxes.forEach(checkbox => {
                     checkbox.checked = selectedSources.includes(checkbox.value);
