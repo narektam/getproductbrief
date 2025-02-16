@@ -73,7 +73,7 @@
       border-radius: 4px;
       background-color: #e9ecef;
     }
-    /* Fallback email input container (if needed) */
+    /* Fallback email input container */
     #emailInputContainer {
       margin-bottom: 20px;
       display: none;
@@ -90,23 +90,25 @@
       border: 1px solid #ccc;
       border-radius: 4px;
     }
-    /* Sources container for the multiselect dropdown */
+    /* Sources container for checkboxes */
     .sources {
       margin-bottom: 20px;
       display: none;
     }
-    .sources label {
+    .sources p {
       font-size: 16px;
-      display: block;
       margin-bottom: 8px;
     }
-    /* Styles for the <select> element */
-    select#sourcesSelect {
-      width: 100%;
-      padding: 10px;
+    .sources label {
       font-size: 16px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+    }
+    .sources label img {
+      height: 16px;
+      width: 16px;
+      margin-right: 8px;
     }
     button {
       width: 100%;
@@ -121,7 +123,6 @@
     button:hover {
       background-color: #0056b3;
     }
-    /* Loading indicator styling */
     .loading {
       text-align: center;
       font-size: 16px;
@@ -139,7 +140,7 @@
       text-decoration: none;
       margin: 0 10px;
     }
-    /* Clerk container overlay styling to cover full screen and center sign-in widget */
+    /* Clerk container overlay styling */
     #clerk-container {
       position: fixed;
       top: 0;
@@ -162,18 +163,11 @@
     src="https://native-ibex-44.clerk.accounts.dev/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"
     type="text/javascript"
   ></script>
-  <!-- Include Choices.js CSS -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
-</head>
-<body>
-  <!-- Full-screen Clerk container overlay -->
-  <div id="clerk-container"></div>
   
   <header>
     <a href="index.html" class="home-btn">ProductBrief</a>
     <h1>Update Your Subscription</h1>
   </header>
-  
   <div class="main-content">
     <div class="container">
       <form id="updateForm" style="display:none;">
@@ -184,22 +178,21 @@
           <!-- Hidden input to submit the email -->
           <input type="hidden" id="email" name="email">
         </div>
-        <!-- Fallback email input container (if Clerk is not used) -->
+        <!-- Fallback email input container -->
         <div id="emailInputContainer" style="display:none;">
           <label for="emailInput">Email Address:</label>
           <input type="email" id="emailInput" name="email" placeholder="Enter your email" required>
         </div>
         
-        <!-- Sources container for the multiselect dropdown -->
+        <!-- Sources container for checkboxes -->
         <div class="sources" id="sourcesContainer">
-          <label for="sourcesSelect">Select your sources:</label>
-          <select id="sourcesSelect" name="sources" multiple></select>
+          <p>Select your sources:</p>
+          <!-- Dynamic checkboxes will be inserted here -->
         </div>
         
         <button type="submit">Load My Preferences</button>
       </form>
       
-      <!-- Loading indicator -->
       <div class="loading" id="loadingIndicator">Loading...</div>
       
       <div class="footer">
@@ -209,51 +202,22 @@
     </div>
   </div>
   
-  <!-- Include Choices.js JavaScript -->
-  <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
-  
   <script>
-    let sourceChoices = null; // Global variable for the Choices instance
-
-    // Function to load sources from JSON and populate the select
+    // Utility function to load sources from JSON file and populate checkboxes
     async function loadSources() {
       try {
         const response = await fetch("assets/json/sources.json");
         const sourcesData = await response.json();
-        const select = document.getElementById("sourcesSelect");
-        select.innerHTML = ""; // clear existing options
+        const container = document.getElementById("sourcesContainer");
+        let html = "<p>Select your sources:</p>";
         sourcesData.forEach(sourceObj => {
-          const option = document.createElement("option");
-          option.value = sourceObj.source;
-          option.text = sourceObj.source;
-          // Store logo URL as custom property
-          option.setAttribute("data-custom-properties", JSON.stringify({ logoURL: sourceObj.logoURL }));
-          select.appendChild(option);
+          html += `<label>
+                      <input type="checkbox" name="sources" value="${sourceObj.source}">
+                      <img src="${sourceObj.logoURL}" alt="${sourceObj.source} Logo">
+                      ${sourceObj.source}
+                    </label>`;
         });
-        // Initialize Choices on the select and store the instance
-        sourceChoices = new Choices(select, {
-          removeItemButton: true,
-          callbackOnCreateTemplates: function(template) {
-            return {
-              item: (data) => {
-                return template(`
-                  <div class="item ${data.highlighted ? 'highlighted' : ''} ${data.placeholder ? 'placeholder' : ''}" data-item data-id="${data.id}" data-value="${data.value}" ${data.active ? 'aria-selected="true"' : ''} ${data.disabled ? 'aria-disabled="true"' : ''}>
-                    <img src="${JSON.parse(data.customProperties).logoURL}" alt="${data.value} Logo" style="height:16px; width:16px; margin-right:8px;">
-                    ${data.label}
-                  </div>
-                `);
-              },
-              choice: (data) => {
-                return template(`
-                  <div class="choice ${data.disabled ? 'disabled' : ''}" data-select-text="${this.config.itemSelectText}" data-choice data-id="${data.id}" data-value="${data.value}" ${data.disabled ? 'aria-disabled="true"' : ''}>
-                    <img src="${JSON.parse(data.customProperties).logoURL}" alt="${data.value} Logo" style="height:16px; width:16px; margin-right:8px;">
-                    ${data.label}
-                  </div>
-                `);
-              }
-            };
-          }
-        });
+        container.innerHTML = html;
       } catch (error) {
         console.error("Error loading sources:", error);
       }
@@ -262,7 +226,7 @@
     // Load sources on page load
     loadSources();
     
-    // Global flag for preference loading
+    // Global flag to indicate if preferences are loaded
     let preferencesLoaded = false;
     
     // Function to load user preferences via webhook
@@ -293,13 +257,12 @@
               console.warn("Unexpected sources format:", sourcesData);
             }
             const selectedSources = sourceString.split(",").map(s => s.trim());
-            // Reveal the sources container
+            // Reveal the sources container and update checkboxes
             document.getElementById("sourcesContainer").style.display = "block";
-            // Update the Choices instance value
-            if (sourceChoices) {
-              // Set selected values using setValueByChoice
-              sourceChoices.setChoiceByValue(selectedSources);
-            }
+            const checkboxes = document.querySelectorAll("#sourcesContainer input[name='sources']");
+            checkboxes.forEach(checkbox => {
+              checkbox.checked = selectedSources.includes(checkbox.value);
+            });
             preferencesLoaded = true;
             document.querySelector("button[type='submit']").textContent = "Update Preferences";
           } else {
@@ -317,24 +280,23 @@
       });
     }
     
-    // Clerk initialization and auth state handling
+    // Clerk initialization and authentication
     window.addEventListener('load', async function () {
       await Clerk.load();
       console.log("ClerkJS is loaded", Clerk.user);
       if (Clerk.user) {
-        // Hide the Clerk overlay and show update form
+        // Hide Clerk overlay, show update form, and display email as read-only text
         document.getElementById("clerk-container").style.display = "none";
         document.getElementById("updateForm").style.display = "block";
-        // Hide fallback email input; show email display container
         document.getElementById("emailInputContainer").style.display = "none";
         document.getElementById("emailDisplayContainer").style.display = "block";
         const userEmail = Clerk.user.primaryEmailAddress.emailAddress;
         document.getElementById("emailDisplay").textContent = userEmail;
         document.getElementById("email").value = userEmail;
-        // Automatically load user preferences using the authenticated email
+        // Automatically load user preferences
         loadUserPreferences(userEmail);
       } else {
-        // Not authenticated: show Clerk overlay and mount sign-in widget with redirect back
+        // Not authenticated: show Clerk overlay and mount sign-in widget with redirect back to update page
         document.getElementById("clerk-container").style.display = "flex";
         document.getElementById("updateForm").style.display = "none";
         Clerk.mountSignIn(document.getElementById("clerk-container"), {
@@ -343,16 +305,19 @@
       }
     });
     
-    // Handle update form submission for preference updates
+    // Handle update form submission (for updating preferences)
     document.getElementById("updateForm").addEventListener("submit", function(e) {
       e.preventDefault();
       document.getElementById("loadingIndicator").style.display = "block";
       const email = document.getElementById("email").value;
       const today = new Date().toISOString().split("T")[0];
+      const checkboxes = document.querySelectorAll("#sourcesContainer input[name='sources']");
       let selectedSources = [];
-      if (sourceChoices) {
-        selectedSources = sourceChoices.getValue(true);
-      }
+      checkboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+          selectedSources.push(checkbox.value);
+        }
+      });
       const payload = {
         email: email,
         sources: [ selectedSources.join(",") ],
