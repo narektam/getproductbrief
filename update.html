@@ -316,16 +316,17 @@
         redirectUrl: window.location.href, // redirect back to the current page after sign-in
         signUpUrl: "https://www.getproductbrief.com/index.html", // change this to your desired sign-up URL
         defaultLocale: "en",
-        translations: {
-          en: {
-            signIn: {
-              title: "Welcome Back! Please Sign In",
-              subtitle: "Enter your email to get started"
-            },
-            signUp: {
-              title: "Create Your Account",
-              subtitle: "Join us and get the latest product insights"
-            }
+        appearance: {
+          // The keys here (e.g. formTitle, formSubtitle) must match Clerk’s documented element keys.
+          elements: {
+            // Override the title text for the sign in form:
+            formTitle: 'Welcome Back! Please Sign In',
+            // Override the subtitle text:
+            formSubtitle: 'Enter your email to get started'
+          },
+          // You can also override variables (colors, fonts, etc.) if needed:
+          variables: {
+            colorPrimary: "#007BFF"
           }
         }
       });
