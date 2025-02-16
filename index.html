@@ -80,7 +80,7 @@
       width: 16px;
       margin-right: 8px;
     }
-    /* Email row: contains email input and subscribe button */
+    /* Email row: contains the email input and subscribe button side-by-side */
     .email-row {
       display: none; /* initially hidden */
       flex-direction: row;
@@ -153,6 +153,7 @@
       </div>
     </div>
   </div>
+  
   <script>
     document.addEventListener("DOMContentLoaded", function() {
       // Load sources from JSON and populate checkboxes
@@ -170,10 +171,11 @@
           });
           container.innerHTML = html;
           
-          // Add change event listeners to all checkboxes to control email row visibility
+          // Add change event listeners to checkboxes to control email row visibility
           const checkboxes = document.querySelectorAll('input[name="sources"]');
           checkboxes.forEach(checkbox => {
             checkbox.addEventListener("change", function() {
+              // If at least one checkbox is selected, show email row; otherwise, hide it.
               const anySelected = Array.from(checkboxes).some(cb => cb.checked);
               const emailRow = document.getElementById("emailRow");
               emailRow.style.display = anySelected ? "flex" : "none";
@@ -207,9 +209,17 @@
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload)
         })
-        .then(response => response.json())
-        .then(data => {
+        .then(response => {
           document.getElementById("loadingIndicator").style.display = "none";
+          return response.text(); // get raw text so that even if response is empty, we can proceed
+        })
+        .then(text => {
+          let data = {};
+          try {
+            data = text ? JSON.parse(text) : {};
+          } catch (err) {
+            console.error("Error parsing JSON:", err);
+          }
           if (data.error && data.error === "existing_subscriber") {
             alert("Already Subscribed\nThis email is already subscribed. To edit your preferences, click the Update your brief button from your emails.");
           } else if (data.error) {
@@ -217,7 +227,7 @@
           } else {
             alert("Thank you for subscribing!");
             document.getElementById("subscriptionForm").reset();
-            // Hide the email row again after reset
+            // Hide email row again after reset
             document.getElementById("emailRow").style.display = "none";
           }
         })
