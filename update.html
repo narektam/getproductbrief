@@ -20,26 +20,31 @@
       border-radius: 6px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
       position: relative;
-      z-index: 1;
+      z-index: 2;
     }
     header {
       display: flex;
-      justify-content: space-between;
       align-items: center;
+      justify-content: center;
+      position: relative;
       margin-bottom: 20px;
     }
-    header h1 {
-      margin: 0;
-      font-size: 24px;
-      color: #007BFF;
-    }
+    /* ProductBrief link positioned on the left */
     header a.home-btn {
+      position: absolute;
+      left: 0;
       background-color: #007BFF;
       color: #fff;
       padding: 8px 16px;
       border-radius: 50px;
       text-decoration: none;
       font-size: 14px;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 24px;
+      color: #007BFF;
+      text-align: center;
     }
     form {
       margin-top: 20px;
@@ -64,6 +69,7 @@
     }
     .sources p {
       font-size: 16px;
+      margin-bottom: 8px;
     }
     .sources label {
       font-size: 16px;
@@ -101,7 +107,7 @@
       text-decoration: none;
       margin: 0 10px;
     }
-    /* Clerk container overlay styling */
+    /* Clerk container overlay styling to cover the full screen and center sign-in widget */
     #clerk-container {
       position: fixed;
       top: 0;
@@ -111,9 +117,11 @@
       background-color: #ffffff;
       z-index: 1000;
       display: none; /* will be shown if user is not signed in */
+      align-items: center;
+      justify-content: center;
     }
   </style>
-  
+
   <!-- Clerk SDK: load Clerk from the CDN -->
   <script
     async
@@ -124,13 +132,13 @@
   ></script>
 </head>
 <body>
-  <!-- This container will serve as the full-screen overlay for Clerk sign-in -->
+  <!-- Full-screen Clerk container -->
   <div id="clerk-container"></div>
-  
+
   <div class="container">
     <header>
-      <h1>Update Your Subscription</h1>
       <a href="index.html" class="home-btn">ProductBrief</a>
+      <h1>Update Your Subscription</h1>
     </header>
     
     <form id="updateForm" style="display:none;">
@@ -161,14 +169,14 @@
       console.log('ClerkJS is loaded');
       
       if (Clerk.user) {
-        // If authenticated, hide the clerk container and show the update form
+        // If authenticated, hide the Clerk overlay and show the update form
         document.getElementById('clerk-container').style.display = 'none';
         document.getElementById('updateForm').style.display = 'block';
         // Pre-fill the email field with the authenticated user's email
         document.getElementById('email').value = Clerk.user.primaryEmailAddress.emailAddress;
       } else {
-        // If not authenticated, show the clerk container overlay and mount the sign-in widget
-        document.getElementById('clerk-container').style.display = 'block';
+        // If not authenticated, show the Clerk overlay and mount the sign-in widget
+        document.getElementById('clerk-container').style.display = 'flex';
         document.getElementById('updateForm').style.display = 'none';
         Clerk.mountSignIn(document.getElementById('clerk-container'));
       }
@@ -187,7 +195,7 @@
         return params.get(param);
       }
       
-      // Auto-fill email field if "email" parameter exists (fallback if Clerk isn't used)
+      // Fallback auto-fill email if "email" parameter exists (if Clerk isn't used)
       const emailParam = getQueryParam("email");
       if (emailParam) {
         document.getElementById("email").value = emailParam;
