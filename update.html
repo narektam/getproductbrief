@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Update Your Subscription - Get Product Brief</title>
   <style>
@@ -12,7 +12,7 @@
       padding: 0;
       color: #333;
     }
-    /* Fixed header styling now only has navigation links */
+    /* Header styling: only navigation links */
     header {
       position: fixed;
       top: 0;
@@ -45,7 +45,7 @@
       margin-right: 20px;
     }
     .main-content {
-      padding-top: 70px; /* leave space for header */
+      padding-top: 70px; /* space for header */
     }
     .container {
       max-width: 600px;
@@ -55,7 +55,7 @@
       border-radius: 6px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
-    /* Title moved to body and center aligned */
+    /* Page title in body */
     .page-title {
       text-align: center;
       font-size: 24px;
@@ -100,7 +100,7 @@
       border: 1px solid #ccc;
       border-radius: 4px;
     }
-    /* Hidden email field used for submission (when authenticated) */
+    /* Hidden email field for submission when authenticated */
     #email {
       display: none;
     }
@@ -168,6 +168,9 @@
       justify-content: center;
     }
   </style>
+  
+  <!-- Clerk SDK -->
+  <script async crossorigin="anonymous" data-clerk-publishable-key="pk_test_bmF0aXZlLWliZXgtNDQuY2xlcmsuYWNjb3VudHMuZGV2JA" src="https://native-ibex-44.clerk.accounts.dev/npm/@clerk/clerk-js@latest/dist/clerk.browser.js" type="text/javascript"></script>
 </head>
 <body>
   <!-- Clerk container overlay -->
@@ -179,10 +182,11 @@
   </header>
   
   <div class="main-content">
-    <div class="container">
-      <!-- Body Title -->
+    <!-- The container is shown only if the user is authenticated -->
+    <div class="container" id="mainContainer" style="display:none;">
+      <!-- Page title moved to body and center aligned -->
       <div class="page-title">Update Your Subscription - Get Product Brief</div>
-      <form id="updateForm" style="display:none;">
+      <form id="updateForm">
         <!-- Email display container for authenticated users -->
         <div id="emailDisplayContainer">
           <label>Email Address:</label>
@@ -211,7 +215,7 @@
   </div>
   
   <script>
-    // Function to load dynamic sources from JSON and populate checkboxes
+    // Function to load sources from JSON and populate checkboxes
     async function loadSources() {
       try {
         const response = await fetch("assets/json/sources.json");
@@ -293,9 +297,9 @@
       await Clerk.load();
       console.log("ClerkJS is loaded", Clerk.user);
       if (Clerk.user) {
-        // Authenticated: hide Clerk overlay and show update form
+        // If authenticated, show the main container and update form
         document.getElementById("clerk-container").style.display = "none";
-        document.getElementById("updateForm").style.display = "block";
+        document.getElementById("mainContainer").style.display = "block";
         // Hide fallback email input and disable it
         const emailInputContainer = document.getElementById("emailInputContainer");
         emailInputContainer.style.display = "none";
@@ -312,9 +316,9 @@
         // Automatically load user preferences
         loadUserPreferences(userEmail);
       } else {
-        // Not authenticated: show Clerk overlay and mount sign-in widget with custom options
+        // Not authenticated: hide the main container and show Clerk sign-in overlay
+        document.getElementById("mainContainer").style.display = "none";
         document.getElementById("clerk-container").style.display = "flex";
-        document.getElementById("updateForm").style.display = "none";
         Clerk.mountSignIn(document.getElementById("clerk-container"), {
           redirectUrl: window.location.href,
           signUpUrl: "https://www.getproductbrief.com/index.html",
