@@ -62,9 +62,8 @@
     }
     .sources p {
       font-size: 16px;
-      margin-bottom: 8px;
     }
-    .sources .source-item {
+    .sources label {
       font-size: 16px;
       margin-right: 10px;
       display: inline-block;
@@ -100,7 +99,20 @@
       text-decoration: none;
       margin: 0 10px;
     }
+    /* Styles for Clerk's sign-in widget container */
+    #clerk-container {
+      margin-top: 20px;
+    }
   </style>
+
+  <!-- Clerk SDK: load Clerk from the CDN -->
+  <script
+    async
+    crossorigin="anonymous"
+    data-clerk-publishable-key="pk_test_bmF0aXZlLWliZXgtNDQuY2xlcmsuYWNjb3VudHMuZGV2JA" 
+    src="https://native-ibex-44.clerk.accounts.dev/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"
+    type="text/javascript"
+  ></script>
 </head>
 <body>
   <div class="container">
@@ -109,13 +121,16 @@
       <a href="index.html" class="home-btn">ProductBrief</a>
     </header>
     
-    <form id="updateForm">
+    <!-- This container will hold the Clerk sign-in widget if the user is not authenticated -->
+    <div id="clerk-container"></div>
+    
+    <form id="updateForm" style="display:none;">
       <label for="email">Email Address:</label>
       <input type="email" id="email" name="email" placeholder="Enter your email" required>
       
       <!-- Sources will be loaded dynamically -->
       <div class="sources" id="sourcesContainer">
-        <!-- Content populated by JavaScript -->
+        <!-- Dynamic checkboxes go here -->
       </div>
       
       <button type="submit">Load My Preferences</button>
@@ -130,6 +145,30 @@
     </div>
   </div>
   
+  <!-- Clerk Initialization Script -->
+  <script>
+    window.addEventListener('load', async function () {
+      // Load Clerk
+      await Clerk.load();
+      console.log('ClerkJS is loaded');
+      
+      // Check if a user is signed in
+      if (Clerk.user) {
+        // If the user is signed in, hide the Clerk container (if used) and show the update form
+        document.getElementById('clerk-container').style.display = 'none';
+        document.getElementById('updateForm').style.display = 'block';
+        
+        // Pre-fill the email field with the authenticated user's email
+        document.getElementById('email').value = Clerk.user.primaryEmailAddress.emailAddress;
+      } else {
+        // If not signed in, mount the sign-in widget
+        document.getElementById('updateForm').style.display = 'none';
+        Clerk.mountSignIn(document.getElementById('clerk-container'));
+      }
+    });
+  </script>
+  
+  <!-- Your update form script -->
   <script>
     document.addEventListener("DOMContentLoaded", function() {
       // Global flag to check if preferences have been loaded
@@ -141,15 +180,13 @@
         return params.get(param);
       }
       
-      // Auto-fill email field if "email" parameter exists
+      // Auto-fill email field if "email" parameter exists (this is a fallback in case Clerk isn't used)
       const emailParam = getQueryParam("email");
       if (emailParam) {
         document.getElementById("email").value = emailParam;
-        // Optionally, make it read-only:
-        // document.getElementById("email").readOnly = true;
       }
       
-      // Function to load sources from JSON file and populate the sources container
+      // Function to load sources from the JSON file and populate the sources container
       function loadSources() {
         fetch("assets/json/sources.json")
           .then(response => response.json())
@@ -157,7 +194,7 @@
             const container = document.getElementById("sourcesContainer");
             let html = "<p>Select your sources:</p>";
             sourcesData.forEach(sourceObj => {
-              html += `<label class="source-item"><input type="checkbox" name="sources" value="${sourceObj.source}"> ${sourceObj.source}</label>`;
+              html += `<label><input type="checkbox" name="sources" value="${sourceObj.source}"> ${sourceObj.source}</label>`;
             });
             container.innerHTML = html;
           })
@@ -166,7 +203,7 @@
           });
       }
       
-      // Load the sources dynamically on page load
+      // Load sources dynamically
       loadSources();
       
       // Handle form submission
@@ -177,16 +214,12 @@
         
         const email = document.getElementById("email").value;
         const today = new Date().toISOString().split("T")[0];
-        
         let payload, webhookUrl;
         
         if (!preferencesLoaded) {
-          // First submission: load preferences from get-subscription webhook
           payload = { email: email };
           webhookUrl = "https://narektamoyan.app.n8n.cloud/webhook/get-subscription";
         } else {
-          // Subsequent submission: update preferences using add-subscription webhook
-          // Gather current selected sources from the form
           const checkboxes = document.querySelectorAll('input[name="sources"]');
           let selectedSources = [];
           checkboxes.forEach(checkbox => {
@@ -219,7 +252,6 @@
             alert("Error: " + data.error);
           } else {
             if (!preferencesLoaded) {
-              // For get-subscription response, we expect an array with one object.
               if (Array.isArray(data) && data.length > 0) {
                 const userData = data[0];
                 const sourcesData = userData.Sources || userData.sources;
@@ -238,13 +270,13 @@
                   // Reveal the sources container
                   document.getElementById("sourcesContainer").style.display = "block";
                   
-                  // Update checkboxes: use querySelectorAll on container to ensure dynamic elements are targeted
+                  // Check appropriate checkboxes (only within the dynamically loaded container)
                   const checkboxes = document.querySelectorAll('#sourcesContainer input[name="sources"]');
                   checkboxes.forEach(checkbox => {
                     checkbox.checked = selectedSources.includes(checkbox.value);
                   });
                   
-                  // Set flag to indicate preferences are loaded and update button text
+                  // Set flag and update button text for subsequent updates
                   preferencesLoaded = true;
                   document.querySelector("button[type='submit']").textContent = "Update Preferences";
                 } else {
@@ -255,7 +287,6 @@
                 alert("No subscription preferences found for this email.");
               }
             } else {
-              // For add-subscription response, assume update is successful
               alert("Your subscription has been updated!");
             }
           }
