@@ -1,188 +1,75 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Update Your Subscription - Get Product Brief</title>
-  <style>
-    body {
-      background-color: #f2f2f2;
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 20px;
-      color: #333;
-    }
-    .container {
-      max-width: 600px;
-      background-color: #fff;
-      margin: 50px auto;
-      padding: 20px;
-      border-radius: 6px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    }
-    header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-    }
-    header h1 {
-      margin: 0;
-      font-size: 24px;
-      color: #007BFF;
-    }
-    header a.home-btn {
-      background-color: #007BFF;
-      color: #fff;
-      padding: 8px 16px;
-      border-radius: 50px;
-      text-decoration: none;
-      font-size: 14px;
-    }
-    form {
-      margin-top: 20px;
-    }
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-size: 16px;
-    }
-    input[type="email"] {
-      width: 100%;
-      padding: 10px;
-      font-size: 16px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      margin-bottom: 20px;
-    }
-    /* Initially hide the sources container */
-    .sources {
-      margin-bottom: 20px;
-      display: none;
-    }
-    .sources p {
-      font-size: 16px;
-    }
-    .sources label {
-      font-size: 16px;
-      margin-right: 10px;
-      display: inline-block;
-    }
-    button {
-      width: 100%;
-      padding: 12px;
-      font-size: 16px;
-      background-color: #007BFF;
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    button:hover {
-      background-color: #0056b3;
-    }
-    .footer {
-      text-align: center;
-      margin-top: 20px;
-      font-size: 14px;
-    }
-    .footer a {
-      color: #007BFF;
-      text-decoration: none;
-      margin: 0 10px;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <header>
-      <h1>Update Your Subscription</h1>
-      <a href="index.html" class="home-btn">ProductBrief</a>
-    </header>
-    
-    <form id="updateForm">
-      <label for="email">Email Address:</label>
-      <input type="email" id="email" name="email" placeholder="Enter your email" required>
-      
-      <div class="sources">
-        <p>Select your sources:</p>
-        <!-- Predefined list of available sources -->
-        <label><input type="checkbox" name="sources" value="OpenAI"> OpenAI</label>
-        <label><input type="checkbox" name="sources" value="Lenny's Newsletter"> Lenny's Newsletter</label>
-        <label><input type="checkbox" name="sources" value="Anthropic"> Anthropic</label>
-        <label><input type="checkbox" name="sources" value="Reforge"> Reforge</label>
-      </div>
-      
-      <button type="submit">Load My Preferences</button>
-    </form>
-    
-    <div class="footer">
-      <a href="privacy.html">Privacy Policy</a>
-      <a href="terms.html">Terms of Use</a>
-    </div>
-  </div>
-  
-  <script>
-    // Function to get URL parameters
-    function getQueryParam(param) {
-      const params = new URLSearchParams(window.location.search);
-      return params.get(param);
-    }
+<script>
+  // Function to get URL parameters
+  function getQueryParam(param) {
+    const params = new URLSearchParams(window.location.search);
+    return params.get(param);
+  }
 
-    // Auto-fill email field if "email" parameter exists
-    const emailParam = getQueryParam("email");
-    if (emailParam) {
-      document.getElementById("email").value = emailParam;
-      // Optionally make it read-only:
-      // document.getElementById("email").readOnly = true;
-    }
+  // Auto-fill email field if "email" parameter exists
+  const emailParam = getQueryParam("email");
+  if (emailParam) {
+    document.getElementById("email").value = emailParam;
+    // Optionally, make it read-only:
+    // document.getElementById("email").readOnly = true;
+  }
+  
+  // Handle form submission
+  document.getElementById("updateForm").addEventListener("submit", function(e) {
+    e.preventDefault();
     
-    // Handle form submission
-    document.getElementById("updateForm").addEventListener("submit", function(e) {
-      e.preventDefault();
+    const email = document.getElementById("email").value;
+    
+    // Build the payload
+    const payload = { email: email };
+    
+    // Call the webhook to get the subscription details
+    fetch("https://narektamoyan.app.n8n.cloud/webhook/get-subscription", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log("Webhook response:", data); // Debug log
       
-      const email = document.getElementById("email").value;
-      
-      // Build the payload
-      const payload = { email: email };
-      
-      // Call the webhook to get the subscription details
-      fetch("https://narektamoyan.app.n8n.cloud/webhook/get-subscription", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      })
-      .then(response => response.json())
-      .then(data => {
-        if (data.error) {
-          // If there's an error, show it as a popup
-          alert("Error: " + data.error);
-        } else {
-          // If successful, show the sources section
-          if (data.sources && data.sources.length > 0) {
-            // Assume data.sources is formatted as ["OpenAI,Anthropic,Reforge"]
-            const sourceString = data.sources[0];
-            const selectedSources = sourceString.split(",").map(s => s.trim());
-            
-            // Reveal the sources container
-            document.querySelector(".sources").style.display = "block";
-            
-            // Loop over checkboxes and check those that match selected sources
-            const checkboxes = document.querySelectorAll('input[name="sources"]');
-            checkboxes.forEach(checkbox => {
-              checkbox.checked = selectedSources.includes(checkbox.value);
-            });
-          } else {
-            // If no sources found, optionally hide the sources container
-            document.querySelector(".sources").style.display = "none";
+      if (data.error) {
+        alert("Error: " + data.error);
+      } else {
+        let selectedSources = [];
+        // Check if data.sources exists
+        if (data.sources) {
+          if (typeof data.sources === 'string') {
+            // If data.sources is a string, split it directly
+            selectedSources = data.sources.split(",").map(s => s.trim());
+          } else if (Array.isArray(data.sources) && data.sources.length > 0) {
+            // If it's an array, check if its first element is a string
+            if (typeof data.sources[0] === 'string') {
+              selectedSources = data.sources[0].split(",").map(s => s.trim());
+            } else {
+              console.warn("Unexpected format for sources:", data.sources);
+            }
           }
         }
-      })
-      .catch(error => {
-        console.error("Error:", error);
-        alert("An error occurred while fetching your subscription details.");
-      });
+        
+        if (selectedSources.length > 0) {
+          // Reveal the sources container
+          document.querySelector(".sources").style.display = "block";
+          
+          // Loop over all checkboxes in the sources section and check those that match selected sources
+          const checkboxes = document.querySelectorAll('input[name="sources"]');
+          checkboxes.forEach(checkbox => {
+            checkbox.checked = selectedSources.includes(checkbox.value);
+          });
+        } else {
+          // If no valid sources are returned, hide the sources container
+          document.querySelector(".sources").style.display = "none";
+          alert("No subscription preferences found for this email.");
+        }
+      }
+    })
+    .catch(error => {
+      console.error("Error:", error);
+      alert("An error occurred while fetching your subscription details.");
     });
-  </script>
-</body>
-</html>
+  });
+</script>
