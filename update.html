@@ -81,14 +81,6 @@
     button:hover {
       background-color: #0056b3;
     }
-    /* Loading indicator styling */
-    .loading {
-      text-align: center;
-      font-size: 16px;
-      color: #007BFF;
-      margin-top: 20px;
-      display: none;
-    }
     .footer {
       text-align: center;
       margin-top: 20px;
@@ -123,9 +115,6 @@
       
       <button type="submit">Load My Preferences</button>
     </form>
-
-    <!-- Loading indicator -->
-    <div class="loading" id="loadingIndicator">Loading...</div>
     
     <div class="footer">
       <a href="privacy.html">Privacy Policy</a>
@@ -153,15 +142,9 @@
       document.getElementById("updateForm").addEventListener("submit", function(e) {
         e.preventDefault();
         
-        // Show the loading indicator
-        document.getElementById("loadingIndicator").style.display = "block";
-        
         const email = document.getElementById("email").value;
-        
-        // Build the payload
         const payload = { email: email };
         
-        // Call the webhook to get the subscription details
         fetch("https://narektamoyan.app.n8n.cloud/webhook/get-subscription", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -169,23 +152,23 @@
         })
         .then(response => response.json())
         .then(data => {
-          // Hide the loading indicator
-          document.getElementById("loadingIndicator").style.display = "none";
           console.log("Webhook response:", data); // Debug log
           
           if (data.error) {
             alert("Error: " + data.error);
           } else {
-            let selectedSources = [];
-            // Use data.Sources with capital S
-            if (data.Sources && data.Sources.length > 0) {
-              const sourceString = typeof data.Sources === 'string' ? data.Sources : data.Sources[0];
-              selectedSources = sourceString.split(",").map(s => s.trim());
+            // Check for both 'Sources' and 'sources'
+            const sourcesData = data.Sources || data.sources;
+            
+            if (sourcesData && sourcesData.length > 0) {
+              // If sourcesData is a string, use it; otherwise, use the first element
+              const sourceString = typeof sourcesData === 'string' ? sourcesData : sourcesData[0];
+              const selectedSources = sourceString.split(",").map(s => s.trim());
               
               // Reveal the sources container
               document.querySelector(".sources").style.display = "block";
               
-              // Loop over checkboxes in the sources section and check those matching selected sources
+              // Loop over checkboxes in the sources section and check those that match selected sources
               const checkboxes = document.querySelectorAll('input[name="sources"]');
               checkboxes.forEach(checkbox => {
                 checkbox.checked = selectedSources.includes(checkbox.value);
@@ -197,8 +180,6 @@
           }
         })
         .catch(error => {
-          // Hide the loading indicator
-          document.getElementById("loadingIndicator").style.display = "none";
           console.error("Error:", error);
           alert("An error occurred while fetching your subscription details.");
         });
