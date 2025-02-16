@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Get Product Brief - Subscribe</title>
   <link rel="icon" type="image/png" href="/assets/images/favicon.ico/favicon-96x96.png" sizes="96x96" />
   <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
@@ -17,18 +17,19 @@
       padding: 0;
       color: #333;
     }
-    /* Fixed header styling now only contains navigation links */
+    /* Header with symmetric left/right links */
     header {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       background-color: #ffffff;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
       z-index: 1100;
       display: flex;
       align-items: center;
       padding: 10px 20px;
+      justify-content: space-between;
     }
     header a.home-btn {
       text-decoration: none;
@@ -37,15 +38,23 @@
       color: #fff;
       padding: 8px 16px;
       border-radius: 50px;
+      margin-left: 20px;
+    }
+    header h1 {
+      flex: 1;
+      text-align: center;
+      margin: 0;
+      font-size: 24px;
+      color: #007BFF;
     }
     header a.update-link {
       text-decoration: none;
       font-size: 14px;
       color: #007BFF;
-      margin-left: auto;
       padding: 8px 16px;
       border: 1px solid #007BFF;
       border-radius: 50px;
+      margin-right: 20px;
     }
     .main-content {
       padding-top: 70px; /* leave space for header */
@@ -56,9 +65,9 @@
       margin: 50px auto;
       padding: 20px;
       border-radius: 6px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
-    /* Title in the body */
+    /* Title in body */
     .page-title {
       text-align: center;
       font-size: 24px;
@@ -89,7 +98,7 @@
       width: 16px;
       margin-right: 8px;
     }
-    /* Email row: contains email input and subscribe button side-by-side */
+    /* Email row: email input and subscribe button side-by-side */
     .email-row {
       display: none; /* initially hidden */
       flex-direction: row;
@@ -137,6 +146,7 @@
 <body>
   <header>
     <a href="index.html" class="home-btn">ProductBrief</a>
+    <h1></h1>
     <a href="update.html" class="update-link">Already Subscribed?</a>
   </header>
   <div class="main-content">
@@ -161,7 +171,6 @@
       </div>
     </div>
   </div>
-  
   <script>
     document.addEventListener("DOMContentLoaded", function() {
       // Load sources from JSON and populate checkboxes
