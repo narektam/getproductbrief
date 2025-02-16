@@ -12,7 +12,7 @@
       padding: 0;
       color: #333;
     }
-    /* Fixed header styling */
+    /* Fixed header styling now only has navigation links */
     header {
       position: fixed;
       top: 0;
@@ -23,6 +23,7 @@
       z-index: 1100;
       display: flex;
       align-items: center;
+      justify-content: space-between;
       padding: 10px 20px;
     }
     header a.home-btn {
@@ -32,17 +33,19 @@
       color: #fff;
       padding: 8px 16px;
       border-radius: 50px;
+      margin-left: 20px;
     }
-    header h1 {
-      flex: 1;
-      text-align: center;
-      margin: 0;
-      font-size: 24px;
+    header a.update-link {
+      text-decoration: none;
+      font-size: 14px;
       color: #007BFF;
+      padding: 8px 16px;
+      border: 1px solid #007BFF;
+      border-radius: 50px;
+      margin-right: 20px;
     }
-    /* Main content positioned below header */
     .main-content {
-      padding-top: 70px;
+      padding-top: 70px; /* leave space for header */
     }
     .container {
       max-width: 600px;
@@ -51,6 +54,13 @@
       padding: 20px;
       border-radius: 6px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    /* Title moved to body and center aligned */
+    .page-title {
+      text-align: center;
+      font-size: 24px;
+      color: #007BFF;
+      margin-bottom: 20px;
     }
     form {
       margin-top: 20px;
@@ -127,7 +137,6 @@
     button:hover {
       background-color: #0056b3;
     }
-    /* Loading indicator styling */
     .loading {
       text-align: center;
       font-size: 16px;
@@ -159,21 +168,20 @@
       justify-content: center;
     }
   </style>
-  
-  <!-- Clerk SDK: load Clerk from the CDN -->
-  <script async crossorigin="anonymous" data-clerk-publishable-key="pk_test_bmF0aXZlLWliZXgtNDQuY2xlcmsuYWNjb3VudHMuZGV2JA" src="https://native-ibex-44.clerk.accounts.dev/npm/@clerk/clerk-js@latest/dist/clerk.browser.js" type="text/javascript"></script>
 </head>
 <body>
-  <!-- Full-screen Clerk container overlay -->
+  <!-- Clerk container overlay -->
   <div id="clerk-container"></div>
   
   <header>
     <a href="index.html" class="home-btn">ProductBrief</a>
-    <h1>Update Your Subscription</h1>
+    <a href="update.html" class="update-link">Already Subscribed?</a>
   </header>
   
   <div class="main-content">
     <div class="container">
+      <!-- Body Title -->
+      <div class="page-title">Update Your Subscription - Get Product Brief</div>
       <form id="updateForm" style="display:none;">
         <!-- Email display container for authenticated users -->
         <div id="emailDisplayContainer">
@@ -187,18 +195,14 @@
           <label for="emailInput">Email Address:</label>
           <input type="email" id="emailInput" name="email" placeholder="Enter your email" required>
         </div>
-        
         <!-- Sources container for checkboxes -->
         <div class="sources" id="sourcesContainer">
           <p>Select your sources:</p>
           <!-- Dynamic checkboxes will be inserted here -->
         </div>
-        
         <button type="submit">Load My Preferences</button>
       </form>
-      
       <div class="loading" id="loadingIndicator">Loading...</div>
-      
       <div class="footer">
         <a href="privacy.html">Privacy Policy</a>
         <a href="terms.html">Terms of Use</a>
@@ -284,55 +288,49 @@
       });
     }
     
-
-  // Clerk initialization and authentication
-  window.addEventListener('load', async function () {
-    await Clerk.load();
-    console.log("ClerkJS is loaded", Clerk.user);
-    if (Clerk.user) {
-      // Authenticated: hide fallback, show display, set email, load preferences
-      document.getElementById("clerk-container").style.display = "none";
-      document.getElementById("updateForm").style.display = "block";
-      // Hide fallback email input and disable it
-      const emailInputContainer = document.getElementById("emailInputContainer");
-      emailInputContainer.style.display = "none";
-      const emailInput = document.getElementById("emailInput");
-      if (emailInput) {
-        emailInput.disabled = true;
-        emailInput.removeAttribute("required");
-      }
-      // Show email display container
-      document.getElementById("emailDisplayContainer").style.display = "block";
-      const userEmail = Clerk.user.primaryEmailAddress.emailAddress;
-      document.getElementById("emailDisplay").textContent = userEmail;
-      document.getElementById("email").value = userEmail;
-      // Automatically load user preferences
-      loadUserPreferences(userEmail);
-    } else {
-      // Not authenticated: show Clerk overlay and mount sign-in widget with custom options
-      document.getElementById("clerk-container").style.display = "flex";
-      document.getElementById("updateForm").style.display = "none";
-      Clerk.mountSignIn(document.getElementById("clerk-container"), {
-        redirectUrl: window.location.href, // redirect back to the current page after sign-in
-        signUpUrl: "https://www.getproductbrief.com/index.html", // change this to your desired sign-up URL
-        defaultLocale: "en",
-        appearance: {
-          // The keys here (e.g. formTitle, formSubtitle) must match Clerk’s documented element keys.
-          elements: {
-            // Override the title text for the sign in form:
-            formTitle: 'Welcome Back! Please Sign In',
-            // Override the subtitle text:
-            formSubtitle: 'Enter your email to get started'
-          },
-          // You can also override variables (colors, fonts, etc.) if needed:
-          variables: {
-            colorPrimary: "#007BFF"
-          }
+    // Clerk initialization and authentication
+    window.addEventListener('load', async function () {
+      await Clerk.load();
+      console.log("ClerkJS is loaded", Clerk.user);
+      if (Clerk.user) {
+        // Authenticated: hide Clerk overlay and show update form
+        document.getElementById("clerk-container").style.display = "none";
+        document.getElementById("updateForm").style.display = "block";
+        // Hide fallback email input and disable it
+        const emailInputContainer = document.getElementById("emailInputContainer");
+        emailInputContainer.style.display = "none";
+        const emailInput = document.getElementById("emailInput");
+        if(emailInput) {
+          emailInput.disabled = true;
+          emailInput.removeAttribute("required");
         }
-      });
-    }
-  });
-
+        // Show email display container
+        document.getElementById("emailDisplayContainer").style.display = "block";
+        const userEmail = Clerk.user.primaryEmailAddress.emailAddress;
+        document.getElementById("emailDisplay").textContent = userEmail;
+        document.getElementById("email").value = userEmail;
+        // Automatically load user preferences
+        loadUserPreferences(userEmail);
+      } else {
+        // Not authenticated: show Clerk overlay and mount sign-in widget with custom options
+        document.getElementById("clerk-container").style.display = "flex";
+        document.getElementById("updateForm").style.display = "none";
+        Clerk.mountSignIn(document.getElementById("clerk-container"), {
+          redirectUrl: window.location.href,
+          signUpUrl: "https://www.getproductbrief.com/index.html",
+          defaultLocale: "en",
+          appearance: {
+            elements: {
+              formTitle: 'Welcome Back! Please Sign In',
+              formSubtitle: 'Enter your email to get started'
+            },
+            variables: {
+              colorPrimary: "#007BFF"
+            }
+          }
+        });
+      }
+    });
     
     // Handle update form submission (for updating preferences)
     document.getElementById("updateForm").addEventListener("submit", function(e) {
