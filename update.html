@@ -123,6 +123,7 @@
     button:hover {
       background-color: #0056b3;
     }
+    /* Loading indicator styling */
     .loading {
       text-align: center;
       font-size: 16px;
@@ -163,11 +164,16 @@
     src="https://native-ibex-44.clerk.accounts.dev/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"
     type="text/javascript"
   ></script>
+</head>
+<body>
+  <!-- Full-screen Clerk container overlay -->
+  <div id="clerk-container"></div>
   
   <header>
     <a href="index.html" class="home-btn">ProductBrief</a>
     <h1>Update Your Subscription</h1>
   </header>
+  
   <div class="main-content">
     <div class="container">
       <form id="updateForm" style="display:none;">
@@ -203,7 +209,7 @@
   </div>
   
   <script>
-    // Utility function to load sources from JSON file and populate checkboxes
+    // Function to load dynamic sources from JSON and populate checkboxes
     async function loadSources() {
       try {
         const response = await fetch("assets/json/sources.json");
@@ -212,10 +218,10 @@
         let html = "<p>Select your sources:</p>";
         sourcesData.forEach(sourceObj => {
           html += `<label>
-                      <input type="checkbox" name="sources" value="${sourceObj.source}">
-                      <img src="${sourceObj.logoURL}" alt="${sourceObj.source} Logo">
-                      ${sourceObj.source}
-                    </label>`;
+                     <input type="checkbox" name="sources" value="${sourceObj.source}">
+                     <img src="${sourceObj.logoURL}" alt="${sourceObj.source} Logo">
+                     ${sourceObj.source}
+                   </label>`;
         });
         container.innerHTML = html;
       } catch (error) {
@@ -226,7 +232,7 @@
     // Load sources on page load
     loadSources();
     
-    // Global flag to indicate if preferences are loaded
+    // Global flag for preference loading
     let preferencesLoaded = false;
     
     // Function to load user preferences via webhook
@@ -285,7 +291,7 @@
       await Clerk.load();
       console.log("ClerkJS is loaded", Clerk.user);
       if (Clerk.user) {
-        // Hide Clerk overlay, show update form, and display email as read-only text
+        // Hide the Clerk overlay, show update form, and display the user's email as read-only text
         document.getElementById("clerk-container").style.display = "none";
         document.getElementById("updateForm").style.display = "block";
         document.getElementById("emailInputContainer").style.display = "none";
@@ -293,10 +299,10 @@
         const userEmail = Clerk.user.primaryEmailAddress.emailAddress;
         document.getElementById("emailDisplay").textContent = userEmail;
         document.getElementById("email").value = userEmail;
-        // Automatically load user preferences
+        // Automatically load user preferences using the authenticated email
         loadUserPreferences(userEmail);
       } else {
-        // Not authenticated: show Clerk overlay and mount sign-in widget with redirect back to update page
+        // Not authenticated: show Clerk overlay and mount sign-in widget with redirect back to this page
         document.getElementById("clerk-container").style.display = "flex";
         document.getElementById("updateForm").style.display = "none";
         Clerk.mountSignIn(document.getElementById("clerk-container"), {
@@ -305,7 +311,7 @@
       }
     });
     
-    // Handle update form submission (for updating preferences)
+    // Handle update form submission for preference updates
     document.getElementById("updateForm").addEventListener("submit", function(e) {
       e.preventDefault();
       document.getElementById("loadingIndicator").style.display = "block";
