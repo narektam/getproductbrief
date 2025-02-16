@@ -9,8 +9,40 @@
       background-color: #f2f2f2;
       font-family: Arial, sans-serif;
       margin: 0;
-      padding: 20px;
+      padding: 0;
       color: #333;
+    }
+    /* Header that stays on top */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background-color: #ffffff;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      z-index: 1100;
+      display: flex;
+      align-items: center;
+      padding: 10px 20px;
+    }
+    header h1 {
+      flex: 1;
+      text-align: center;
+      margin: 0;
+      font-size: 24px;
+      color: #007BFF;
+    }
+    header a.home-btn {
+      text-decoration: none;
+      font-size: 14px;
+      background-color: #007BFF;
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 50px;
+    }
+    /* Main container for content (below header) */
+    .main-content {
+      padding-top: 70px; /* leave space for the fixed header */
     }
     .container {
       max-width: 600px;
@@ -19,30 +51,6 @@
       padding: 20px;
       border-radius: 6px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      position: relative;
-      z-index: 2;
-    }
-    header {
-      position: relative;
-      text-align: center;
-      margin-bottom: 20px;
-    }
-    header h1 {
-      margin: 0;
-      font-size: 24px;
-      color: #007BFF;
-    }
-    header a.home-btn {
-      position: absolute;
-      left: 0;
-      top: 50%;
-      transform: translateY(-50%);
-      background-color: #007BFF;
-      color: #fff;
-      padding: 8px 16px;
-      border-radius: 50px;
-      text-decoration: none;
-      font-size: 14px;
     }
     form {
       margin-top: 20px;
@@ -114,7 +122,7 @@
       height: 100%;
       background-color: #ffffff;
       z-index: 1000;
-      display: none; /* shown if user is not signed in */
+      display: none; /* will be shown if user is not signed in */
       align-items: center;
       justify-content: center;
     }
@@ -130,33 +138,37 @@
   ></script>
 </head>
 <body>
-  <!-- Full-screen Clerk container -->
+  <!-- Fixed header -->
+  <header>
+    <a href="index.html" class="home-btn">ProductBrief</a>
+    <h1>Update Your Subscription</h1>
+  </header>
+  
+  <!-- Clerk container overlay for sign-in -->
   <div id="clerk-container"></div>
-
-  <div class="container">
-    <header>
-      <a href="index.html" class="home-btn">ProductBrief</a>
-      <h1>Update Your Subscription</h1>
-    </header>
-    
-    <form id="updateForm" style="display:none;">
-      <label for="email">Email Address:</label>
-      <input type="email" id="email" name="email" placeholder="Enter your email" required>
+  
+  <!-- Main content area below header -->
+  <div class="main-content">
+    <div class="container">
+      <form id="updateForm" style="display:none;">
+        <label for="email">Email Address:</label>
+        <input type="email" id="email" name="email" placeholder="Enter your email" required>
+        
+        <!-- Sources will be loaded dynamically -->
+        <div class="sources" id="sourcesContainer">
+          <!-- Dynamic checkboxes will be inserted here -->
+        </div>
+        
+        <button type="submit">Load My Preferences</button>
+      </form>
       
-      <!-- Sources will be loaded dynamically -->
-      <div class="sources" id="sourcesContainer">
-        <!-- Dynamic checkboxes will be inserted here -->
+      <!-- Loading indicator -->
+      <div class="loading" id="loadingIndicator">Loading...</div>
+      
+      <div class="footer">
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="terms.html">Terms of Use</a>
       </div>
-      
-      <button type="submit">Load My Preferences</button>
-    </form>
-    
-    <!-- Loading indicator -->
-    <div class="loading" id="loadingIndicator">Loading...</div>
-    
-    <div class="footer">
-      <a href="privacy.html">Privacy Policy</a>
-      <a href="terms.html">Terms of Use</a>
     </div>
   </div>
   
