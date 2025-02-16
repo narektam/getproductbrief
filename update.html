@@ -178,7 +178,7 @@
           <!-- Hidden input to submit the email -->
           <input type="hidden" id="email" name="email">
         </div>
-        <!-- Fallback email input container (should rarely show) -->
+        <!-- Fallback email input container (if Clerk not used) -->
         <div id="emailInputContainer" style="display:none;">
           <label for="emailInput">Email Address:</label>
           <input type="email" id="emailInput" name="email" placeholder="Enter your email" required>
@@ -203,7 +203,7 @@
   </div>
   
   <script>
-    // Utility: load sources from JSON
+    // Utility function to load sources from JSON file
     async function loadSources() {
       try {
         const response = await fetch("assets/json/sources.json");
@@ -219,13 +219,13 @@
       }
     }
     
-    // Call loadSources on page load
+    // Load the sources on page load
     loadSources();
     
     // Global flag for preference loading
     let preferencesLoaded = false;
     
-    // Function: load user preferences from get-subscription webhook
+    // Function to load user preferences from the get-subscription webhook
     function loadUserPreferences(userEmail) {
       document.getElementById("loadingIndicator").style.display = "block";
       const payload = { email: userEmail };
@@ -277,31 +277,32 @@
       });
     }
     
-    // Clerk initialization and auth state handling
+    // Clerk initialization and authentication
     window.addEventListener('load', async function () {
       await Clerk.load();
       console.log("ClerkJS is loaded", Clerk.user);
       if (Clerk.user) {
-        // If authenticated, hide the Clerk overlay and show update form
+        // User is authenticated: hide Clerk overlay, show update form, and display user's email as read-only
         document.getElementById("clerk-container").style.display = "none";
         document.getElementById("updateForm").style.display = "block";
-        // Hide the fallback email input and show the email display container
         document.getElementById("emailInputContainer").style.display = "none";
         document.getElementById("emailDisplayContainer").style.display = "block";
         const userEmail = Clerk.user.primaryEmailAddress.emailAddress;
         document.getElementById("emailDisplay").textContent = userEmail;
         document.getElementById("email").value = userEmail;
-        // Automatically load user preferences
+        // Automatically load preferences for the authenticated user
         loadUserPreferences(userEmail);
       } else {
-        // If not authenticated, show the Clerk sign-in overlay
+        // User not authenticated: show Clerk overlay and mount sign-in widget with redirect back to update page
         document.getElementById("clerk-container").style.display = "flex";
         document.getElementById("updateForm").style.display = "none";
-        Clerk.mountSignIn(document.getElementById("clerk-container"));
+        Clerk.mountSignIn(document.getElementById("clerk-container"), {
+          redirectUrl: window.location.href
+        });
       }
     });
     
-    // Handle update form submission (for subsequent updates)
+    // Handle update form submission for preference updates
     document.getElementById("updateForm").addEventListener("submit", function(e) {
       e.preventDefault();
       document.getElementById("loadingIndicator").style.display = "block";
