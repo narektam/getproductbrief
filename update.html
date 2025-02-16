@@ -23,28 +23,26 @@
       z-index: 2;
     }
     header {
-      display: flex;
-      align-items: center;
-      justify-content: center;
       position: relative;
+      text-align: center;
       margin-bottom: 20px;
     }
-    /* ProductBrief link positioned on the left */
+    header h1 {
+      margin: 0;
+      font-size: 24px;
+      color: #007BFF;
+    }
     header a.home-btn {
       position: absolute;
       left: 0;
+      top: 50%;
+      transform: translateY(-50%);
       background-color: #007BFF;
       color: #fff;
       padding: 8px 16px;
       border-radius: 50px;
       text-decoration: none;
       font-size: 14px;
-    }
-    header h1 {
-      margin: 0;
-      font-size: 24px;
-      color: #007BFF;
-      text-align: center;
     }
     form {
       margin-top: 20px;
@@ -107,7 +105,7 @@
       text-decoration: none;
       margin: 0 10px;
     }
-    /* Clerk container overlay styling to cover the full screen and center sign-in widget */
+    /* Clerk container overlay styling */
     #clerk-container {
       position: fixed;
       top: 0;
@@ -116,12 +114,12 @@
       height: 100%;
       background-color: #ffffff;
       z-index: 1000;
-      display: none; /* will be shown if user is not signed in */
+      display: none; /* shown if user is not signed in */
       align-items: center;
       justify-content: center;
     }
   </style>
-
+  
   <!-- Clerk SDK: load Clerk from the CDN -->
   <script
     async
