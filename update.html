@@ -73,7 +73,7 @@
       border-radius: 4px;
       background-color: #e9ecef;
     }
-    /* Email input container for non-authenticated fallback */
+    /* Email input container for fallback (if Clerk not used) */
     #emailInputContainer {
       margin-bottom: 20px;
       display: none;
@@ -178,7 +178,7 @@
           <!-- Hidden input to submit the email -->
           <input type="hidden" id="email" name="email">
         </div>
-        <!-- Fallback email input container (if not authenticated) -->
+        <!-- Fallback email input container (should rarely show) -->
         <div id="emailInputContainer" style="display:none;">
           <label for="emailInput">Email Address:</label>
           <input type="email" id="emailInput" name="email" placeholder="Enter your email" required>
@@ -203,7 +203,7 @@
   </div>
   
   <script>
-    // Function to load dynamic sources from JSON file
+    // Utility: load sources from JSON
     async function loadSources() {
       try {
         const response = await fetch("assets/json/sources.json");
@@ -219,13 +219,13 @@
       }
     }
     
-    // Call loadSources to populate the checkboxes
+    // Call loadSources on page load
     loadSources();
     
     // Global flag for preference loading
     let preferencesLoaded = false;
     
-    // Function to load user preferences from webhook
+    // Function: load user preferences from get-subscription webhook
     function loadUserPreferences(userEmail) {
       document.getElementById("loadingIndicator").style.display = "block";
       const payload = { email: userEmail };
@@ -253,15 +253,13 @@
               console.warn("Unexpected sources format:", sourcesData);
             }
             const selectedSources = sourceString.split(",").map(s => s.trim());
-            
             // Reveal the sources container and update checkboxes
             document.getElementById("sourcesContainer").style.display = "block";
             const checkboxes = document.querySelectorAll("#sourcesContainer input[name='sources']");
             checkboxes.forEach(checkbox => {
               checkbox.checked = selectedSources.includes(checkbox.value);
             });
-            
-            // Update button text for subsequent updates
+            // Mark preferences as loaded and update button text
             preferencesLoaded = true;
             document.querySelector("button[type='submit']").textContent = "Update Preferences";
           } else {
@@ -279,31 +277,31 @@
       });
     }
     
-    // Clerk initialization and authentication
+    // Clerk initialization and auth state handling
     window.addEventListener('load', async function () {
       await Clerk.load();
       console.log("ClerkJS is loaded", Clerk.user);
       if (Clerk.user) {
-        // Hide Clerk overlay, show update form
+        // If authenticated, hide the Clerk overlay and show update form
         document.getElementById("clerk-container").style.display = "none";
         document.getElementById("updateForm").style.display = "block";
-        // Show email as read-only
+        // Hide the fallback email input and show the email display container
         document.getElementById("emailInputContainer").style.display = "none";
         document.getElementById("emailDisplayContainer").style.display = "block";
         const userEmail = Clerk.user.primaryEmailAddress.emailAddress;
         document.getElementById("emailDisplay").textContent = userEmail;
         document.getElementById("email").value = userEmail;
-        // Auto-load preferences for authenticated user
+        // Automatically load user preferences
         loadUserPreferences(userEmail);
       } else {
-        // Not authenticated: show Clerk overlay and mount sign-in widget
+        // If not authenticated, show the Clerk sign-in overlay
         document.getElementById("clerk-container").style.display = "flex";
         document.getElementById("updateForm").style.display = "none";
         Clerk.mountSignIn(document.getElementById("clerk-container"));
       }
     });
     
-    // Handle update form submission for preference updates
+    // Handle update form submission (for subsequent updates)
     document.getElementById("updateForm").addEventListener("submit", function(e) {
       e.preventDefault();
       document.getElementById("loadingIndicator").style.display = "block";
