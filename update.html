@@ -73,7 +73,7 @@
       border-radius: 4px;
       background-color: #e9ecef;
     }
-    /* Email input container for fallback (if Clerk not used) */
+    /* Fallback email input container (if needed) */
     #emailInputContainer {
       margin-bottom: 20px;
       display: none;
@@ -90,19 +90,23 @@
       border: 1px solid #ccc;
       border-radius: 4px;
     }
-    /* Sources container for dynamic checkboxes */
+    /* Sources container for the multiselect dropdown */
     .sources {
       margin-bottom: 20px;
       display: none;
     }
-    .sources p {
-      font-size: 16px;
-      margin-bottom: 8px;
-    }
     .sources label {
       font-size: 16px;
-      margin-right: 10px;
-      display: inline-block;
+      display: block;
+      margin-bottom: 8px;
+    }
+    /* Styles for the <select> element */
+    select#sourcesSelect {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
     }
     button {
       width: 100%;
@@ -135,7 +139,7 @@
       text-decoration: none;
       margin: 0 10px;
     }
-    /* Clerk container overlay styling to cover the full screen and center sign-in widget */
+    /* Clerk container overlay styling to cover full screen and center sign-in widget */
     #clerk-container {
       position: fixed;
       top: 0;
@@ -158,6 +162,8 @@
     src="https://native-ibex-44.clerk.accounts.dev/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"
     type="text/javascript"
   ></script>
+  <!-- Include Choices.js CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
 </head>
 <body>
   <!-- Full-screen Clerk container overlay -->
@@ -178,15 +184,16 @@
           <!-- Hidden input to submit the email -->
           <input type="hidden" id="email" name="email">
         </div>
-        <!-- Fallback email input container (if Clerk not used) -->
+        <!-- Fallback email input container (if Clerk is not used) -->
         <div id="emailInputContainer" style="display:none;">
           <label for="emailInput">Email Address:</label>
           <input type="email" id="emailInput" name="email" placeholder="Enter your email" required>
         </div>
         
-        <!-- Sources container for dynamic checkboxes -->
+        <!-- Sources container for the multiselect dropdown -->
         <div class="sources" id="sourcesContainer">
-          <!-- Dynamic checkboxes will be inserted here -->
+          <label for="sourcesSelect">Select your sources:</label>
+          <select id="sourcesSelect" name="sources" multiple></select>
         </div>
         
         <button type="submit">Load My Preferences</button>
@@ -202,30 +209,63 @@
     </div>
   </div>
   
+  <!-- Include Choices.js JavaScript -->
+  <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
+  
   <script>
-    // Utility function to load sources from JSON file
+    let sourceChoices = null; // Global variable for the Choices instance
+
+    // Function to load sources from JSON and populate the select
     async function loadSources() {
       try {
         const response = await fetch("assets/json/sources.json");
         const sourcesData = await response.json();
-        const container = document.getElementById("sourcesContainer");
-        let html = "<p>Select your sources:</p>";
+        const select = document.getElementById("sourcesSelect");
+        select.innerHTML = ""; // clear existing options
         sourcesData.forEach(sourceObj => {
-          html += `<label><input type="checkbox" name="sources" value="${sourceObj.source}"> ${sourceObj.source}</label>`;
+          const option = document.createElement("option");
+          option.value = sourceObj.source;
+          option.text = sourceObj.source;
+          // Store logo URL as custom property
+          option.setAttribute("data-custom-properties", JSON.stringify({ logoURL: sourceObj.logoURL }));
+          select.appendChild(option);
         });
-        container.innerHTML = html;
+        // Initialize Choices on the select and store the instance
+        sourceChoices = new Choices(select, {
+          removeItemButton: true,
+          callbackOnCreateTemplates: function(template) {
+            return {
+              item: (data) => {
+                return template(`
+                  <div class="item ${data.highlighted ? 'highlighted' : ''} ${data.placeholder ? 'placeholder' : ''}" data-item data-id="${data.id}" data-value="${data.value}" ${data.active ? 'aria-selected="true"' : ''} ${data.disabled ? 'aria-disabled="true"' : ''}>
+                    <img src="${JSON.parse(data.customProperties).logoURL}" alt="${data.value} Logo" style="height:16px; width:16px; margin-right:8px;">
+                    ${data.label}
+                  </div>
+                `);
+              },
+              choice: (data) => {
+                return template(`
+                  <div class="choice ${data.disabled ? 'disabled' : ''}" data-select-text="${this.config.itemSelectText}" data-choice data-id="${data.id}" data-value="${data.value}" ${data.disabled ? 'aria-disabled="true"' : ''}>
+                    <img src="${JSON.parse(data.customProperties).logoURL}" alt="${data.value} Logo" style="height:16px; width:16px; margin-right:8px;">
+                    ${data.label}
+                  </div>
+                `);
+              }
+            };
+          }
+        });
       } catch (error) {
         console.error("Error loading sources:", error);
       }
     }
     
-    // Load the sources on page load
+    // Load sources on page load
     loadSources();
     
     // Global flag for preference loading
     let preferencesLoaded = false;
     
-    // Function to load user preferences from the get-subscription webhook
+    // Function to load user preferences via webhook
     function loadUserPreferences(userEmail) {
       document.getElementById("loadingIndicator").style.display = "block";
       const payload = { email: userEmail };
@@ -253,13 +293,13 @@
               console.warn("Unexpected sources format:", sourcesData);
             }
             const selectedSources = sourceString.split(",").map(s => s.trim());
-            // Reveal the sources container and update checkboxes
+            // Reveal the sources container
             document.getElementById("sourcesContainer").style.display = "block";
-            const checkboxes = document.querySelectorAll("#sourcesContainer input[name='sources']");
-            checkboxes.forEach(checkbox => {
-              checkbox.checked = selectedSources.includes(checkbox.value);
-            });
-            // Mark preferences as loaded and update button text
+            // Update the Choices instance value
+            if (sourceChoices) {
+              // Set selected values using setValueByChoice
+              sourceChoices.setChoiceByValue(selectedSources);
+            }
             preferencesLoaded = true;
             document.querySelector("button[type='submit']").textContent = "Update Preferences";
           } else {
@@ -277,23 +317,24 @@
       });
     }
     
-    // Clerk initialization and authentication
+    // Clerk initialization and auth state handling
     window.addEventListener('load', async function () {
       await Clerk.load();
       console.log("ClerkJS is loaded", Clerk.user);
       if (Clerk.user) {
-        // User is authenticated: hide Clerk overlay, show update form, and display user's email as read-only
+        // Hide the Clerk overlay and show update form
         document.getElementById("clerk-container").style.display = "none";
         document.getElementById("updateForm").style.display = "block";
+        // Hide fallback email input; show email display container
         document.getElementById("emailInputContainer").style.display = "none";
         document.getElementById("emailDisplayContainer").style.display = "block";
         const userEmail = Clerk.user.primaryEmailAddress.emailAddress;
         document.getElementById("emailDisplay").textContent = userEmail;
         document.getElementById("email").value = userEmail;
-        // Automatically load preferences for the authenticated user
+        // Automatically load user preferences using the authenticated email
         loadUserPreferences(userEmail);
       } else {
-        // User not authenticated: show Clerk overlay and mount sign-in widget with redirect back to update page
+        // Not authenticated: show Clerk overlay and mount sign-in widget with redirect back
         document.getElementById("clerk-container").style.display = "flex";
         document.getElementById("updateForm").style.display = "none";
         Clerk.mountSignIn(document.getElementById("clerk-container"), {
@@ -308,13 +349,10 @@
       document.getElementById("loadingIndicator").style.display = "block";
       const email = document.getElementById("email").value;
       const today = new Date().toISOString().split("T")[0];
-      const checkboxes = document.querySelectorAll("#sourcesContainer input[name='sources']");
       let selectedSources = [];
-      checkboxes.forEach(checkbox => {
-        if (checkbox.checked) {
-          selectedSources.push(checkbox.value);
-        }
-      });
+      if (sourceChoices) {
+        selectedSources = sourceChoices.getValue(true);
+      }
       const payload = {
         email: email,
         sources: [ selectedSources.join(",") ],
