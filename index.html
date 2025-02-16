@@ -2,33 +2,57 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/png" href="/assets/images/favicon.ico/favicon-96x96.png" sizes="96x96" />
-  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
-  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
-  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
-  <link rel="manifest" href="/assets/images/site.webmanifest" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Get Product Brief - Subscribe</title>
   <style>
     body {
-      margin: 0;
-      padding: 0;
       background-color: #f2f2f2;
       font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
       color: #333;
+    }
+    /* Fixed header styling */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background-color: #ffffff;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      z-index: 1100;
+      display: flex;
+      align-items: center;
+      padding: 10px 20px;
+    }
+    header h1 {
+      flex: 1;
+      text-align: center;
+      margin: 0;
+      font-size: 24px;
+      color: #007BFF;
+    }
+    header a.home-btn {
+      text-decoration: none;
+      font-size: 14px;
+      background-color: #007BFF;
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 50px;
+    }
+    /* Main content positioned below the fixed header */
+    .main-content {
+      padding-top: 70px; /* Adjust this if your header height changes */
     }
     .container {
       max-width: 600px;
+      background-color: #fff;
       margin: 50px auto;
-      background-color: #ffffff;
       padding: 20px;
       border-radius: 6px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
-    h1 {
-      text-align: center;
-      margin-bottom: 20px;
-    }
+    /* Example form styling (customize as needed) */
     form {
       display: flex;
       flex-direction: column;
@@ -40,7 +64,6 @@
       border: 1px solid #ccc;
       border-radius: 4px;
     }
-    /* Sources container is loaded dynamically */
     .sources {
       margin-bottom: 20px;
     }
@@ -61,14 +84,6 @@
     button:hover {
       background-color: #0056b3;
     }
-    /* Loading indicator styling */
-    .loading {
-      text-align: center;
-      font-size: 16px;
-      color: #007BFF;
-      margin-top: 20px;
-      display: none;
-    }
     .footer {
       text-align: center;
       margin-top: 20px;
@@ -82,94 +97,36 @@
   </style>
 </head>
 <body>
-  <div class="container">
+  <header>
+    <a href="index.html" class="home-btn">ProductBrief</a>
     <h1>Subscribe to Get Product Brief</h1>
-    <form id="subscriptionForm">
-      <label for="email">Email:</label>
-      <input type="email" id="email" name="email" placeholder="Enter your email" required>
+  </header>
+  <div class="main-content">
+    <div class="container">
+      <!-- Subscription form content here -->
+      <form id="subscriptionForm">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" placeholder="Enter your email" required>
+        
+        <!-- Example: sources will be loaded dynamically or can be hardcoded -->
+        <div class="sources" id="sourcesContainer">
+          <p>Select your sources:</p>
+          <!-- You can generate checkboxes dynamically using JS, as shown in your update page -->
+          <label><input type="checkbox" name="sources" value="OpenAI"> OpenAI</label>
+          <label><input type="checkbox" name="sources" value="Anthropic"> Anthropic</label>
+          <label><input type="checkbox" name="sources" value="Reforge"> Reforge</label>
+        </div>
+        
+        <button type="submit">Subscribe</button>
+      </form>
       
-      <!-- Sources will be dynamically generated here -->
-      <div class="sources" id="sourcesContainer">
-        <!-- Dynamic checkboxes go here -->
+      <div class="footer">
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="terms.html">Terms of Use</a>
+        <br>
+        <a href="update.html">Update your subscription</a>
       </div>
-      
-      <button type="submit">Subscribe</button>
-    </form>
-    
-    <!-- Loading indicator -->
-    <div class="loading" id="loadingIndicator">Loading...</div>
-    
-    <div class="footer">
-      <a href="privacy.html">Privacy Policy</a>
-      <a href="terms.html">Terms of Use</a>
-      <br>
-      <a href="update.html">Update your subscription</a>
     </div>
   </div>
-
-  <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      // Load the sources from the JSON file
-      fetch("assets/json/sources.json")
-        .then(response => response.json())
-        .then(sourcesData => {
-          const container = document.getElementById("sourcesContainer");
-          let html = "<p>Select your sources:</p>";
-          sourcesData.forEach(sourceObj => {
-            html += `<label><input type="checkbox" name="sources" value="${sourceObj.source}"> ${sourceObj.source}</label>`;
-          });
-          container.innerHTML = html;
-        })
-        .catch(error => {
-          console.error("Error loading sources:", error);
-        });
-      
-      // Handle form submission
-      document.getElementById("subscriptionForm").addEventListener("submit", function(e) {
-        e.preventDefault(); // Prevent default form submission
-        
-        // Show the loading indicator
-        document.getElementById("loadingIndicator").style.display = "block";
-        
-        // Collect form values
-        const email = document.getElementById("email").value;
-        const checkboxes = document.querySelectorAll('input[name="sources"]:checked');
-        const selectedSources = Array.from(checkboxes).map(checkbox => checkbox.value);
-        // Build sources as an array with one comma-separated string
-        const sources = [ selectedSources.join(",") ];
-        const today = new Date().toISOString().split("T")[0];
-        const payload = {
-          email: email,
-          sources: sources,
-          submission_date: today,
-          update_date: today,
-          submission_status: "Active"
-        };
-        
-        // Send payload to your webhook
-        fetch("https://narektamoyan.app.n8n.cloud/webhook/add-subscription", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        })
-        .then(response => {
-          // Hide loading indicator regardless of outcome
-          document.getElementById("loadingIndicator").style.display = "none";
-          if (response.ok) {
-            alert("Thank you for subscribing!");
-            // Reset the form to its default state
-            document.getElementById("subscriptionForm").reset();
-          } else {
-            alert("There was an error processing your subscription.");
-          }
-        })
-        .catch(error => {
-          document.getElementById("loadingIndicator").style.display = "none";
-          console.error("Error submitting form:", error);
-          alert("There was an error processing your subscription.");
-        });
-      });
-    });
-  </script>
 </body>
 </html>
