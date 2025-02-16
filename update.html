@@ -178,7 +178,7 @@
           <!-- Hidden input to submit the email -->
           <input type="hidden" id="email" name="email">
         </div>
-        <!-- Fallback email input container (if needed) -->
+        <!-- Fallback email input container (if not authenticated) -->
         <div id="emailInputContainer" style="display:none;">
           <label for="emailInput">Email Address:</label>
           <input type="email" id="emailInput" name="email" placeholder="Enter your email" required>
@@ -203,150 +203,146 @@
   </div>
   
   <script>
-    document.addEventListener("DOMContentLoaded", async function() {
-      // Function to load sources from the JSON file
-      function loadSources() {
-        return fetch("assets/json/sources.json")
-          .then(response => response.json())
-          .then(sourcesData => {
-            const container = document.getElementById("sourcesContainer");
-            let html = "<p>Select your sources:</p>";
-            sourcesData.forEach(sourceObj => {
-              html += `<label><input type="checkbox" name="sources" value="${sourceObj.source}"> ${sourceObj.source}</label>`;
-            });
-            container.innerHTML = html;
-          })
-          .catch(error => {
-            console.error("Error loading sources:", error);
-          });
+    // Function to load dynamic sources from JSON file
+    async function loadSources() {
+      try {
+        const response = await fetch("assets/json/sources.json");
+        const sourcesData = await response.json();
+        const container = document.getElementById("sourcesContainer");
+        let html = "<p>Select your sources:</p>";
+        sourcesData.forEach(sourceObj => {
+          html += `<label><input type="checkbox" name="sources" value="${sourceObj.source}"> ${sourceObj.source}</label>`;
+        });
+        container.innerHTML = html;
+      } catch (error) {
+        console.error("Error loading sources:", error);
       }
-      
-      // Load sources on page load
-      await loadSources();
-      
-      // Global flag to indicate if preferences are loaded
-      let preferencesLoaded = false;
-      
-      // Function to load user preferences via webhook
-      function loadUserPreferences(userEmail) {
-        document.getElementById("loadingIndicator").style.display = "block";
-        const payload = { email: userEmail };
-        fetch("https://narektamoyan.app.n8n.cloud/webhook/get-subscription", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        })
-        .then(response => response.json())
-        .then(data => {
-          document.getElementById("loadingIndicator").style.display = "none";
-          console.log("Webhook response:", data);
-          if (data.error) {
-            alert("Error: " + data.error);
-          } else if (Array.isArray(data) && data.length > 0) {
-            const userData = data[0];
-            const sourcesData = userData.Sources || userData.sources;
-            if (sourcesData && sourcesData.length > 0) {
-              let sourceString;
-              if (typeof sourcesData === 'string') {
-                sourceString = sourcesData;
-              } else if (Array.isArray(sourcesData) && typeof sourcesData[0] === 'string') {
-                sourceString = sourcesData[0];
-              } else {
-                console.warn("Unexpected sources format:", sourcesData);
-                sourceString = "";
-              }
-              const selectedSources = sourceString.split(",").map(s => s.trim());
-              
-              // Reveal the sources container
-              document.getElementById("sourcesContainer").style.display = "block";
-              
-              // Update checkboxes based on selected sources
-              const checkboxes = document.querySelectorAll("#sourcesContainer input[name='sources']");
-              checkboxes.forEach(checkbox => {
-                checkbox.checked = selectedSources.includes(checkbox.value);
-              });
-              
-              // Mark preferences as loaded and update button text
-              preferencesLoaded = true;
-              document.querySelector("button[type='submit']").textContent = "Update Preferences";
+    }
+    
+    // Call loadSources to populate the checkboxes
+    loadSources();
+    
+    // Global flag for preference loading
+    let preferencesLoaded = false;
+    
+    // Function to load user preferences from webhook
+    function loadUserPreferences(userEmail) {
+      document.getElementById("loadingIndicator").style.display = "block";
+      const payload = { email: userEmail };
+      fetch("https://narektamoyan.app.n8n.cloud/webhook/get-subscription", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      })
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById("loadingIndicator").style.display = "none";
+        console.log("Webhook response:", data);
+        if (data.error) {
+          alert("Error: " + data.error);
+        } else if (Array.isArray(data) && data.length > 0) {
+          const userData = data[0];
+          const sourcesData = userData.Sources || userData.sources;
+          if (sourcesData && sourcesData.length > 0) {
+            let sourceString = "";
+            if (typeof sourcesData === 'string') {
+              sourceString = sourcesData;
+            } else if (Array.isArray(sourcesData) && typeof sourcesData[0] === 'string') {
+              sourceString = sourcesData[0];
             } else {
-              document.getElementById("sourcesContainer").style.display = "none";
-              alert("No subscription preferences found for this email.");
+              console.warn("Unexpected sources format:", sourcesData);
             }
+            const selectedSources = sourceString.split(",").map(s => s.trim());
+            
+            // Reveal the sources container and update checkboxes
+            document.getElementById("sourcesContainer").style.display = "block";
+            const checkboxes = document.querySelectorAll("#sourcesContainer input[name='sources']");
+            checkboxes.forEach(checkbox => {
+              checkbox.checked = selectedSources.includes(checkbox.value);
+            });
+            
+            // Update button text for subsequent updates
+            preferencesLoaded = true;
+            document.querySelector("button[type='submit']").textContent = "Update Preferences";
           } else {
+            document.getElementById("sourcesContainer").style.display = "none";
             alert("No subscription preferences found for this email.");
           }
-        })
-        .catch(error => {
-          document.getElementById("loadingIndicator").style.display = "none";
-          console.error("Error fetching preferences:", error);
-          alert("An error occurred while fetching your subscription details.");
-        });
-      }
-      
-      // Clerk initialization and authentication
+        } else {
+          alert("No subscription preferences found for this email.");
+        }
+      })
+      .catch(error => {
+        document.getElementById("loadingIndicator").style.display = "none";
+        console.error("Error fetching preferences:", error);
+        alert("An error occurred while fetching your subscription details.");
+      });
+    }
+    
+    // Clerk initialization and authentication
+    window.addEventListener('load', async function () {
       await Clerk.load();
-      console.log("ClerkJS is loaded");
-      
+      console.log("ClerkJS is loaded", Clerk.user);
       if (Clerk.user) {
-        // Authenticated: hide Clerk overlay, show update form, and display user's email as read-only
+        // Hide Clerk overlay, show update form
         document.getElementById("clerk-container").style.display = "none";
         document.getElementById("updateForm").style.display = "block";
+        // Show email as read-only
         document.getElementById("emailInputContainer").style.display = "none";
         document.getElementById("emailDisplayContainer").style.display = "block";
         const userEmail = Clerk.user.primaryEmailAddress.emailAddress;
         document.getElementById("emailDisplay").textContent = userEmail;
         document.getElementById("email").value = userEmail;
-        // Automatically load preferences for the authenticated user
+        // Auto-load preferences for authenticated user
         loadUserPreferences(userEmail);
       } else {
-        // Not authenticated: show Clerk overlay and mount the sign-in widget
+        // Not authenticated: show Clerk overlay and mount sign-in widget
         document.getElementById("clerk-container").style.display = "flex";
         document.getElementById("updateForm").style.display = "none";
         Clerk.mountSignIn(document.getElementById("clerk-container"));
       }
-      
-      // Handle update form submission for subsequent preference updates
-      document.getElementById("updateForm").addEventListener("submit", function(e) {
-        e.preventDefault();
-        document.getElementById("loadingIndicator").style.display = "block";
-        const email = document.getElementById("email").value;
-        const today = new Date().toISOString().split("T")[0];
-        const checkboxes = document.querySelectorAll("#sourcesContainer input[name='sources']");
-        let selectedSources = [];
-        checkboxes.forEach(checkbox => {
-          if (checkbox.checked) {
-            selectedSources.push(checkbox.value);
-          }
-        });
-        const payload = {
-          email: email,
-          sources: [ selectedSources.join(",") ],
-          submission_date: today,
-          update_date: today,
-          submission_status: "Active"
-        };
-        const webhookUrl = "https://narektamoyan.app.n8n.cloud/webhook/add-subscription";
-        fetch(webhookUrl, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        })
-        .then(response => response.json())
-        .then(data => {
-          document.getElementById("loadingIndicator").style.display = "none";
-          console.log("Webhook update response:", data);
-          if (data.error) {
-            alert("Error: " + data.error);
-          } else {
-            alert("Your subscription has been updated!");
-          }
-        })
-        .catch(error => {
-          document.getElementById("loadingIndicator").style.display = "none";
-          console.error("Error updating preferences:", error);
-          alert("An error occurred while processing your request.");
-        });
+    });
+    
+    // Handle update form submission for preference updates
+    document.getElementById("updateForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      document.getElementById("loadingIndicator").style.display = "block";
+      const email = document.getElementById("email").value;
+      const today = new Date().toISOString().split("T")[0];
+      const checkboxes = document.querySelectorAll("#sourcesContainer input[name='sources']");
+      let selectedSources = [];
+      checkboxes.forEach(checkbox => {
+        if (checkbox.checked) {
+          selectedSources.push(checkbox.value);
+        }
+      });
+      const payload = {
+        email: email,
+        sources: [ selectedSources.join(",") ],
+        submission_date: today,
+        update_date: today,
+        submission_status: "Active"
+      };
+      const webhookUrl = "https://narektamoyan.app.n8n.cloud/webhook/add-subscription";
+      fetch(webhookUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      })
+      .then(response => response.json())
+      .then(data => {
+        document.getElementById("loadingIndicator").style.display = "none";
+        console.log("Webhook update response:", data);
+        if (data.error) {
+          alert("Error: " + data.error);
+        } else {
+          alert("Your subscription has been updated!");
+        }
+      })
+      .catch(error => {
+        document.getElementById("loadingIndicator").style.display = "none";
+        console.error("Error updating preferences:", error);
+        alert("An error occurred while processing your request.");
       });
     });
   </script>
