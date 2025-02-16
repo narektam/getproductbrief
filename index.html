@@ -61,21 +61,6 @@
       flex-direction: column;
       gap: 15px;
     }
-    /* Email container: initially hidden */
-    .email-container {
-      display: none;
-      flex-direction: column;
-    }
-    .email-container label {
-      font-size: 16px;
-      margin-bottom: 8px;
-    }
-    .email-container input {
-      padding: 10px;
-      font-size: 16px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
     /* Sources container for checkboxes */
     .sources {
       margin-bottom: 20px;
@@ -95,16 +80,30 @@
       width: 16px;
       margin-right: 8px;
     }
-    button {
-      padding: 12px;
+    /* Email row: contains email input and subscribe button */
+    .email-row {
+      display: none; /* initially hidden */
+      flex-direction: row;
+      gap: 10px;
+      align-items: center;
+    }
+    .email-row input {
+      flex: 1;
+      padding: 10px;
       font-size: 16px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    .email-row button {
+      padding: 10px 16px;
+      font-size: 14px;
       background-color: #007BFF;
       color: #fff;
       border: none;
       border-radius: 4px;
       cursor: pointer;
     }
-    button:hover {
+    .email-row button:hover {
       background-color: #0056b3;
     }
     .loading {
@@ -139,18 +138,13 @@
           <p>Select your sources:</p>
           <!-- Dynamic checkboxes will be inserted here -->
         </div>
-        
-        <!-- Email container is initially hidden and appears only when at least one source is selected -->
-        <div class="email-container" id="emailContainer">
-          <label for="email">Email:</label>
+        <!-- Email row container: contains the email input and subscribe button side-by-side -->
+        <div class="email-row" id="emailRow">
           <input type="email" id="email" name="email" placeholder="Enter your email" required>
+          <button type="submit">Subscribe</button>
         </div>
-        
-        <button type="submit">Subscribe</button>
       </form>
-      
       <div class="loading" id="loadingIndicator">Loading...</div>
-      
       <div class="footer">
         <a href="privacy.html">Privacy Policy</a>
         <a href="terms.html">Terms of Use</a>
@@ -159,7 +153,6 @@
       </div>
     </div>
   </div>
-  
   <script>
     document.addEventListener("DOMContentLoaded", function() {
       // Load sources from JSON and populate checkboxes
@@ -177,14 +170,13 @@
           });
           container.innerHTML = html;
           
-          // Add change event listeners to checkboxes to control email container visibility
+          // Add change event listeners to all checkboxes to control email row visibility
           const checkboxes = document.querySelectorAll('input[name="sources"]');
           checkboxes.forEach(checkbox => {
             checkbox.addEventListener("change", function() {
-              // If at least one source is selected, show the email container; otherwise, hide it.
               const anySelected = Array.from(checkboxes).some(cb => cb.checked);
-              const emailContainer = document.getElementById("emailContainer");
-              emailContainer.style.display = anySelected ? "flex" : "none";
+              const emailRow = document.getElementById("emailRow");
+              emailRow.style.display = anySelected ? "flex" : "none";
             });
           });
         })
@@ -225,8 +217,8 @@
           } else {
             alert("Thank you for subscribing!");
             document.getElementById("subscriptionForm").reset();
-            // Hide email container after reset
-            document.getElementById("emailContainer").style.display = "none";
+            // Hide the email row again after reset
+            document.getElementById("emailRow").style.display = "none";
           }
         })
         .catch(error => {
