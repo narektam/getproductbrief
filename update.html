@@ -135,6 +135,9 @@
   
   <script>
     document.addEventListener("DOMContentLoaded", function() {
+      // Flag to check if preferences have been loaded
+      let preferencesLoaded = false;
+      
       // Function to get URL parameters
       function getQueryParam(param) {
         const params = new URLSearchParams(window.location.search);
@@ -145,6 +148,8 @@
       const emailParam = getQueryParam("email");
       if (emailParam) {
         document.getElementById("email").value = emailParam;
+        // Optionally, make it read-only:
+        // document.getElementById("email").readOnly = true;
       }
       
       // Handle form submission
@@ -154,9 +159,36 @@
         document.getElementById("loadingIndicator").style.display = "block";
         
         const email = document.getElementById("email").value;
-        const payload = { email: email };
+        const today = new Date().toISOString().split("T")[0];
         
-        fetch("https://narektamoyan.app.n8n.cloud/webhook/get-subscription", {
+        let payload, webhookUrl;
+        
+        if (!preferencesLoaded) {
+          // First submission: load preferences from get-subscription webhook
+          payload = { email: email };
+          webhookUrl = "https://narektamoyan.app.n8n.cloud/webhook/get-subscription";
+        } else {
+          // Subsequent submission: update preferences using add-subscription webhook
+          // Gather current selected sources from the form
+          const checkboxes = document.querySelectorAll('input[name="sources"]');
+          let selectedSources = [];
+          checkboxes.forEach(checkbox => {
+            if (checkbox.checked) {
+              selectedSources.push(checkbox.value);
+            }
+          });
+          // Build payload; sources is an array containing one comma-separated string
+          payload = {
+            email: email,
+            sources: [ selectedSources.join(",") ],
+            submission_date: today,
+            update_date: today,
+            submission_status: "Active"
+          };
+          webhookUrl = "https://narektamoyan.app.n8n.cloud/webhook/add-subscription";
+        }
+        
+        fetch(webhookUrl, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload)
@@ -167,43 +199,55 @@
           document.getElementById("loadingIndicator").style.display = "none";
           console.log("Webhook response:", data);
           
-          // Expecting data to be an array with one object
-          if (Array.isArray(data) && data.length > 0) {
-            const userData = data[0];
-            const sourcesData = userData.Sources || userData.sources;
-            
-            if (sourcesData && sourcesData.length > 0) {
-              let sourceString;
-              if (typeof sourcesData === 'string') {
-                sourceString = sourcesData;
-              } else if (Array.isArray(sourcesData) && typeof sourcesData[0] === 'string') {
-                sourceString = sourcesData[0];
-              } else {
-                console.warn("Unexpected sources format:", sourcesData);
-                sourceString = "";
-              }
-              const selectedSources = sourceString.split(",").map(s => s.trim());
-              
-              // Reveal the sources container
-              document.querySelector(".sources").style.display = "block";
-              
-              // Loop over checkboxes in the sources section and check those matching selected sources
-              const checkboxes = document.querySelectorAll('input[name="sources"]');
-              checkboxes.forEach(checkbox => {
-                checkbox.checked = selectedSources.includes(checkbox.value);
-              });
-            } else {
-              document.querySelector(".sources").style.display = "none";
-              alert("No subscription preferences found for this email.");
-            }
+          if (data.error) {
+            alert("Error: " + data.error);
           } else {
-            alert("No subscription preferences found for this email.");
+            if (!preferencesLoaded) {
+              // For get-subscription response, we expect an array with one object.
+              if (Array.isArray(data) && data.length > 0) {
+                const userData = data[0];
+                const sourcesData = userData.Sources || userData.sources;
+                if (sourcesData && sourcesData.length > 0) {
+                  let sourceString;
+                  if (typeof sourcesData === 'string') {
+                    sourceString = sourcesData;
+                  } else if (Array.isArray(sourcesData) && typeof sourcesData[0] === 'string') {
+                    sourceString = sourcesData[0];
+                  } else {
+                    console.warn("Unexpected sources format:", sourcesData);
+                    sourceString = "";
+                  }
+                  const selectedSources = sourceString.split(",").map(s => s.trim());
+                  
+                  // Reveal the sources container
+                  document.querySelector(".sources").style.display = "block";
+                  
+                  // Check appropriate checkboxes
+                  const checkboxes = document.querySelectorAll('input[name="sources"]');
+                  checkboxes.forEach(checkbox => {
+                    checkbox.checked = selectedSources.includes(checkbox.value);
+                  });
+                  
+                  // Set flag to indicate preferences are loaded and update button text
+                  preferencesLoaded = true;
+                  document.querySelector("button[type='submit']").textContent = "Update Preferences";
+                } else {
+                  document.querySelector(".sources").style.display = "none";
+                  alert("No subscription preferences found for this email.");
+                }
+              } else {
+                alert("No subscription preferences found for this email.");
+              }
+            } else {
+              // For add-subscription response, assume update is successful
+              alert("Your subscription has been updated!");
+            }
           }
         })
         .catch(error => {
           document.getElementById("loadingIndicator").style.display = "none";
           console.error("Error:", error);
-          alert("An error occurred while fetching your subscription details.");
+          alert("An error occurred while processing your request.");
         });
       });
     });
