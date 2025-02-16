@@ -284,38 +284,51 @@
       });
     }
     
-    // Clerk initialization and authentication
-    window.addEventListener('load', async function () {
-      await Clerk.load();
-      console.log("ClerkJS is loaded", Clerk.user);
-      if (Clerk.user) {
-        // Authenticated: hide fallback, show display, set email, load preferences
-        document.getElementById("clerk-container").style.display = "none";
-        document.getElementById("updateForm").style.display = "block";
-        // Hide fallback email input and disable it
-        const emailInputContainer = document.getElementById("emailInputContainer");
-        emailInputContainer.style.display = "none";
-        const emailInput = document.getElementById("emailInput");
-        if(emailInput) {
-          emailInput.disabled = true;
-          emailInput.removeAttribute("required");
-        }
-        // Show email display container
-        document.getElementById("emailDisplayContainer").style.display = "block";
-        const userEmail = Clerk.user.primaryEmailAddress.emailAddress;
-        document.getElementById("emailDisplay").textContent = userEmail;
-        document.getElementById("email").value = userEmail;
-        // Automatically load user preferences
-        loadUserPreferences(userEmail);
-      } else {
-        // Not authenticated: show Clerk overlay and mount sign-in widget with redirect back
-        document.getElementById("clerk-container").style.display = "flex";
-        document.getElementById("updateForm").style.display = "none";
-        Clerk.mountSignIn(document.getElementById("clerk-container"), {
-          redirectUrl: window.location.href
-        });
+
+  // Clerk initialization and authentication
+  window.addEventListener('load', async function () {
+    await Clerk.load();
+    console.log("ClerkJS is loaded", Clerk.user);
+    if (Clerk.user) {
+      // Authenticated: hide fallback, show display, set email, load preferences
+      document.getElementById("clerk-container").style.display = "none";
+      document.getElementById("updateForm").style.display = "block";
+      // Hide fallback email input and disable it
+      const emailInputContainer = document.getElementById("emailInputContainer");
+      emailInputContainer.style.display = "none";
+      const emailInput = document.getElementById("emailInput");
+      if (emailInput) {
+        emailInput.disabled = true;
+        emailInput.removeAttribute("required");
       }
-    });
+      // Show email display container
+      document.getElementById("emailDisplayContainer").style.display = "block";
+      const userEmail = Clerk.user.primaryEmailAddress.emailAddress;
+      document.getElementById("emailDisplay").textContent = userEmail;
+      document.getElementById("email").value = userEmail;
+      // Automatically load user preferences
+      loadUserPreferences(userEmail);
+    } else {
+      // Not authenticated: show Clerk overlay and mount sign-in widget with custom options
+      document.getElementById("clerk-container").style.display = "flex";
+      document.getElementById("updateForm").style.display = "none";
+      Clerk.mountSignIn(document.getElementById("clerk-container"), {
+        redirectUrl: window.location.href, // redirect back to the current page after sign-in
+        signUpUrl: "https://yourdomain.com/custom-signup", // change this to your desired sign-up URL
+        localization: {
+          signIn: {
+            title: "Welcome Back! Please Sign In",
+            subtitle: "Enter your email to get started"
+          },
+          signUp: {
+            title: "Create Your Account",
+            subtitle: "Join us and get the latest product insights"
+          }
+        }
+      });
+    }
+  });
+
     
     // Handle update form submission (for updating preferences)
     document.getElementById("updateForm").addEventListener("submit", function(e) {
