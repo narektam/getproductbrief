@@ -245,7 +245,7 @@
     function loadUserPreferences(userEmail) {
       document.getElementById("loadingIndicator").style.display = "block";
       const payload = { email: userEmail };
-      fetch("https://narektamoyan.app.n8n.cloud/webhook/update-subscription", {
+      fetch("https://narektamoyan.app.n8n.cloud/webhook/get-subscription", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
@@ -356,7 +356,7 @@
         update_date: today,
         submission_status: "Active"
       };
-      const webhookUrl = "https://narektamoyan.app.n8n.cloud/webhook/get-subscription";
+      const webhookUrl = "https://narektamoyan.app.n8n.cloud/webhook/update-subscription";
       fetch(webhookUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
