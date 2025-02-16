@@ -55,8 +55,13 @@
       border-radius: 4px;
       margin-bottom: 20px;
     }
+    /* Initially hide the sources container */
     .sources {
       margin-bottom: 20px;
+      display: none;
+    }
+    .sources p {
+      font-size: 16px;
     }
     .sources label {
       font-size: 16px;
@@ -128,7 +133,7 @@
     const emailParam = getQueryParam("email");
     if (emailParam) {
       document.getElementById("email").value = emailParam;
-      // Optionally, you can make it read-only:
+      // Optionally make it read-only:
       // document.getElementById("email").readOnly = true;
     }
     
@@ -139,16 +144,12 @@
       const email = document.getElementById("email").value;
       
       // Build the payload
-      const payload = {
-        email: email
-      };
+      const payload = { email: email };
       
       // Call the webhook to get the subscription details
       fetch("https://narektamoyan.app.n8n.cloud/webhook/get-subscription", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload)
       })
       .then(response => response.json())
@@ -157,22 +158,23 @@
           // If there's an error, show it as a popup
           alert("Error: " + data.error);
         } else {
-          // Otherwise, update the form by checking the appropriate sources
-          // Assume that data.sources is in the format: ["OpenAI,Anthropic,Reforge"]
-          // We'll split that string by comma, trim each value, and then check matching checkboxes.
+          // If successful, show the sources section
           if (data.sources && data.sources.length > 0) {
-            const sourceString = data.sources[0];  // e.g., "OpenAI,Anthropic,Reforge"
+            // Assume data.sources is formatted as ["OpenAI,Anthropic,Reforge"]
+            const sourceString = data.sources[0];
             const selectedSources = sourceString.split(",").map(s => s.trim());
             
-            // Loop over all checkboxes in the sources section and check them if they are in the selectedSources array
+            // Reveal the sources container
+            document.querySelector(".sources").style.display = "block";
+            
+            // Loop over checkboxes and check those that match selected sources
             const checkboxes = document.querySelectorAll('input[name="sources"]');
             checkboxes.forEach(checkbox => {
-              if (selectedSources.includes(checkbox.value)) {
-                checkbox.checked = true;
-              } else {
-                checkbox.checked = false;
-              }
+              checkbox.checked = selectedSources.includes(checkbox.value);
             });
+          } else {
+            // If no sources found, optionally hide the sources container
+            document.querySelector(".sources").style.display = "none";
           }
         }
       })
