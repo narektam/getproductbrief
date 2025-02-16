@@ -46,7 +46,7 @@
       color: #007BFF;
     }
     .main-content {
-      padding-top: 70px; /* space for header */
+      padding-top: 70px; /* leave space for header */
     }
     .container {
       max-width: 600px;
@@ -61,7 +61,16 @@
       flex-direction: column;
       gap: 10px;
     }
-    input[type="email"] {
+    /* Email container: initially hidden */
+    .email-container {
+      display: none;
+      flex-direction: column;
+    }
+    .email-container label {
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+    .email-container input {
       padding: 10px;
       font-size: 16px;
       border: 1px solid #ccc;
@@ -125,10 +134,13 @@
   <div class="main-content">
     <div class="container">
       <form id="subscriptionForm">
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" placeholder="Enter your email" required>
+        <!-- Email input container is initially hidden -->
+        <div class="email-container" id="emailContainer">
+          <label for="email">Email:</label>
+          <input type="email" id="email" name="email" placeholder="Enter your email" required>
+        </div>
         
-        <!-- Sources container for checkboxes (populated dynamically) -->
+        <!-- Sources container for checkboxes -->
         <div class="sources" id="sourcesContainer">
           <p>Select your sources:</p>
           <!-- Dynamic checkboxes will be inserted here -->
@@ -150,7 +162,7 @@
   
   <script>
     document.addEventListener("DOMContentLoaded", function() {
-      // Load sources from JSON and populate checkboxes
+      // Function to load sources from JSON and populate checkboxes
       fetch("assets/json/sources.json")
         .then(response => response.json())
         .then(sourcesData => {
@@ -158,12 +170,28 @@
           let html = "<p>Select your sources:</p>";
           sourcesData.forEach(sourceObj => {
             html += `<label>
-              <input type="checkbox" name="sources" value="${sourceObj.source}">
-              <img src="${sourceObj.logoURL}" alt="${sourceObj.source} Logo">
-              ${sourceObj.source}
-            </label>`;
+                       <input type="checkbox" name="sources" value="${sourceObj.source}">
+                       <img src="${sourceObj.logoURL}" alt="${sourceObj.source} Logo">
+                       ${sourceObj.source}
+                     </label>`;
           });
           container.innerHTML = html;
+          
+          // Add change event listeners to all checkboxes
+          const checkboxes = document.querySelectorAll('input[name="sources"]');
+          checkboxes.forEach(checkbox => {
+            checkbox.addEventListener("change", function() {
+              // Check if any checkbox is selected
+              const anySelected = Array.from(checkboxes).some(cb => cb.checked);
+              const emailContainer = document.getElementById("emailContainer");
+              // If at least one source is selected, show email field; otherwise hide it
+              if (anySelected) {
+                emailContainer.style.display = "flex";
+              } else {
+                emailContainer.style.display = "none";
+              }
+            });
+          });
         })
         .catch(error => {
           console.error("Error loading sources:", error);
@@ -173,6 +201,7 @@
       document.getElementById("subscriptionForm").addEventListener("submit", function(e) {
         e.preventDefault();
         document.getElementById("loadingIndicator").style.display = "block";
+        
         const email = document.getElementById("email").value;
         const checkboxes = document.querySelectorAll('input[name="sources"]:checked');
         const selectedSources = Array.from(checkboxes).map(checkbox => checkbox.value);
@@ -196,6 +225,8 @@
           if (response.ok) {
             alert("Thank you for subscribing!");
             document.getElementById("subscriptionForm").reset();
+            // Hide email input again after reset
+            document.getElementById("emailContainer").style.display = "none";
           } else {
             alert("There was an error processing your subscription.");
           }
