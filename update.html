@@ -157,13 +157,7 @@
   </style>
   
   <!-- Clerk SDK: load Clerk from the CDN -->
-  <script
-    async
-    crossorigin="anonymous"
-    data-clerk-publishable-key="pk_test_bmF0aXZlLWliZXgtNDQuY2xlcmsuYWNjb3VudHMuZGV2JA"
-    src="https://native-ibex-44.clerk.accounts.dev/npm/@clerk/clerk-js@latest/dist/clerk.browser.js"
-    type="text/javascript"
-  ></script>
+  <script async crossorigin="anonymous" data-clerk-publishable-key="pk_test_bmF0aXZlLWliZXgtNDQuY2xlcmsuYWNjb3VudHMuZGV2JA" src="https://native-ibex-44.clerk.accounts.dev/npm/@clerk/clerk-js@latest/dist/clerk.browser.js" type="text/javascript"></script>
 </head>
 <body>
   <!-- Full-screen Clerk container overlay -->
@@ -209,7 +203,7 @@
   </div>
   
   <script>
-    // Function to load dynamic sources from JSON and populate checkboxes
+    // Function to load dynamic sources from JSON and populate the checkboxes
     async function loadSources() {
       try {
         const response = await fetch("assets/json/sources.json");
@@ -232,7 +226,7 @@
     // Load sources on page load
     loadSources();
     
-    // Global flag for preference loading
+    // Global flag to indicate if preferences are loaded
     let preferencesLoaded = false;
     
     // Function to load user preferences via webhook
@@ -291,9 +285,10 @@
       await Clerk.load();
       console.log("ClerkJS is loaded", Clerk.user);
       if (Clerk.user) {
-        // Hide the Clerk overlay, show update form, and display the user's email as read-only text
+        // Hide the Clerk overlay and show the update form
         document.getElementById("clerk-container").style.display = "none";
         document.getElementById("updateForm").style.display = "block";
+        // Hide the fallback email input container and show the email display container
         document.getElementById("emailInputContainer").style.display = "none";
         document.getElementById("emailDisplayContainer").style.display = "block";
         const userEmail = Clerk.user.primaryEmailAddress.emailAddress;
@@ -311,7 +306,7 @@
       }
     });
     
-    // Handle update form submission for preference updates
+    // Handle update form submission (for updating preferences)
     document.getElementById("updateForm").addEventListener("submit", function(e) {
       e.preventDefault();
       document.getElementById("loadingIndicator").style.display = "block";
