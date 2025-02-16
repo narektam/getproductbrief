@@ -9,6 +9,8 @@
   <link rel="shortcut icon" href="/assets/images/favicon.ico" />
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
   <link rel="manifest" href="/assets/images/site.webmanifest" />
+  <!-- Include Choices.js CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css" />
   <style>
     body {
       background-color: #f2f2f2;
@@ -47,11 +49,11 @@
     }
     /* Main content positioned below header */
     .main-content {
-      padding-top: 70px; /* Adjust to header height */
+      padding-top: 70px; /* adjust if header height changes */
     }
     .container {
       max-width: 600px;
-      background-color: #ffffff;
+      background-color: #fff;
       margin: 50px auto;
       padding: 20px;
       border-radius: 6px;
@@ -68,14 +70,22 @@
       border: 1px solid #ccc;
       border-radius: 4px;
     }
-    /* Sources container for dynamic sources */
+    /* Sources container for our multiselect dropdown */
     .sources {
       margin-bottom: 20px;
     }
     .sources label {
       font-size: 16px;
-      margin-right: 10px;
-      display: inline-block;
+      display: block;
+      margin-bottom: 5px;
+    }
+    /* Loading indicator styling */
+    .loading {
+      text-align: center;
+      font-size: 16px;
+      color: #007BFF;
+      margin-top: 20px;
+      display: none;
     }
     button {
       padding: 12px;
@@ -88,14 +98,6 @@
     }
     button:hover {
       background-color: #0056b3;
-    }
-    /* Loading indicator styling */
-    .loading {
-      text-align: center;
-      font-size: 16px;
-      color: #007BFF;
-      margin-top: 20px;
-      display: none;
     }
     .footer {
       text-align: center;
@@ -120,15 +122,15 @@
         <label for="email">Email:</label>
         <input type="email" id="email" name="email" placeholder="Enter your email" required>
         
-        <!-- Sources will be dynamically generated here -->
+        <!-- Sources container for multiselect dropdown -->
         <div class="sources" id="sourcesContainer">
-          <!-- Dynamic checkboxes go here -->
+          <label for="sourcesSelect">Select your sources:</label>
+          <select id="sourcesSelect" name="sources" multiple></select>
         </div>
         
         <button type="submit">Subscribe</button>
       </form>
       
-      <!-- Loading indicator -->
       <div class="loading" id="loadingIndicator">Loading...</div>
       
       <div class="footer">
@@ -140,42 +142,64 @@
     </div>
   </div>
   
+  <!-- Include Choices.js JavaScript -->
+  <script src="https://cdn.jsdelivr.net/npm/choices.js/public/assets/scripts/choices.min.js"></script>
   <script>
     document.addEventListener("DOMContentLoaded", function() {
-      // Function to load sources from the JSON file and populate the sources container
-      function loadSources() {
-        fetch("assets/json/sources.json")
-          .then(response => response.json())
-          .then(sourcesData => {
-            const container = document.getElementById("sourcesContainer");
-            let html = "<p>Select your sources:</p>";
-            sourcesData.forEach(sourceObj => {
-              html += `<label><input type="checkbox" name="sources" value="${sourceObj.source}"> ${sourceObj.source}</label>`;
-            });
-            container.innerHTML = html;
-          })
-          .catch(error => {
-            console.error("Error loading sources:", error);
+      // Load sources from JSON and populate the <select>
+      fetch("assets/json/sources.json")
+        .then(response => response.json())
+        .then(sourcesData => {
+          const select = document.getElementById("sourcesSelect");
+          sourcesData.forEach(sourceObj => {
+            const option = document.createElement("option");
+            option.value = sourceObj.source;
+            option.text = sourceObj.source;
+            // Attach custom property for the logo URL
+            option.setAttribute("data-custom-properties", JSON.stringify({ logoURL: sourceObj.logoURL }));
+            select.appendChild(option);
           });
-      }
-      
-      // Load sources dynamically on page load
-      loadSources();
+          
+          // Initialize Choices on the select with custom templates
+          new Choices(select, {
+            removeItemButton: true,
+            callbackOnCreateTemplates: function(template) {
+              return {
+                item: (data) => {
+                  return template(`
+                    <div class="item ${data.highlighted ? 'highlighted' : ''} ${data.placeholder ? 'placeholder' : ''}" data-item data-id="${data.id}" data-value="${data.value}" ${data.active ? 'aria-selected="true"' : ''} ${data.disabled ? 'aria-disabled="true"' : ''}>
+                      <img src="${JSON.parse(data.customProperties).logoURL}" alt="${data.value} Logo" style="height:16px; width:16px; margin-right:8px;">
+                      ${data.label}
+                    </div>
+                  `);
+                },
+                choice: (data) => {
+                  return template(`
+                    <div class="choice ${data.disabled ? 'disabled' : ''}" data-select-text="${this.config.itemSelectText}" data-choice data-id="${data.id}" data-value="${data.value}" ${data.disabled ? 'aria-disabled="true"' : ''}>
+                      <img src="${JSON.parse(data.customProperties).logoURL}" alt="${data.value} Logo" style="height:16px; width:16px; margin-right:8px;">
+                      ${data.label}
+                    </div>
+                  `);
+                }
+              };
+            }
+          });
+        })
+        .catch(error => {
+          console.error("Error loading sources:", error);
+        });
       
       // Handle form submission
       document.getElementById("subscriptionForm").addEventListener("submit", function(e) {
         e.preventDefault();
-        // Show loading indicator
         document.getElementById("loadingIndicator").style.display = "block";
         
-        // Get form values
         const email = document.getElementById("email").value;
-        const checkboxes = document.querySelectorAll('input[name="sources"]:checked');
-        const selectedSources = Array.from(checkboxes).map(checkbox => checkbox.value);
-        // Build sources array as one comma-separated string inside an array
+        // Use Choices API to get selected values (array of strings)
+        const choicesInstance = document.getElementById("sourcesSelect")._choices;
+        const selectedSources = choicesInstance.getValue(true);
         const sources = [ selectedSources.join(",") ];
         const today = new Date().toISOString().split("T")[0];
-        
         const payload = {
           email: email,
           sources: sources,
@@ -184,18 +208,15 @@
           submission_status: "Active"
         };
         
-        // Send data to the webhook
         fetch("https://narektamoyan.app.n8n.cloud/webhook/add-subscription", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(payload)
         })
         .then(response => {
-          // Hide loading indicator
           document.getElementById("loadingIndicator").style.display = "none";
           if (response.ok) {
             alert("Thank you for subscribing!");
-            // Reset the form after confirmation
             document.getElementById("subscriptionForm").reset();
           } else {
             alert("There was an error processing your subscription.");
