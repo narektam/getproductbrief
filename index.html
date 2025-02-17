@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Get Product Brief - Subscribe</title>
   <link rel="icon" type="image/png" href="/assets/images/favicon.ico/favicon-96x96.png" sizes="96x96" />
   <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
@@ -17,18 +17,19 @@
       padding: 0;
       color: #333;
     }
-    /* Fixed header styling */
+    /* Header with symmetric left/right links */
     header {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       background-color: #ffffff;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
       z-index: 1100;
       display: flex;
       align-items: center;
       padding: 10px 20px;
+      justify-content: space-between;
     }
     header a.home-btn {
       text-decoration: none;
@@ -37,6 +38,7 @@
       color: #fff;
       padding: 8px 16px;
       border-radius: 50px;
+      margin-left: 20px;
     }
     header h1 {
       flex: 1;
@@ -52,7 +54,7 @@
       padding: 8px 16px;
       border: 1px solid #007BFF;
       border-radius: 50px;
-      margin-left: auto;
+      margin-right: 20px;
     }
     .main-content {
       padding-top: 70px; /* leave space for header */
@@ -63,38 +65,63 @@
       margin: 50px auto;
       padding: 20px;
       border-radius: 6px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    /* Title in body */
+    .page-title {
+      text-align: center;
+      font-size: 24px;
+      color: #007BFF;
+      margin-bottom: 20px;
     }
     form {
       display: flex;
       flex-direction: column;
       gap: 15px;
     }
-    input[type="email"] {
+    /* Sources container for checkboxes */
+    .sources {
+      margin-bottom: 20px;
+    }
+    .sources p {
+      font-size: 16px;
+      margin-bottom: 8px;
+    }
+    .sources label {
+      font-size: 16px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+    }
+    .sources label img {
+      height: 16px;
+      width: 16px;
+      margin-right: 8px;
+    }
+    /* Email row: email input and subscribe button side-by-side */
+    .email-row {
+      display: none; /* initially hidden */
+      flex-direction: row;
+      gap: 10px;
+      align-items: center;
+    }
+    .email-row input {
+      flex: 1;
       padding: 10px;
       font-size: 16px;
       border: 1px solid #ccc;
       border-radius: 4px;
     }
-    .sources {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-    .sources label {
-      font-size: 16px;
-      margin-right: 10px;
-    }
-    button {
-      padding: 12px;
-      font-size: 16px;
+    .email-row button {
+      padding: 10px 16px;
+      font-size: 14px;
       background-color: #007BFF;
       color: #fff;
       border: none;
       border-radius: 4px;
       cursor: pointer;
     }
-    button:hover {
+    .email-row button:hover {
       background-color: #0056b3;
     }
     .loading {
@@ -104,16 +131,12 @@
       margin-top: 20px;
       display: none;
     }
-    /* Footer: dedicated area at the bottom */
-    footer {
-      margin-top: 40px;
+    .footer {
       text-align: center;
+      margin-top: 20px;
       font-size: 14px;
-      padding: 20px 0;
-      background-color: #fff;
-      border-top: 1px solid #ddd;
     }
-    footer a {
+    .footer a {
       color: #007BFF;
       text-decoration: none;
       margin: 0 10px;
@@ -123,69 +146,111 @@
 <body>
   <header>
     <a href="index.html" class="home-btn">ProductBrief</a>
-    <h1>Subscribe to Get Product Brief</h1>
+    <h1></h1>
     <a href="update.html" class="update-link">Already Subscribed?</a>
   </header>
   <div class="main-content">
     <div class="container">
+      <div class="page-title">Subscribe to Get Product Brief</div>
       <form id="subscriptionForm">
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" placeholder="Enter your email" required>
-        
-        <div class="sources">
-          <label><input type="checkbox" name="sources" value="OpenAI"> OpenAI</label>
-          <label><input type="checkbox" name="sources" value="Anthropic"> Anthropic</label>
-          <label><input type="checkbox" name="sources" value="Reforge"> Reforge</label>
-          <!-- Add more sources as needed -->
+        <!-- Sources container for checkboxes -->
+        <div class="sources" id="sourcesContainer">
+          <p>Select your sources:</p>
+          <!-- Dynamic checkboxes will be inserted here -->
         </div>
-        
-        <button type="submit">Subscribe</button>
+        <!-- Email row container: contains the email input and subscribe button side-by-side -->
+        <div class="email-row" id="emailRow">
+          <input type="email" id="email" name="email" placeholder="Enter your email" required>
+          <button type="submit">Subscribe</button>
+        </div>
       </form>
-      
       <div class="loading" id="loadingIndicator">Loading...</div>
+      <div class="footer">
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="terms.html">Terms of Use</a>
+      </div>
     </div>
   </div>
-  <footer>
-    <a href="privacy.html">Privacy Policy</a>
-    <a href="terms.html">Terms of Use</a>
-  </footer>
-
   <script>
-    document.getElementById("subscriptionForm").addEventListener("submit", function(e) {
-      e.preventDefault();
-      document.getElementById("loadingIndicator").style.display = "block";
+    document.addEventListener("DOMContentLoaded", function() {
+      // Load sources from JSON and populate checkboxes
+      fetch("assets/json/sources.json")
+        .then(response => response.json())
+        .then(sourcesData => {
+          const container = document.getElementById("sourcesContainer");
+          let html = "<p>Select your sources:</p>";
+          sourcesData.forEach(sourceObj => {
+            html += `<label>
+                       <input type="checkbox" name="sources" value="${sourceObj.source}">
+                       <img src="${sourceObj.logoURL}" alt="${sourceObj.source} Logo">
+                       ${sourceObj.source}
+                     </label>`;
+          });
+          container.innerHTML = html;
+          
+          // Add change event listeners to checkboxes to control email row visibility
+          const checkboxes = document.querySelectorAll('input[name="sources"]');
+          checkboxes.forEach(checkbox => {
+            checkbox.addEventListener("change", function() {
+              const anySelected = Array.from(checkboxes).some(cb => cb.checked);
+              const emailRow = document.getElementById("emailRow");
+              emailRow.style.display = anySelected ? "flex" : "none";
+            });
+          });
+        })
+        .catch(error => {
+          console.error("Error loading sources:", error);
+        });
       
-      const email = document.getElementById("email").value;
-      const checkboxes = document.querySelectorAll('input[name="sources"]:checked');
-      const selectedSources = Array.from(checkboxes).map(checkbox => checkbox.value);
-      const sources = [ selectedSources.join(",") ];
-      const today = new Date().toISOString().split("T")[0];
-      const payload = {
-        email: email,
-        sources: sources,
-        submission_date: today,
-        update_date: today,
-        submission_status: "Active"
-      };
-      
-      fetch("https://narektamoyan.app.n8n.cloud/webhook/add-subscription", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      })
-      .then(response => {
-        document.getElementById("loadingIndicator").style.display = "none";
-        if (response.ok) {
-          alert("Thank you for subscribing!");
-          document.getElementById("subscriptionForm").reset();
-        } else {
+      // Handle form submission
+      document.getElementById("subscriptionForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        document.getElementById("loadingIndicator").style.display = "block";
+        
+        const email = document.getElementById("email").value;
+        const checkboxes = document.querySelectorAll('input[name="sources"]:checked');
+        const selectedSources = Array.from(checkboxes).map(checkbox => checkbox.value);
+        const sources = [ selectedSources.join(",") ];
+        const today = new Date().toISOString().split("T")[0];
+        const payload = {
+          email: email,
+          sources: sources,
+          submission_date: today,
+          update_date: today,
+          submission_status: "Active"
+        };
+        
+        fetch("https://narektamoyan.app.n8n.cloud/webhook/add-subscription", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        })
+        .then(response => {
+          document.getElementById("loadingIndicator").style.display = "none";
+          return response.text();
+        })
+        .then(text => {
+          let data = {};
+          try {
+            data = text ? JSON.parse(text) : {};
+          } catch (err) {
+            console.error("Error parsing JSON:", err);
+          }
+          if (data.error && data.error === "existing_subscriber") {
+            alert("Already Subscribed\nThis email is already subscribed. To edit your preferences, click the Update your brief button from your emails.");
+          } else if (data.error) {
+            alert("There was an error processing your subscription.");
+          } else {
+            alert("Thank you for subscribing!");
+            document.getElementById("subscriptionForm").reset();
+            document.getElementById("emailRow").style.display = "none";
+          }
+        })
+        .catch(error => {
+          document.getElementById("loadingIndicator").style.display = "none";
+          console.error("Error submitting form:", error);
           alert("There was an error processing your subscription.");
-        }
-      })
-      .catch(error => {
-        document.getElementById("loadingIndicator").style.display = "none";
-        console.error("Error submitting form:", error);
-        alert("There was an error processing your subscription.");
+        });
       });
     });
   </script>
