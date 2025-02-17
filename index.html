@@ -131,9 +131,9 @@
     }
     .selected-source {
       background-color: #fff;
-      border: 1px solid #000;
+      border: 1px solid #007BFF;
       border-radius: 4px;
-      padding: 10px;
+      padding: 10px; /* equal padding on left and right */
       display: flex;
       align-items: center;
       width: 100%;
@@ -348,7 +348,7 @@
       emailRow.style.display = selectedSources.length > 0 ? "flex" : "none";
     }
     
-    // Handle form submission (using your existing logic)
+    // Handle form submission
     document.getElementById("subscriptionForm").addEventListener("submit", function(e) {
       e.preventDefault();
       document.getElementById("loadingIndicator").style.display = "block";
