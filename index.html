@@ -11,7 +11,7 @@
   <link rel="manifest" href="/assets/images/site.webmanifest" />
   <style>
     body {
-      background-color: #f2f2f2;
+      background-color: #ffffff; /* All pages have white background */
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
@@ -20,14 +20,14 @@
       flex-direction: column;
       min-height: 100vh;
     }
-    /* Header with symmetric left/right links */
+    /* Header with symmetric left/right links, no shadow, thin border */
     header {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       background-color: #ffffff;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      border-bottom: 0.5px solid #f0faf3;
       z-index: 1100;
       display: flex;
       align-items: center;
@@ -63,7 +63,7 @@
       flex: 1;
       padding-top: 70px; /* leave space for header */
     }
-    /* Page title placed above the white card */
+    /* Page title placed above the card */
     .page-title {
       text-align: center;
       font-size: 24px;
@@ -72,14 +72,14 @@
     }
     .container {
       max-width: 600px;
-      background-color: #fff;
+      background-color: #f0faf3; /* Card area background */
       margin: 0 auto 20px;
       padding: 20px;
       border-radius: 6px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      box-sizing: border-box;
       position: relative;
     }
-    /* Search box inside the white card */
+    /* Search box inside the card */
     .search-box {
       margin-bottom: 20px;
       position: relative;
@@ -121,7 +121,7 @@
       margin-right: 10px;
       border-radius: 4px;
     }
-    /* Selected sources container: full width, vertical stack */
+    /* Selected sources container: vertical stack, full width */
     .selected-sources {
       display: flex;
       flex-direction: column;
@@ -195,11 +195,11 @@
       margin-top: 20px;
       display: none;
     }
-    /* Footer: dedicated area at the very bottom, left-aligned */
+    /* Footer: dedicated area at the very bottom, left-aligned, with thin border */
     footer {
       background-color: #fff;
       padding: 20px;
-      border-top: 1px solid #ddd;
+      border-top: 0.5px solid #f0faf3;
       font-size: 14px;
       width: 100%;
       text-align: left;
