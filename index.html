@@ -65,7 +65,7 @@
       flex: 1;
       padding-top: 70px; /* leave space for header */
     }
-    /* Page title placed above the white card; updated color */
+    /* Page title placed above the white card, updated color */
     .page-title {
       text-align: center;
       font-size: 24px;
@@ -74,14 +74,14 @@
     }
     .container {
       max-width: 600px;
-      background-color: #f0faf3; /* card area background */
+      background-color: #f57b55; /* card background remains f57b55 */
       margin: 0 auto 20px;
       padding: 20px;
       border-radius: 6px;
       box-sizing: border-box;
       position: relative;
     }
-    /* Search box inside the card (no border) */
+    /* Search box inside the card */
     .search-box {
       margin-bottom: 20px;
       position: relative;
@@ -90,7 +90,7 @@
       width: 100%;
       padding: 10px;
       font-size: 16px;
-      border: none;
+      border: none; /* no border */
       border-radius: 4px;
       box-sizing: border-box;
       background-color: #fff;
@@ -134,7 +134,7 @@
     }
     .selected-source {
       background-color: #fff;
-      border: 0.5px solid #000; /* black border */
+      border: 0.5px solid #000; /* border color set to black */
       border-radius: 4px;
       padding: 10px;
       box-sizing: border-box;
@@ -151,10 +151,10 @@
     }
     .selected-source .remove-source {
       margin-left: auto;
-      padding-right: 10px;
+      padding-right: 10px; /* ensure right padding */
       cursor: pointer;
       font-weight: bold;
-      color: #000; /* black x button */
+      color: #000; /* x button color black */
     }
     form {
       display: flex;
@@ -165,7 +165,7 @@
     .sources {
       display: none;
     }
-    /* Email row: email input and subscribe button side-by-side (no border on input) */
+    /* Email row: email input and subscribe button side-by-side */
     .email-row {
       display: none; /* initially hidden */
       flex-direction: row;
@@ -176,7 +176,7 @@
       flex: 1;
       padding: 10px;
       font-size: 16px;
-      border: none;
+      border: none; /* no border */
       border-radius: 4px;
       background-color: #fff;
     }
@@ -354,7 +354,7 @@
       emailRow.style.display = selectedSources.length > 0 ? "flex" : "none";
     }
     
-    // Handle form submission
+    // Handle form submission (using your existing logic)
     document.getElementById("subscriptionForm").addEventListener("submit", function(e) {
       e.preventDefault();
       document.getElementById("loadingIndicator").style.display = "block";
