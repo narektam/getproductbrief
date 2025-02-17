@@ -2,136 +2,117 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Get Product Brief - Subscribe</title>
-  <!-- Favicon links as needed -->
+  <link rel="icon" type="image/png" href="/assets/images/favicon.ico/favicon-96x96.png" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <link rel="manifest" href="/assets/images/site.webmanifest" />
   <style>
-    /* RESET & BASE STYLES */
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
     body {
       background-color: #f2f2f2;
       font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
       color: #333;
     }
-    a {
-      text-decoration: none;
-      color: inherit;
-    }
-
-    /* HEADER */
+    /* Header with symmetric left/right links */
     header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      background-color: #ffffff;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      z-index: 1100;
       display: flex;
       align-items: center;
+      padding: 10px 20px;
       justify-content: space-between;
-      padding: 16px 24px;
-      background-color: #fff;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
-    .logo {
-      font-size: 20px;
-      font-weight: bold;
-      color: #333;
-    }
-    .header-link {
+    header a.home-btn {
+      text-decoration: none;
       font-size: 14px;
+      background-color: #007BFF;
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 50px;
+      margin-left: 20px;
+    }
+    header h1 {
+      flex: 1;
+      text-align: center;
+      margin: 0;
+      font-size: 24px;
       color: #007BFF;
     }
-    .header-link:hover {
-      text-decoration: underline;
+    header a.update-link {
+      text-decoration: none;
+      font-size: 14px;
+      color: #007BFF;
+      padding: 8px 16px;
+      border: 1px solid #007BFF;
+      border-radius: 50px;
+      margin-right: 20px;
     }
-
-    /* HERO SECTION */
-    .hero {
-      max-width: 900px;
-      margin: 40px auto;
-      text-align: center;
-      padding: 0 20px;
+    .main-content {
+      padding-top: 70px; /* leave space for header */
     }
-    .hero h1 {
-      font-size: 28px;
-      color: #FFBF00; /* highlight color from screenshot */
-      margin-bottom: 16px;
-    }
-    .hero p.subtitle {
-      font-size: 16px;
-      color: #555;
-      margin-bottom: 24px;
-      line-height: 1.5;
-    }
-
-    /* SOURCES LIST (similar to items in screenshot) */
-    .sources-list {
-      background-color: #fff;
-      border-radius: 6px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      padding: 20px;
-      margin: 0 auto 24px;
+    .container {
       max-width: 600px;
+      background-color: #fff;
+      margin: 50px auto;
+      padding: 20px;
+      border-radius: 6px;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
-    .sources-list h3 {
+    /* Title in body */
+    .page-title {
+      text-align: center;
+      font-size: 24px;
+      color: #007BFF;
+      margin-bottom: 20px;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    /* Sources container for checkboxes */
+    .sources {
+      margin-bottom: 20px;
+    }
+    .sources p {
       font-size: 16px;
-      margin-bottom: 16px;
-      color: #333;
+      margin-bottom: 8px;
     }
-    .source-row {
+    .sources label {
+      font-size: 16px;
+      margin-bottom: 8px;
       display: flex;
       align-items: center;
-      padding: 12px 0;
-      border-bottom: 1px solid #eee;
     }
-    .source-row:last-child {
-      border-bottom: none;
+    .sources label img {
+      height: 16px;
+      width: 16px;
+      margin-right: 8px;
     }
-    .source-row img {
-      width: 24px;
-      height: 24px;
-      margin-right: 12px;
-      border-radius: 4px;
-    }
-    .source-row .source-text {
-      font-size: 14px;
-      color: #333;
-    }
-
-    /* FORM SECTION */
-    .form-section {
-      max-width: 600px;
-      margin: 0 auto;
-      background-color: #fff;
-      border-radius: 6px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      padding: 20px;
-    }
-    .form-section h3 {
-      font-size: 18px;
-      color: #333;
-      margin-bottom: 16px;
-      text-align: center;
-    }
-    .form-row {
-      display: flex;
+    /* Email row: email input and subscribe button side-by-side */
+    .email-row {
+      display: none; /* initially hidden */
       flex-direction: row;
-      align-items: center;
       gap: 10px;
-      margin-bottom: 16px;
+      align-items: center;
     }
-    .form-row label {
-      flex: 0 0 auto;
-      font-size: 14px;
-      color: #333;
-    }
-    .form-row input[type="email"] {
+    .email-row input {
       flex: 1;
       padding: 10px;
-      font-size: 14px;
+      font-size: 16px;
       border: 1px solid #ccc;
       border-radius: 4px;
     }
-    .subscribe-btn {
+    .email-row button {
       padding: 10px 16px;
       font-size: 14px;
       background-color: #007BFF;
@@ -140,140 +121,136 @@
       border-radius: 4px;
       cursor: pointer;
     }
-    .subscribe-btn:hover {
+    .email-row button:hover {
       background-color: #0056b3;
     }
-
-    /* FOOTER */
-    footer {
-      text-align: center;
-      font-size: 14px;
-      color: #777;
-      margin: 40px 0 20px;
-    }
-    footer a {
-      color: #007BFF;
-      text-decoration: none;
-      margin: 0 10px;
-    }
-
-    /* LOADING INDICATOR */
     .loading {
       text-align: center;
       font-size: 16px;
       color: #007BFF;
       margin-top: 20px;
-      display: none; /* hidden by default */
+      display: none;
+    }
+    .footer {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 14px;
+    }
+    .footer a {
+      color: #007BFF;
+      text-decoration: none;
+      margin: 0 10px;
     }
   </style>
 </head>
 <body>
-
-  <!-- HEADER -->
   <header>
-    <div class="logo">Get Product Brief</div>
-    <a href="update.html" class="header-link">Already Subscribed?</a>
+    <a href="index.html" class="home-btn">ProductBrief</a>
+    <h1></h1>
+    <a href="update.html" class="update-link">Already Subscribed?</a>
   </header>
-
-  <!-- HERO SECTION -->
-  <section class="hero">
-    <h1>Never miss another Feature, Fix, Update, or Release</h1>
-    <p class="subtitle">
-      Join thousands of product folks who get a weekly email summary of changes in the tools, services, and repositories they rely on.
-      1 minute setup. Absolutely free, no account required.
-    </p>
-  </section>
-
-  <!-- DYNAMIC SOURCES LIST (similar to items in screenshot) -->
-  <!-- If you want actual checkboxes here, merge with your code that loads sources. 
-       For demonstration, I'll show a static list. -->
-  <div class="sources-list" id="sourcesContainer">
-    <h3>Select your sources:</h3>
-    <!-- You could loop over your dynamic sources from JSON here. 
-         For example:
-         <div class="source-row" v-for="source in sources">
-           <img :src="source.logoURL" alt="Source Logo">
-           <div class="source-text">{{ source.name }}</div>
-         </div>
-    -->
-    <div class="source-row">
-      <img src="https://via.placeholder.com/24" alt="Logo">
-      <div class="source-text">OpenAI</div>
-    </div>
-    <div class="source-row">
-      <img src="https://via.placeholder.com/24" alt="Logo">
-      <div class="source-text">Anthropic</div>
-    </div>
-    <div class="source-row">
-      <img src="https://via.placeholder.com/24" alt="Logo">
-      <div class="source-text">Reforge</div>
-    </div>
-  </div>
-
-  <!-- FORM SECTION -->
-  <div class="form-section">
-    <h3>Stay in the Loop</h3>
-    <form id="subscriptionForm">
-      <div class="form-row">
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" placeholder="Enter your email" required/>
+  <div class="main-content">
+    <div class="container">
+      <div class="page-title">Subscribe to Get Product Brief</div>
+      <form id="subscriptionForm">
+        <!-- Sources container for checkboxes -->
+        <div class="sources" id="sourcesContainer">
+          <p>Select your sources:</p>
+          <!-- Dynamic checkboxes will be inserted here -->
+        </div>
+        <!-- Email row container: contains the email input and subscribe button side-by-side -->
+        <div class="email-row" id="emailRow">
+          <input type="email" id="email" name="email" placeholder="Enter your email" required>
+          <button type="submit">Subscribe</button>
+        </div>
+      </form>
+      <div class="loading" id="loadingIndicator">Loading...</div>
+      <div class="footer">
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="terms.html">Terms of Use</a>
       </div>
-      <!-- If you want your actual checkboxes, you could place them here 
-           or keep them in the "sources-list" section. Just ensure they share the same form. -->
-
-      <button type="submit" class="subscribe-btn">Subscribe</button>
-    </form>
-    <div class="loading" id="loadingIndicator">Loading...</div>
+    </div>
   </div>
-
-  <!-- FOOTER -->
-  <footer>
-    <a href="privacy.html">Privacy Policy</a>
-    <a href="terms.html">Terms of Use</a>
-  </footer>
-
-  <!-- MERGE YOUR N8N LOGIC OR FETCH LOGIC HERE -->
   <script>
-    // This example merges your existing subscription logic from the index page:
-    document.getElementById("subscriptionForm").addEventListener("submit", function(e) {
-      e.preventDefault();
-      document.getElementById("loadingIndicator").style.display = "block";
-
-      const email = document.getElementById("email").value;
-      // If you have dynamic checkboxes, you'd gather them here:
-      // e.g. const selectedSources = ...
-      // then pass them in your payload
-
-      const payload = {
-        email: email,
-        // sources: [ selectedSources.join(",") ],
-        // submission_date: ...,
-        // update_date: ...,
-        // submission_status: "Active"
-      };
-
-      // Example fetch to your n8n webhook
-      fetch("https://narektamoyan.app.n8n.cloud/webhook/add-subscription", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload)
-      })
-      .then(response => response.json())
-      .then(data => {
-        document.getElementById("loadingIndicator").style.display = "none";
-        if (data.error && data.error === "existing_subscriber") {
-          alert("Already Subscribed\nThis email is already subscribed. To edit your preferences, click the Update your brief button from your emails.");
-        } else if (data.error) {
+    document.addEventListener("DOMContentLoaded", function() {
+      // Load sources from JSON and populate checkboxes
+      fetch("assets/json/sources.json")
+        .then(response => response.json())
+        .then(sourcesData => {
+          const container = document.getElementById("sourcesContainer");
+          let html = "<p>Select your sources:</p>";
+          sourcesData.forEach(sourceObj => {
+            html += `<label>
+                       <input type="checkbox" name="sources" value="${sourceObj.source}">
+                       <img src="${sourceObj.logoURL}" alt="${sourceObj.source} Logo">
+                       ${sourceObj.source}
+                     </label>`;
+          });
+          container.innerHTML = html;
+          
+          // Add change event listeners to checkboxes to control email row visibility
+          const checkboxes = document.querySelectorAll('input[name="sources"]');
+          checkboxes.forEach(checkbox => {
+            checkbox.addEventListener("change", function() {
+              const anySelected = Array.from(checkboxes).some(cb => cb.checked);
+              const emailRow = document.getElementById("emailRow");
+              emailRow.style.display = anySelected ? "flex" : "none";
+            });
+          });
+        })
+        .catch(error => {
+          console.error("Error loading sources:", error);
+        });
+      
+      // Handle form submission
+      document.getElementById("subscriptionForm").addEventListener("submit", function(e) {
+        e.preventDefault();
+        document.getElementById("loadingIndicator").style.display = "block";
+        
+        const email = document.getElementById("email").value;
+        const checkboxes = document.querySelectorAll('input[name="sources"]:checked');
+        const selectedSources = Array.from(checkboxes).map(checkbox => checkbox.value);
+        const sources = [ selectedSources.join(",") ];
+        const today = new Date().toISOString().split("T")[0];
+        const payload = {
+          email: email,
+          sources: sources,
+          submission_date: today,
+          update_date: today,
+          submission_status: "Active"
+        };
+        
+        fetch("https://narektamoyan.app.n8n.cloud/webhook/add-subscription", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        })
+        .then(response => {
+          document.getElementById("loadingIndicator").style.display = "none";
+          return response.text();
+        })
+        .then(text => {
+          let data = {};
+          try {
+            data = text ? JSON.parse(text) : {};
+          } catch (err) {
+            console.error("Error parsing JSON:", err);
+          }
+          if (data.error && data.error === "existing_subscriber") {
+            alert("Already Subscribed\nThis email is already subscribed. To edit your preferences, click the Update your brief button from your emails.");
+          } else if (data.error) {
+            alert("There was an error processing your subscription.");
+          } else {
+            alert("Thank you for subscribing!");
+            document.getElementById("subscriptionForm").reset();
+            document.getElementById("emailRow").style.display = "none";
+          }
+        })
+        .catch(error => {
+          document.getElementById("loadingIndicator").style.display = "none";
+          console.error("Error submitting form:", error);
           alert("There was an error processing your subscription.");
-        } else {
-          alert("Thank you for subscribing!");
-          document.getElementById("subscriptionForm").reset();
-        }
-      })
-      .catch(error => {
-        document.getElementById("loadingIndicator").style.display = "none";
-        console.error("Error submitting form:", error);
-        alert("There was an error processing your subscription.");
+        });
       });
     });
   </script>
