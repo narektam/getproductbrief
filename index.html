@@ -20,7 +20,7 @@
       flex-direction: column;
       min-height: 100vh;
     }
-    /* Header with symmetric left/right links */
+    /* Header with symmetric left/right links (buttons now black) */
     header {
       position: fixed;
       top: 0;
@@ -37,11 +37,12 @@
     header a.home-btn {
       text-decoration: none;
       font-size: 14px;
-      background-color: #007BFF;
+      background-color: #000;
       color: #fff;
       padding: 8px 16px;
       border-radius: 50px;
       margin-left: 20px;
+      border: none;
     }
     header h1 {
       flex: 1;
@@ -53,9 +54,10 @@
     header a.update-link {
       text-decoration: none;
       font-size: 14px;
-      color: #007BFF;
+      background-color: #000;
+      color: #fff;
       padding: 8px 16px;
-      border: 1px solid #007BFF;
+      border: none;
       border-radius: 50px;
       margin-right: 20px !important;
     }
@@ -63,23 +65,23 @@
       flex: 1;
       padding-top: 70px; /* leave space for header */
     }
-    /* Page title placed above the card */
+    /* Page title placed above the white card; updated color */
     .page-title {
       text-align: center;
       font-size: 24px;
-      color: #007BFF;
+      color: #363737;
       margin: 40px auto 20px;
     }
     .container {
       max-width: 600px;
-      background-color: #f57b55; /* Updated card background */
+      background-color: #f0faf3; /* card area background */
       margin: 0 auto 20px;
       padding: 20px;
       border-radius: 6px;
       box-sizing: border-box;
       position: relative;
     }
-    /* Search box inside the card */
+    /* Search box inside the card (no border) */
     .search-box {
       margin-bottom: 20px;
       position: relative;
@@ -88,9 +90,10 @@
       width: 100%;
       padding: 10px;
       font-size: 16px;
-      border: 1px solid #ccc;
+      border: none;
       border-radius: 4px;
       box-sizing: border-box;
+      background-color: #fff;
     }
     /* Dropdown list for search results */
     .search-results {
@@ -131,7 +134,7 @@
     }
     .selected-source {
       background-color: #fff;
-      border: 0.5px solid #000; /* border color changed to black */
+      border: 0.5px solid #000; /* black border */
       border-radius: 4px;
       padding: 10px;
       box-sizing: border-box;
@@ -151,7 +154,7 @@
       padding-right: 10px;
       cursor: pointer;
       font-weight: bold;
-      color: #000; /* x button color changed to black */
+      color: #000; /* black x button */
     }
     form {
       display: flex;
@@ -162,7 +165,7 @@
     .sources {
       display: none;
     }
-    /* Email row: email input and subscribe button side-by-side */
+    /* Email row: email input and subscribe button side-by-side (no border on input) */
     .email-row {
       display: none; /* initially hidden */
       flex-direction: row;
@@ -173,13 +176,14 @@
       flex: 1;
       padding: 10px;
       font-size: 16px;
-      border: 1px solid #ccc;
+      border: none;
       border-radius: 4px;
+      background-color: #fff;
     }
     .email-row button {
       padding: 10px 16px;
       font-size: 14px;
-      background-color: #000; /* subscribe button color set to black */
+      background-color: #000; /* subscribe button black */
       color: #fff;
       border: none;
       border-radius: 4px;
