@@ -179,15 +179,15 @@
   <div id="clerk-container"></div>
   
   <header>
-    <a href="update.html" class="home-btn">ProductBrief</a>
-    <!-- Auth link will be set dynamically based on authentication state -->
+    <!-- Home link will be set dynamically based on authentication -->
+    <a id="homeLink" href="#" class="home-btn">ProductBrief</a>
     <a id="authLink" href="#" class="update-link"></a>
   </header>
   
   <div class="main-content">
     <!-- Main container, shown only when authenticated -->
     <div class="container" id="mainContainer">
-      <!-- Page title in the body -->
+      <!-- Page title in body -->
       <div class="page-title">Update Your Subscription - Get Product Brief</div>
       <form id="updateForm">
         <!-- Email display container for authenticated users -->
@@ -299,19 +299,23 @@
     window.addEventListener('load', async function () {
       await Clerk.load();
       console.log("ClerkJS is loaded", Clerk.user);
+      const homeLink = document.getElementById("homeLink");
       const authLink = document.getElementById("authLink");
       if (Clerk.user) {
-        // Authenticated: update auth link to "Sign Out"
+        // For authenticated users:
+        // Set home link to update.html so clicking it keeps them on the update page.
+        homeLink.href = "update.html";
+        // Update auth link to "Sign Out" with sign-out functionality.
         authLink.textContent = "Sign Out";
         authLink.href = "#";
         authLink.addEventListener("click", async function () {
           await Clerk.signOut();
           window.location.href = "index.html";
         });
-        // Show main container and update form
+        // Show main container and update form.
         document.getElementById("clerk-container").style.display = "none";
         document.getElementById("mainContainer").style.display = "block";
-        // Hide fallback email input and disable it
+        // Hide fallback email input and disable it.
         const emailInputContainer = document.getElementById("emailInputContainer");
         emailInputContainer.style.display = "none";
         const emailInput = document.getElementById("emailInput");
@@ -319,18 +323,21 @@
           emailInput.disabled = true;
           emailInput.removeAttribute("required");
         }
-        // Show email display container
+        // Show email display container.
         document.getElementById("emailDisplayContainer").style.display = "block";
         const userEmail = Clerk.user.primaryEmailAddress.emailAddress;
         document.getElementById("emailDisplay").textContent = userEmail;
         document.getElementById("email").value = userEmail;
-        // Automatically load user preferences using the authenticated email
+        // Automatically load user preferences using the authenticated email.
         loadUserPreferences(userEmail);
       } else {
-        // Not authenticated: update auth link to "Already Subscribed?"
+        // For non-authenticated users:
+        // Set home link to index.html so clicking it takes them to the subscription page.
+        homeLink.href = "index.html";
+        // Update auth link to "Already Subscribed?" linking to update.html.
         authLink.textContent = "Already Subscribed?";
         authLink.href = "update.html";
-        // Hide main container and show Clerk sign-in overlay
+        // Hide main container and show Clerk sign-in overlay.
         document.getElementById("mainContainer").style.display = "none";
         document.getElementById("clerk-container").style.display = "flex";
         Clerk.mountSignIn(document.getElementById("clerk-container"), {
