@@ -90,6 +90,7 @@
       width: 100%;
       padding: 10px;
       font-size: 16px;
+      height: 48px; /* set uniform height */
       border: none; /* no border */
       border-radius: 4px;
       box-sizing: border-box;
@@ -128,11 +129,11 @@
       margin-right: 10px;
       border-radius: 4px;
     }
-    /* Selected sources container: vertical stack, full width, reduced gap */
+    /* Selected sources container: vertical stack, full width */
     .selected-sources {
       display: flex;
       flex-direction: column;
-      gap: 5px; /* 50% reduction from 10px */
+      gap: 5px; /* reduced gap */
       margin-bottom: 20px;
       width: 100%;
     }
@@ -180,7 +181,7 @@
       flex: 1;
       padding: 10px;
       font-size: 16px;
-      height: 28px; /* reduced height by 20px from 48px */
+      height: 48px; /* set uniform height */
       border: none; /* no border */
       border-radius: 4px;
       background-color: #fff;
@@ -192,7 +193,7 @@
     .email-row button {
       padding: 10px 16px;
       font-size: 14px;
-      height: 28px; /* match email input height */
+      height: 48px; /* same height as email input */
       background-color: #000;
       color: #fff;
       border: none;
