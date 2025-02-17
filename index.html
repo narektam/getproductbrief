@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Get Product Brief - Subscribe</title>
   <link rel="icon" type="image/png" href="/assets/images/favicon.ico/favicon-96x96.png" sizes="96x96" />
   <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
   <link rel="shortcut icon" href="/assets/images/favicon.ico" />
@@ -16,7 +17,7 @@
       padding: 0;
       color: #333;
     }
-    /* Header with symmetric left/right links */
+    /* Header with symmetric left/right links, without a title */
     header {
       position: fixed;
       top: 0;
@@ -27,8 +28,8 @@
       z-index: 1100;
       display: flex;
       align-items: center;
-      padding: 10px 20px;
       justify-content: space-between;
+      padding: 10px 20px;
     }
     header a.home-btn {
       text-decoration: none;
@@ -38,13 +39,6 @@
       padding: 8px 16px;
       border-radius: 50px;
       margin-left: 20px;
-    }
-    header h1 {
-      flex: 1;
-      text-align: center;
-      margin: 0;
-      font-size: 24px;
-      color: #007BFF;
     }
     header a.update-link {
       text-decoration: none;
@@ -58,7 +52,7 @@
     .main-content {
       padding-top: 70px; /* leave space for header */
     }
-    /* Page title placed above container */
+    /* Page title above the white card */
     .page-title {
       text-align: center;
       font-size: 24px;
@@ -73,25 +67,16 @@
       border-radius: 6px;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
-    /* Search box inside container */
+    /* Search box inside the white card */
     .search-box {
-      position: relative;
       margin-bottom: 20px;
     }
     .search-box input[type="text"] {
       width: 100%;
-      padding: 10px 40px 10px 10px;
+      padding: 10px;
       font-size: 16px;
       border: 1px solid #ccc;
       border-radius: 4px;
-    }
-    .search-box .search-icon {
-      position: absolute;
-      right: 10px;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 18px;
-      color: #777;
     }
     form {
       display: flex;
@@ -150,15 +135,22 @@
       margin-top: 20px;
       display: none;
     }
-    .footer {
-      text-align: center;
-      margin-top: 20px;
+    /* Footer: dedicated area at the bottom, left aligned */
+    footer {
+      background-color: #fff;
+      padding: 20px;
+      border-top: 1px solid #ddd;
+      margin-top: 40px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+      text-align: left;
       font-size: 14px;
     }
-    .footer a {
+    footer a {
       color: #007BFF;
       text-decoration: none;
-      margin: 0 10px;
+      margin-right: 10px;
     }
   </style>
 </head>
@@ -169,13 +161,12 @@
     <a href="update.html" class="update-link">Already Subscribed?</a>
   </header>
   <div class="main-content">
-    <!-- Page title outside the white card -->
+    <!-- Page title placed above the white card -->
     <div class="page-title">Subscribe to Get Product Brief</div>
     <div class="container">
       <!-- Search box inside the white card -->
       <div class="search-box">
         <input type="text" id="searchInput" placeholder="Search for sources you want to add">
-        <span class="search-icon">&#128269;</span>
       </div>
       <form id="subscriptionForm">
         <!-- Sources container for checkboxes -->
