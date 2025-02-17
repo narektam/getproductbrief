@@ -90,15 +90,18 @@
       width: 100%;
       padding: 10px;
       font-size: 16px;
-      height: 48px; /* set uniform height */
+      height: 48px; /* uniform height */
       border: none; /* no border */
       border-radius: 4px;
       box-sizing: border-box;
       background-color: #fff;
     }
-    /* Lighter placeholder text for search box */
     .search-box input[type="text"]::placeholder {
       color: #aaa;
+    }
+    .search-box input[type="text"]:focus {
+      border: 1px solid #000;
+      outline: none;
     }
     /* Dropdown list for search results */
     .search-results {
@@ -107,7 +110,7 @@
       left: 0;
       right: 0;
       background-color: #fff;
-      border: 1px solid #ccc;
+      border: 1px solid #000; /* black border */
       border-top: none;
       max-height: 180px; /* about 4.5 items visible */
       overflow-y: auto;
@@ -115,7 +118,8 @@
       display: none;
     }
     .search-results div {
-      padding: 8px 10px;
+      height: 48px; /* same height as selected source cards */
+      padding: 0 10px;
       display: flex;
       align-items: center;
       cursor: pointer;
@@ -172,7 +176,7 @@
     }
     /* Email row: email input and subscribe button side-by-side */
     .email-row {
-      display: none; /* initially hidden */
+      display: none;
       flex-direction: row;
       gap: 10px;
       align-items: center;
@@ -181,15 +185,18 @@
       flex: 1;
       padding: 10px;
       font-size: 16px;
-      height: 48px; /* set uniform height */
+      height: 48px; /* uniform height */
       border: none; /* no border */
       border-radius: 4px;
       background-color: #fff;
       box-sizing: border-box;
     }
-    /* Lighter placeholder text for email input */
     .email-row input::placeholder {
       color: #aaa;
+    }
+    .email-row input:focus {
+      border: 1px solid #000;
+      outline: none;
     }
     .email-row button {
       padding: 10px 16px;
