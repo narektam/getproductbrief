@@ -27,7 +27,7 @@
       left: 0;
       width: 100%;
       background-color: #ffffff;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
       z-index: 1100;
       display: flex;
       align-items: center;
@@ -63,7 +63,7 @@
       flex: 1;
       padding-top: 70px; /* leave space for header */
     }
-    /* Page title above the white card */
+    /* Page title placed above the white card */
     .page-title {
       text-align: center;
       font-size: 24px;
@@ -76,12 +76,12 @@
       margin: 0 auto 20px;
       padding: 20px;
       border-radius: 6px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
       position: relative;
     }
     /* Search box inside the white card */
     .search-box {
-      margin-bottom: 10px;
+      margin-bottom: 20px;
       position: relative;
     }
     .search-box input[type="text"] {
@@ -92,7 +92,7 @@
       border-radius: 4px;
       box-sizing: border-box;
     }
-    /* Dropdown search results */
+    /* Dropdown list for search results */
     .search-results {
       position: absolute;
       top: 100%;
@@ -101,9 +101,10 @@
       background-color: #fff;
       border: 1px solid #ccc;
       border-top: none;
-      max-height: 200px;
+      max-height: 200px; /* Adjust so that about 4.5 items are visible */
       overflow-y: auto;
       z-index: 10;
+      display: none;
     }
     .search-results div {
       padding: 8px 10px;
@@ -120,7 +121,7 @@
       margin-right: 10px;
       border-radius: 4px;
     }
-    /* Selected sources container */
+    /* Container for selected sources (if needed) */
     .selected-sources {
       display: flex;
       flex-wrap: wrap;
@@ -153,7 +154,7 @@
       flex-direction: column;
       gap: 15px;
     }
-    /* Hide the original sources container if any */
+    /* Hide the original sources container */
     .sources {
       display: none;
     }
@@ -220,9 +221,9 @@
       <!-- Search box inside the white card -->
       <div class="search-box">
         <input type="text" id="searchInput" placeholder="Search for sources you want to add">
-        <div class="search-results" id="searchResults" style="display:none;"></div>
+        <div class="search-results" id="searchResults"></div>
       </div>
-      <!-- Container for selected sources -->
+      <!-- Container for selected sources (if you want to show them) -->
       <div class="selected-sources" id="selectedSources"></div>
       <form id="subscriptionForm">
         <!-- Email row container: contains the email input and subscribe button side-by-side -->
@@ -248,7 +249,7 @@
       try {
         const response = await fetch("assets/json/sources.json");
         const sourcesData = await response.json();
-        allSources = sourcesData; // store for later use
+        allSources = sourcesData;
       } catch (error) {
         console.error("Error loading sources:", error);
       }
@@ -259,25 +260,10 @@
     const searchResults = document.getElementById("searchResults");
     const selectedSourcesContainer = document.getElementById("selectedSources");
 
-    // When user types or focuses in search box, show dropdown with matching sources
-    searchInput.addEventListener("input", function() {
-      const query = this.value.toLowerCase().trim();
-      // Clear previous results
+    // Function to render search results from a list of sources
+    function renderSearchResults(sources) {
       searchResults.innerHTML = "";
-      if (!query) {
-        searchResults.style.display = "none";
-        return;
-      }
-      // Filter sources based on query and exclude already selected ones
-      const results = allSources.filter(source => 
-        source.source.toLowerCase().includes(query) &&
-        !selectedSources.some(sel => sel.source === source.source)
-      );
-      if (results.length === 0) {
-        searchResults.style.display = "none";
-        return;
-      }
-      results.forEach(source => {
+      sources.forEach(source => {
         const div = document.createElement("div");
         div.innerHTML = `<img src="${source.logoURL}" alt="${source.source} Logo"> ${source.source}`;
         div.addEventListener("click", function() {
@@ -287,10 +273,31 @@
         });
         searchResults.appendChild(div);
       });
-      searchResults.style.display = "block";
+      searchResults.style.display = sources.length ? "block" : "none";
+    }
+    
+    // Show all sources when the search box is focused and empty
+    searchInput.addEventListener("focus", function() {
+      if (this.value.trim() === "") {
+        renderSearchResults(allSources);
+      }
+    });
+    
+    // Filter sources as user types
+    searchInput.addEventListener("input", function() {
+      const query = this.value.toLowerCase().trim();
+      if (query === "") {
+        renderSearchResults(allSources);
+      } else {
+        const results = allSources.filter(source =>
+          source.source.toLowerCase().includes(query) &&
+          !selectedSources.some(sel => sel.source === source.source)
+        );
+        renderSearchResults(results);
+      }
     });
 
-    // Hide search results if clicking outside the search box
+    // Hide search results if clicking outside the search box and results
     document.addEventListener("click", function(e) {
       if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
         searchResults.style.display = "none";
@@ -335,13 +342,12 @@
       emailRow.style.display = selectedSources.length > 0 ? "flex" : "none";
     }
     
-    // Handle form submission (using your existing logic)
+    // Handle form submission
     document.getElementById("subscriptionForm").addEventListener("submit", function(e) {
       e.preventDefault();
       document.getElementById("loadingIndicator").style.display = "block";
       
       const email = document.getElementById("email").value;
-      // Build sources payload from selectedSources
       const sourcesPayload = [ selectedSources.map(s => s.source).join(",") ];
       const today = new Date().toISOString().split("T")[0];
       const payload = {
