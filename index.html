@@ -10,26 +10,30 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
   <link rel="manifest" href="/assets/images/site.webmanifest" />
   <style>
+    /* Use flexbox on body to push footer to the bottom */
     body {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
       background-color: #f2f2f2;
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
       color: #333;
     }
-    /* Header with symmetric left/right links, without a title */
+    /* Header with symmetric left/right links */
     header {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       background-color: #ffffff;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
       z-index: 1100;
       display: flex;
       align-items: center;
-      justify-content: space-between;
       padding: 10px 20px;
+      justify-content: space-between;
     }
     header a.home-btn {
       text-decoration: none;
@@ -39,6 +43,13 @@
       padding: 8px 16px;
       border-radius: 50px;
       margin-left: 20px;
+    }
+    header h1 {
+      flex: 1;
+      text-align: center;
+      margin: 0;
+      font-size: 24px;
+      color: #007BFF;
     }
     header a.update-link {
       text-decoration: none;
@@ -50,7 +61,16 @@
       margin-right: 20px;
     }
     .main-content {
+      flex: 1;
       padding-top: 70px; /* leave space for header */
+    }
+    .container {
+      max-width: 600px;
+      background-color: #fff;
+      margin: 50px auto 20px;
+      padding: 20px;
+      border-radius: 6px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
     /* Page title above the white card */
     .page-title {
@@ -58,14 +78,6 @@
       font-size: 24px;
       color: #007BFF;
       margin: 40px auto 20px;
-    }
-    .container {
-      max-width: 600px;
-      background-color: #fff;
-      margin: 0 auto 20px;
-      padding: 20px;
-      border-radius: 6px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
     /* Search box inside the white card */
     .search-box {
@@ -77,6 +89,7 @@
       font-size: 16px;
       border: 1px solid #ccc;
       border-radius: 4px;
+      box-sizing: border-box;
     }
     form {
       display: flex;
@@ -102,7 +115,7 @@
       width: 16px;
       margin-right: 8px;
     }
-    /* Email row: email input and subscribe button side-by-side */
+    /* Email row: contains email input and subscribe button side-by-side */
     .email-row {
       display: none; /* initially hidden */
       flex-direction: row;
@@ -135,17 +148,14 @@
       margin-top: 20px;
       display: none;
     }
-    /* Footer: dedicated area at the bottom, left aligned */
+    /* Footer: fixed at the bottom of the page */
     footer {
       background-color: #fff;
       padding: 20px;
       border-top: 1px solid #ddd;
-      margin-top: 40px;
-      max-width: 600px;
-      margin-left: auto;
-      margin-right: auto;
-      text-align: left;
       font-size: 14px;
+      width: 100%;
+      text-align: left;
     }
     footer a {
       color: #007BFF;
