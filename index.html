@@ -17,14 +17,14 @@
       padding: 0;
       color: #333;
     }
-    /* Header with symmetric left/right links */
+    /* Fixed header styling */
     header {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       background-color: #ffffff;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
       z-index: 1100;
       display: flex;
       align-items: center;
@@ -131,12 +131,16 @@
       margin-top: 20px;
       display: none;
     }
-    .footer {
+    /* Dedicated footer styling */
+    footer {
+      background-color: #fff;
+      padding: 20px 0;
+      border-top: 1px solid #ddd;
       text-align: center;
-      margin-top: 20px;
       font-size: 14px;
+      margin-top: 40px;
     }
-    .footer a {
+    footer a {
       color: #007BFF;
       text-decoration: none;
       margin: 0 10px;
@@ -146,7 +150,7 @@
 <body>
   <header>
     <a href="index.html" class="home-btn">ProductBrief</a>
-    <h1></h1>
+    <h1>Subscribe to Get Product Brief</h1>
     <a href="update.html" class="update-link">Already Subscribed?</a>
   </header>
   <div class="main-content">
@@ -165,12 +169,12 @@
         </div>
       </form>
       <div class="loading" id="loadingIndicator">Loading...</div>
-      <div class="footer">
-        <a href="privacy.html">Privacy Policy</a>
-        <a href="terms.html">Terms of Use</a>
-      </div>
     </div>
   </div>
+  <footer>
+    <a href="privacy.html">Privacy Policy</a>
+    <a href="terms.html">Terms of Use</a>
+  </footer>
   <script>
     document.addEventListener("DOMContentLoaded", function() {
       // Load sources from JSON and populate checkboxes
