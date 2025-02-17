@@ -129,11 +129,11 @@
       margin-right: 10px;
       border-radius: 4px;
     }
-    /* Selected sources container: vertical stack, full width */
+    /* Selected sources container: vertical stack, full width, reduced gap */
     .selected-sources {
       display: flex;
       flex-direction: column;
-      gap: 5px; /* reduced gap */
+      gap: 5px;
       margin-bottom: 20px;
       width: 100%;
     }
@@ -185,6 +185,7 @@
       border: none; /* no border */
       border-radius: 4px;
       background-color: #fff;
+      box-sizing: border-box;
     }
     /* Lighter placeholder text for email input */
     .email-row input::placeholder {
