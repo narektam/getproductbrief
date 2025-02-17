@@ -12,7 +12,7 @@
       padding: 0;
       color: #333;
     }
-    /* Header styling: only navigation links */
+    /* Fixed header styling: only navigation links */
     header {
       position: fixed;
       top: 0;
@@ -45,8 +45,9 @@
       margin-right: 20px;
     }
     .main-content {
-      padding-top: 70px; /* space for header */
+      padding-top: 70px; /* leave space for header */
     }
+    /* Container for authenticated content */
     .container {
       max-width: 600px;
       background-color: #fff;
@@ -54,6 +55,7 @@
       padding: 20px;
       border-radius: 6px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      display: none; /* initially hidden until user is authenticated */
     }
     /* Page title in body */
     .page-title {
@@ -100,7 +102,7 @@
       border: 1px solid #ccc;
       border-radius: 4px;
     }
-    /* Hidden email field for submission when authenticated */
+    /* Hidden email field used for submission (when authenticated) */
     #email {
       display: none;
     }
@@ -182,8 +184,8 @@
   </header>
   
   <div class="main-content">
-    <!-- The container is shown only if the user is authenticated -->
-    <div class="container" id="mainContainer" style="display:none;">
+    <!-- Main container (only visible after authentication) -->
+    <div class="container" id="mainContainer">
       <!-- Page title moved to body and center aligned -->
       <div class="page-title">Update Your Subscription - Get Product Brief</div>
       <form id="updateForm">
@@ -215,7 +217,11 @@
   </div>
   
   <script>
-    // Function to load sources from JSON and populate checkboxes
+    // Get prefill email from URL query parameter (if exists)
+    const urlParams = new URLSearchParams(window.location.search);
+    const prefillEmail = urlParams.get("email");
+
+    // Function to load dynamic sources from JSON and populate checkboxes
     async function loadSources() {
       try {
         const response = await fetch("assets/json/sources.json");
@@ -313,13 +319,14 @@
         const userEmail = Clerk.user.primaryEmailAddress.emailAddress;
         document.getElementById("emailDisplay").textContent = userEmail;
         document.getElementById("email").value = userEmail;
-        // Automatically load user preferences
+        // Automatically load user preferences using the authenticated email
         loadUserPreferences(userEmail);
       } else {
-        // Not authenticated: hide the main container and show Clerk sign-in overlay
+        // Not authenticated: hide main container and show Clerk sign-in overlay
         document.getElementById("mainContainer").style.display = "none";
         document.getElementById("clerk-container").style.display = "flex";
-        Clerk.mountSignIn(document.getElementById("clerk-container"), {
+        // Include prefill option if email query parameter is present
+        let signInOptions = {
           redirectUrl: window.location.href,
           signUpUrl: "https://www.getproductbrief.com/index.html",
           defaultLocale: "en",
@@ -332,7 +339,11 @@
               colorPrimary: "#007BFF"
             }
           }
-        });
+        };
+        if(prefillEmail) {
+          signInOptions.prefill = { identifier: prefillEmail };
+        }
+        Clerk.mountSignIn(document.getElementById("clerk-container"), signInOptions);
       }
     });
     
