@@ -63,7 +63,7 @@
       flex: 1;
       padding-top: 70px; /* leave space for header */
     }
-    /* Page title placed above the white card */
+    /* Page title above the white card */
     .page-title {
       text-align: center;
       font-size: 24px;
@@ -101,7 +101,8 @@
       background-color: #fff;
       border: 1px solid #ccc;
       border-top: none;
-      max-height: 200px; /* Adjust so that about 4.5 items are visible */
+      /* Set max-height to show about 4.5 items (adjust as needed) */
+      max-height: 180px;
       overflow-y: auto;
       z-index: 10;
       display: none;
@@ -116,35 +117,36 @@
       background-color: #f0f0f0;
     }
     .search-results img {
-      width: 32px;
-      height: 32px;
+      width: 24px;
+      height: 24px;
       margin-right: 10px;
       border-radius: 4px;
     }
-    /* Container for selected sources (if needed) */
+    /* Selected sources: large cards stacked vertically */
     .selected-sources {
       display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
+      flex-direction: column;
+      gap: 10px;
       margin-bottom: 20px;
     }
     .selected-source {
       background-color: #e9ecef;
       border: 1px solid #ccc;
       border-radius: 4px;
-      padding: 6px 10px;
+      padding: 10px;
       display: flex;
       align-items: center;
-      font-size: 14px;
+      width: 100%;
+      font-size: 16px;
     }
     .selected-source img {
       width: 32px;
       height: 32px;
-      margin-right: 8px;
+      margin-right: 10px;
       border-radius: 4px;
     }
     .selected-source .remove-source {
-      margin-left: 8px;
+      margin-left: auto;
       cursor: pointer;
       font-weight: bold;
       color: #007BFF;
@@ -223,7 +225,7 @@
         <input type="text" id="searchInput" placeholder="Search for sources you want to add">
         <div class="search-results" id="searchResults"></div>
       </div>
-      <!-- Container for selected sources (if you want to show them) -->
+      <!-- Container for selected sources -->
       <div class="selected-sources" id="selectedSources"></div>
       <form id="subscriptionForm">
         <!-- Email row container: contains the email input and subscribe button side-by-side -->
@@ -260,7 +262,7 @@
     const searchResults = document.getElementById("searchResults");
     const selectedSourcesContainer = document.getElementById("selectedSources");
 
-    // Function to render search results from a list of sources
+    // Render search results from a list of sources
     function renderSearchResults(sources) {
       searchResults.innerHTML = "";
       sources.forEach(source => {
@@ -276,10 +278,12 @@
       searchResults.style.display = sources.length ? "block" : "none";
     }
     
-    // Show all sources when the search box is focused and empty
+    // When search box is focused and empty, show all sources (limited to max-height so 4.5 items visible)
     searchInput.addEventListener("focus", function() {
       if (this.value.trim() === "") {
-        renderSearchResults(allSources);
+        renderSearchResults(allSources.filter(source => 
+          !selectedSources.some(sel => sel.source === source.source)
+        ));
       }
     });
     
@@ -287,7 +291,9 @@
     searchInput.addEventListener("input", function() {
       const query = this.value.toLowerCase().trim();
       if (query === "") {
-        renderSearchResults(allSources);
+        renderSearchResults(allSources.filter(source => 
+          !selectedSources.some(sel => sel.source === source.source)
+        ));
       } else {
         const results = allSources.filter(source =>
           source.source.toLowerCase().includes(query) &&
@@ -304,7 +310,7 @@
       }
     });
 
-    // Function to add a selected source to the container
+    // Function to add a selected source to the container as a large card
     function addSelectedSource(source) {
       selectedSources.push(source);
       renderSelectedSources();
@@ -318,7 +324,7 @@
       updateEmailRowVisibility();
     }
 
-    // Render the selected sources container
+    // Render the selected sources container as large cards stacked vertically
     function renderSelectedSources() {
       selectedSourcesContainer.innerHTML = "";
       selectedSources.forEach(source => {
@@ -342,7 +348,7 @@
       emailRow.style.display = selectedSources.length > 0 ? "flex" : "none";
     }
     
-    // Handle form submission
+    // Handle form submission (using your existing logic)
     document.getElementById("subscriptionForm").addEventListener("submit", function(e) {
       e.preventDefault();
       document.getElementById("loadingIndicator").style.display = "block";
