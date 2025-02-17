@@ -23,7 +23,7 @@
       z-index: 1100;
       display: flex;
       align-items: center;
-      justify-content: flex-start;
+      justify-content: space-between;
       padding: 10px 20px;
     }
     header a.home-btn {
@@ -35,10 +35,19 @@
       border-radius: 50px;
       margin-left: 20px;
     }
-    /* Main content positioned below header */
-    .main-content {
-      padding-top: 70px;
+    header a#authLink {
+      text-decoration: none;
+      font-size: 14px;
+      color: #007BFF;
+      padding: 8px 16px;
+      border: 1px solid #007BFF;
+      border-radius: 50px;
+      margin-right: 20px;
     }
+    .main-content {
+      padding-top: 70px; /* leave space for header */
+    }
+    /* Container for authenticated content */
     .container {
       max-width: 600px;
       background-color: #fff;
@@ -46,7 +55,7 @@
       padding: 20px;
       border-radius: 6px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      display: none; /* only shown if authenticated */
+      display: none; /* shown only when authenticated */
     }
     /* Page title in body */
     .page-title {
@@ -93,7 +102,7 @@
       border: 1px solid #ccc;
       border-radius: 4px;
     }
-    /* Hidden email field used for submission (when authenticated) */
+    /* Hidden email field for submission when authenticated */
     #email {
       display: none;
     }
@@ -170,8 +179,9 @@
   <div id="clerk-container"></div>
   
   <header>
-    <!-- For authenticated users, the home link now points to update.html -->
     <a href="update.html" class="home-btn">ProductBrief</a>
+    <!-- Auth link will be set dynamically based on authentication state -->
+    <a id="authLink" href="#" class="update-link"></a>
   </header>
   
   <div class="main-content">
@@ -289,8 +299,16 @@
     window.addEventListener('load', async function () {
       await Clerk.load();
       console.log("ClerkJS is loaded", Clerk.user);
+      const authLink = document.getElementById("authLink");
       if (Clerk.user) {
-        // Authenticated: hide Clerk overlay and show main container
+        // Authenticated: update auth link to "Sign Out"
+        authLink.textContent = "Sign Out";
+        authLink.href = "#";
+        authLink.addEventListener("click", async function () {
+          await Clerk.signOut();
+          window.location.href = "index.html";
+        });
+        // Show main container and update form
         document.getElementById("clerk-container").style.display = "none";
         document.getElementById("mainContainer").style.display = "block";
         // Hide fallback email input and disable it
@@ -309,7 +327,10 @@
         // Automatically load user preferences using the authenticated email
         loadUserPreferences(userEmail);
       } else {
-        // Not authenticated: hide main container and show Clerk sign-in overlay
+        // Not authenticated: update auth link to "Already Subscribed?"
+        authLink.textContent = "Already Subscribed?";
+        authLink.href = "update.html";
+        // Hide main container and show Clerk sign-in overlay
         document.getElementById("mainContainer").style.display = "none";
         document.getElementById("clerk-container").style.display = "flex";
         Clerk.mountSignIn(document.getElementById("clerk-container"), {
