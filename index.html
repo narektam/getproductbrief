@@ -65,7 +65,7 @@
       flex: 1;
       padding-top: 70px; /* leave space for header */
     }
-    /* Page title placed above the white card, updated color */
+    /* Page title placed above the card, updated color */
     .page-title {
       text-align: center;
       font-size: 24px;
@@ -90,6 +90,7 @@
       width: 100%;
       padding: 10px;
       font-size: 16px;
+      height: 48px; /* increased height */
       border: none; /* no border */
       border-radius: 4px;
       box-sizing: border-box;
@@ -134,7 +135,7 @@
     }
     .selected-source {
       background-color: #fff;
-      border: 0.5px solid #000; /* border color set to black */
+      border: none;  /* no border */
       border-radius: 4px;
       padding: 10px;
       box-sizing: border-box;
@@ -151,10 +152,10 @@
     }
     .selected-source .remove-source {
       margin-left: auto;
-      padding-right: 10px; /* ensure right padding */
+      padding-right: 10px;
       cursor: pointer;
       font-weight: bold;
-      color: #000; /* x button color black */
+      color: #000;
     }
     form {
       display: flex;
@@ -167,7 +168,7 @@
     }
     /* Email row: email input and subscribe button side-by-side */
     .email-row {
-      display: none; /* initially hidden */
+      display: none;
       flex-direction: row;
       gap: 10px;
       align-items: center;
@@ -176,6 +177,7 @@
       flex: 1;
       padding: 10px;
       font-size: 16px;
+      height: 48px; /* increased height */
       border: none; /* no border */
       border-radius: 4px;
       background-color: #fff;
@@ -183,7 +185,8 @@
     .email-row button {
       padding: 10px 16px;
       font-size: 14px;
-      background-color: #000; /* subscribe button black */
+      height: 48px; /* same height as email input */
+      background-color: #000;
       color: #fff;
       border: none;
       border-radius: 4px;
