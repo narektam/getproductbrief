@@ -33,10 +33,11 @@
       color: #fff;
       padding: 8px 16px;
       border-radius: 50px;
-      /* For authenticated users, home should always point to update.html */
+      margin-left: 20px;
     }
+    /* Main content positioned below header */
     .main-content {
-      padding-top: 70px; /* leave space for header */
+      padding-top: 70px;
     }
     .container {
       max-width: 600px;
@@ -45,7 +46,7 @@
       padding: 20px;
       border-radius: 6px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      display: none; /* shown only after authentication */
+      display: none; /* only shown if authenticated */
     }
     /* Page title in body */
     .page-title {
@@ -92,7 +93,7 @@
       border: 1px solid #ccc;
       border-radius: 4px;
     }
-    /* Hidden email field for submission (when authenticated) */
+    /* Hidden email field used for submission (when authenticated) */
     #email {
       display: none;
     }
@@ -169,14 +170,14 @@
   <div id="clerk-container"></div>
   
   <header>
-    <!-- For authenticated users, home link should point to update.html -->
+    <!-- For authenticated users, the home link now points to update.html -->
     <a href="update.html" class="home-btn">ProductBrief</a>
   </header>
   
   <div class="main-content">
-    <!-- Main container (visible only for authenticated users) -->
+    <!-- Main container, shown only when authenticated -->
     <div class="container" id="mainContainer">
-      <!-- Page title in body -->
+      <!-- Page title in the body -->
       <div class="page-title">Update Your Subscription - Get Product Brief</div>
       <form id="updateForm">
         <!-- Email display container for authenticated users -->
