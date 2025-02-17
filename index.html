@@ -65,7 +65,7 @@
       flex: 1;
       padding-top: 70px; /* leave space for header */
     }
-    /* Page title placed above the card, updated color */
+    /* Page title placed above the card */
     .page-title {
       text-align: center;
       font-size: 24px;
@@ -103,23 +103,22 @@
       border: 1px solid #000;
       outline: none;
     }
-    /* Dropdown list for search results with rounded corners and fade */
+    /* Dropdown list for search results with fade-out effect and rounded corners */
     .search-results {
       position: absolute;
       top: calc(100% + 5px); /* 5px gap between search box and list */
       left: 0;
       right: 0;
       background-color: #fff;
-      border: 1px solid #000; /* black border */
+      border: 1px solid #000;
       border-top: none;
       border-radius: 4px;
-      max-height: 216px; /* about 4.5 items at 48px each */
+      max-height: 216px; /* 4.5 items at 48px each */
       overflow-y: auto;
       z-index: 10;
       display: none;
       position: absolute;
     }
-    /* Fade effect on the bottom of the search results */
     .search-results::after {
       content: "";
       position: absolute;
