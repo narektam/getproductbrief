@@ -57,14 +57,13 @@
       padding: 8px 16px;
       border: 1px solid #007BFF;
       border-radius: 50px;
-      /* Ensure extra right spacing */
       margin-right: 20px !important;
     }
     .main-content {
       flex: 1;
       padding-top: 70px; /* leave space for header */
     }
-    /* Page title placed above the white card */
+    /* Page title above the white card */
     .page-title {
       text-align: center;
       font-size: 24px;
@@ -78,10 +77,12 @@
       padding: 20px;
       border-radius: 6px;
       box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      position: relative;
     }
     /* Search box inside the white card */
     .search-box {
-      margin-bottom: 20px;
+      margin-bottom: 10px;
+      position: relative;
     }
     .search-box input[type="text"] {
       width: 100%;
@@ -91,29 +92,70 @@
       border-radius: 4px;
       box-sizing: border-box;
     }
+    /* Dropdown search results */
+    .search-results {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      background-color: #fff;
+      border: 1px solid #ccc;
+      border-top: none;
+      max-height: 200px;
+      overflow-y: auto;
+      z-index: 10;
+    }
+    .search-results div {
+      padding: 8px 10px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+    .search-results div:hover {
+      background-color: #f0f0f0;
+    }
+    .search-results img {
+      width: 32px;
+      height: 32px;
+      margin-right: 10px;
+      border-radius: 4px;
+    }
+    /* Selected sources container */
+    .selected-sources {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 20px;
+    }
+    .selected-source {
+      background-color: #e9ecef;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      padding: 6px 10px;
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+    }
+    .selected-source img {
+      width: 32px;
+      height: 32px;
+      margin-right: 8px;
+      border-radius: 4px;
+    }
+    .selected-source .remove-source {
+      margin-left: 8px;
+      cursor: pointer;
+      font-weight: bold;
+      color: #007BFF;
+    }
     form {
       display: flex;
       flex-direction: column;
       gap: 15px;
     }
-    /* Sources container for checkboxes */
+    /* Hide the original sources container if any */
     .sources {
-      margin-bottom: 20px;
-    }
-    .sources p {
-      font-size: 16px;
-      margin-bottom: 8px;
-    }
-    .sources label {
-      font-size: 16px;
-      margin-bottom: 8px;
-      display: flex;
-      align-items: center;
-    }
-    .sources label img {
-      height: 16px;
-      width: 16px;
-      margin-right: 8px;
+      display: none;
     }
     /* Email row: email input and subscribe button side-by-side */
     .email-row {
@@ -178,13 +220,11 @@
       <!-- Search box inside the white card -->
       <div class="search-box">
         <input type="text" id="searchInput" placeholder="Search for sources you want to add">
+        <div class="search-results" id="searchResults" style="display:none;"></div>
       </div>
+      <!-- Container for selected sources -->
+      <div class="selected-sources" id="selectedSources"></div>
       <form id="subscriptionForm">
-        <!-- Sources container for checkboxes -->
-        <div class="sources" id="sourcesContainer">
-          <p>Select your sources:</p>
-          <!-- Dynamic checkboxes will be inserted here -->
-        </div>
         <!-- Email row container: contains the email input and subscribe button side-by-side -->
         <div class="email-row" id="emailRow">
           <input type="email" id="email" name="email" placeholder="Enter your email" required>
@@ -200,85 +240,150 @@
   </footer>
   
   <script>
-    document.addEventListener("DOMContentLoaded", function() {
-      // Load sources from JSON and populate checkboxes
-      fetch("assets/json/sources.json")
-        .then(response => response.json())
-        .then(sourcesData => {
-          const container = document.getElementById("sourcesContainer");
-          let html = "<p>Select your sources:</p>";
-          sourcesData.forEach(sourceObj => {
-            html += `<label>
-                       <input type="checkbox" name="sources" value="${sourceObj.source}">
-                       <img src="${sourceObj.logoURL}" alt="${sourceObj.source} Logo">
-                       ${sourceObj.source}
-                     </label>`;
-          });
-          container.innerHTML = html;
-          
-          // Add change event listeners to checkboxes to control email row visibility
-          const checkboxes = document.querySelectorAll('input[name="sources"]');
-          checkboxes.forEach(checkbox => {
-            checkbox.addEventListener("change", function() {
-              const anySelected = Array.from(checkboxes).some(cb => cb.checked);
-              const emailRow = document.getElementById("emailRow");
-              emailRow.style.display = anySelected ? "flex" : "none";
-            });
-          });
-        })
-        .catch(error => {
-          console.error("Error loading sources:", error);
+    let allSources = [];
+    let selectedSources = [];
+
+    // Load sources from JSON and store in allSources
+    async function loadSources() {
+      try {
+        const response = await fetch("assets/json/sources.json");
+        const sourcesData = await response.json();
+        allSources = sourcesData; // store for later use
+      } catch (error) {
+        console.error("Error loading sources:", error);
+      }
+    }
+    loadSources();
+    
+    const searchInput = document.getElementById("searchInput");
+    const searchResults = document.getElementById("searchResults");
+    const selectedSourcesContainer = document.getElementById("selectedSources");
+
+    // When user types or focuses in search box, show dropdown with matching sources
+    searchInput.addEventListener("input", function() {
+      const query = this.value.toLowerCase().trim();
+      // Clear previous results
+      searchResults.innerHTML = "";
+      if (!query) {
+        searchResults.style.display = "none";
+        return;
+      }
+      // Filter sources based on query and exclude already selected ones
+      const results = allSources.filter(source => 
+        source.source.toLowerCase().includes(query) &&
+        !selectedSources.some(sel => sel.source === source.source)
+      );
+      if (results.length === 0) {
+        searchResults.style.display = "none";
+        return;
+      }
+      results.forEach(source => {
+        const div = document.createElement("div");
+        div.innerHTML = `<img src="${source.logoURL}" alt="${source.source} Logo"> ${source.source}`;
+        div.addEventListener("click", function() {
+          addSelectedSource(source);
+          searchInput.value = "";
+          searchResults.style.display = "none";
         });
+        searchResults.appendChild(div);
+      });
+      searchResults.style.display = "block";
+    });
+
+    // Hide search results if clicking outside the search box
+    document.addEventListener("click", function(e) {
+      if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+        searchResults.style.display = "none";
+      }
+    });
+
+    // Function to add a selected source to the container
+    function addSelectedSource(source) {
+      selectedSources.push(source);
+      renderSelectedSources();
+      updateEmailRowVisibility();
+    }
+
+    // Function to remove a selected source
+    function removeSelectedSource(sourceName) {
+      selectedSources = selectedSources.filter(s => s.source !== sourceName);
+      renderSelectedSources();
+      updateEmailRowVisibility();
+    }
+
+    // Render the selected sources container
+    function renderSelectedSources() {
+      selectedSourcesContainer.innerHTML = "";
+      selectedSources.forEach(source => {
+        const div = document.createElement("div");
+        div.className = "selected-source";
+        div.innerHTML = `<img src="${source.logoURL}" alt="${source.source} Logo"> ${source.source} <span class="remove-source" data-source="${source.source}">&times;</span>`;
+        selectedSourcesContainer.appendChild(div);
+      });
+      // Attach click event to remove buttons
+      document.querySelectorAll(".remove-source").forEach(button => {
+        button.addEventListener("click", function() {
+          const srcName = this.getAttribute("data-source");
+          removeSelectedSource(srcName);
+        });
+      });
+    }
+
+    // Update email row visibility based on selected sources
+    function updateEmailRowVisibility() {
+      const emailRow = document.getElementById("emailRow");
+      emailRow.style.display = selectedSources.length > 0 ? "flex" : "none";
+    }
+    
+    // Handle form submission (using your existing logic)
+    document.getElementById("subscriptionForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      document.getElementById("loadingIndicator").style.display = "block";
       
-      // Handle form submission
-      document.getElementById("subscriptionForm").addEventListener("submit", function(e) {
-        e.preventDefault();
-        document.getElementById("loadingIndicator").style.display = "block";
-        
-        const email = document.getElementById("email").value;
-        const checkboxes = document.querySelectorAll('input[name="sources"]:checked');
-        const selectedSources = Array.from(checkboxes).map(checkbox => checkbox.value);
-        const sources = [ selectedSources.join(",") ];
-        const today = new Date().toISOString().split("T")[0];
-        const payload = {
-          email: email,
-          sources: sources,
-          submission_date: today,
-          update_date: today,
-          submission_status: "Active"
-        };
-        
-        fetch("https://narektamoyan.app.n8n.cloud/webhook/add-subscription", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        })
-        .then(response => {
-          document.getElementById("loadingIndicator").style.display = "none";
-          return response.text();
-        })
-        .then(text => {
-          let data = {};
-          try {
-            data = text ? JSON.parse(text) : {};
-          } catch (err) {
-            console.error("Error parsing JSON:", err);
-          }
-          if (data.error && data.error === "existing_subscriber") {
-            alert("Already Subscribed\nThis email is already subscribed. To edit your preferences, click the Update your brief button from your emails.");
-          } else if (data.error) {
-            alert("There was an error processing your subscription.");
-          } else {
-            alert("Thank you for subscribing!");
-            document.getElementById("subscriptionForm").reset();
-            document.getElementById("emailRow").style.display = "none";
-          }
-        })
-        .catch(error => {
-          document.getElementById("loadingIndicator").style.display = "none";
-          console.error("Error submitting form:", error);
+      const email = document.getElementById("email").value;
+      // Build sources payload from selectedSources
+      const sourcesPayload = [ selectedSources.map(s => s.source).join(",") ];
+      const today = new Date().toISOString().split("T")[0];
+      const payload = {
+        email: email,
+        sources: sourcesPayload,
+        submission_date: today,
+        update_date: today,
+        submission_status: "Active"
+      };
+      
+      fetch("https://narektamoyan.app.n8n.cloud/webhook/add-subscription", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      })
+      .then(response => {
+        document.getElementById("loadingIndicator").style.display = "none";
+        return response.text();
+      })
+      .then(text => {
+        let data = {};
+        try {
+          data = text ? JSON.parse(text) : {};
+        } catch (err) {
+          console.error("Error parsing JSON:", err);
+        }
+        if (data.error && data.error === "existing_subscriber") {
+          alert("Already Subscribed\nThis email is already subscribed. To edit your preferences, click the Update your brief button from your emails.");
+        } else if (data.error) {
           alert("There was an error processing your subscription.");
-        });
+        } else {
+          alert("Thank you for subscribing!");
+          document.getElementById("subscriptionForm").reset();
+          selectedSources = [];
+          renderSelectedSources();
+          updateEmailRowVisibility();
+        }
+      })
+      .catch(error => {
+        document.getElementById("loadingIndicator").style.display = "none";
+        console.error("Error submitting form:", error);
+        alert("There was an error processing your subscription.");
       });
     });
   </script>
