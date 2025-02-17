@@ -12,7 +12,7 @@
       padding: 0;
       color: #333;
     }
-    /* Fixed header styling: only navigation links */
+    /* Header styling */
     header {
       position: fixed;
       top: 0;
@@ -35,7 +35,7 @@
       border-radius: 50px;
       margin-left: 20px;
     }
-    header a.update-link {
+    header a#authLink {
       text-decoration: none;
       font-size: 14px;
       color: #007BFF;
@@ -47,7 +47,6 @@
     .main-content {
       padding-top: 70px; /* leave space for header */
     }
-    /* Container for authenticated content */
     .container {
       max-width: 600px;
       background-color: #fff;
@@ -55,7 +54,7 @@
       padding: 20px;
       border-radius: 6px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      display: none; /* initially hidden until user is authenticated */
+      display: none; /* show only if authenticated */
     }
     /* Page title in body */
     .page-title {
@@ -102,7 +101,7 @@
       border: 1px solid #ccc;
       border-radius: 4px;
     }
-    /* Hidden email field used for submission (when authenticated) */
+    /* Hidden email field for submission when authenticated */
     #email {
       display: none;
     }
@@ -180,13 +179,13 @@
   
   <header>
     <a href="index.html" class="home-btn">ProductBrief</a>
-    <a href="update.html" class="update-link">Already Subscribed?</a>
+    <a id="authLink" href="update.html" class="update-link">Already Subscribed?</a>
   </header>
   
   <div class="main-content">
-    <!-- Main container (only visible after authentication) -->
+    <!-- Main container shown only after authentication -->
     <div class="container" id="mainContainer">
-      <!-- Page title moved to body and center aligned -->
+      <!-- Page title in body -->
       <div class="page-title">Update Your Subscription - Get Product Brief</div>
       <form id="updateForm">
         <!-- Email display container for authenticated users -->
@@ -217,10 +216,6 @@
   </div>
   
   <script>
-    // Get prefill email from URL query parameter (if exists)
-    const urlParams = new URLSearchParams(window.location.search);
-    const prefillEmail = urlParams.get("email");
-
     // Function to load dynamic sources from JSON and populate checkboxes
     async function loadSources() {
       try {
@@ -302,8 +297,16 @@
     window.addEventListener('load', async function () {
       await Clerk.load();
       console.log("ClerkJS is loaded", Clerk.user);
+      const authLink = document.getElementById("authLink");
       if (Clerk.user) {
-        // If authenticated, show the main container and update form
+        // Update header auth link to "Sign Out" and add sign-out functionality
+        authLink.textContent = "Sign Out";
+        authLink.href = "#";
+        authLink.addEventListener("click", async function () {
+          await Clerk.signOut();
+          window.location.href = "index.html";
+        });
+        // Show main container and update form
         document.getElementById("clerk-container").style.display = "none";
         document.getElementById("mainContainer").style.display = "block";
         // Hide fallback email input and disable it
@@ -322,11 +325,13 @@
         // Automatically load user preferences using the authenticated email
         loadUserPreferences(userEmail);
       } else {
-        // Not authenticated: hide main container and show Clerk sign-in overlay
+        // Not authenticated: update header auth link to "Already Subscribed?" 
+        authLink.textContent = "Already Subscribed?";
+        authLink.href = "update.html";
+        // Hide main container and show Clerk sign-in overlay
         document.getElementById("mainContainer").style.display = "none";
         document.getElementById("clerk-container").style.display = "flex";
-        // Include prefill option if email query parameter is present
-        let signInOptions = {
+        Clerk.mountSignIn(document.getElementById("clerk-container"), {
           redirectUrl: window.location.href,
           signUpUrl: "https://www.getproductbrief.com/index.html",
           defaultLocale: "en",
@@ -339,11 +344,7 @@
               colorPrimary: "#007BFF"
             }
           }
-        };
-        if(prefillEmail) {
-          signInOptions.prefill = { identifier: prefillEmail };
-        }
-        Clerk.mountSignIn(document.getElementById("clerk-container"), signInOptions);
+        });
       }
     });
     
