@@ -16,6 +16,9 @@
       margin: 0;
       padding: 0;
       color: #333;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }
     /* Header with symmetric left/right links */
     header {
@@ -54,18 +57,11 @@
       padding: 8px 16px;
       border: 1px solid #007BFF;
       border-radius: 50px;
-      margin-right: 20px; /* Ensures equal spacing from right edge */
+      margin-right: 20px;
     }
     .main-content {
+      flex: 1;
       padding-top: 70px; /* leave space for header */
-    }
-    .container {
-      max-width: 600px;
-      background-color: #fff;
-      margin: 50px auto 20px;
-      padding: 20px;
-      border-radius: 6px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
     /* Page title above the white card */
     .page-title {
@@ -73,6 +69,14 @@
       font-size: 24px;
       color: #007BFF;
       margin: 40px auto 20px;
+    }
+    .container {
+      max-width: 600px;
+      background-color: #fff;
+      margin: 0 auto 20px;
+      padding: 20px;
+      border-radius: 6px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
     /* Search box inside the white card */
     .search-box {
@@ -143,17 +147,15 @@
       margin-top: 20px;
       display: none;
     }
-    /* Footer: dedicated area at the bottom */
+    /* Footer: dedicated at the very bottom, left-aligned */
     footer {
       background-color: #fff;
       padding: 20px;
       border-top: 1px solid #ddd;
-      margin-top: 40px;
-      text-align: left;
       font-size: 14px;
-      max-width: 600px;
-      margin-left: auto;
-      margin-right: auto;
+      width: 100%;
+      text-align: left;
+      margin-top: auto;
     }
     footer a {
       color: #007BFF;
