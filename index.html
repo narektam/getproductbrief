@@ -78,7 +78,7 @@
       font-weight: 500;
       margin: 0 10px 20px;
     }
-    /* On desktop, add side margins equal to 15% of the screen width */
+    /* Desktop: add side margins equal to 15% of viewport width */
     @media (min-width: 769px) {
       .description {
         margin-left: 15vw;
@@ -101,14 +101,14 @@
     }
     .search-box input[type="text"] {
       width: 100%;
-      padding: 10px 10px 10px 40px; /* extra left padding for the icon */
+      padding: 10px 10px 10px 40px; /* extra left padding for icon */
       font-size: 16px;
       height: 48px;
       border: none;
       border-radius: 4px;
       box-sizing: border-box;
       background-color: #fff;
-      /* Uniform search icon */
+      /* Uniform search icon (stroke-based SVG) */
       background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='16'%20height='16'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='black'%20stroke-width='2'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Ccircle%20cx='11'%20cy='11'%20r='8'%3E%3C/circle%3E%3Cline%20x1='21'%20y1='21'%20x2='16.65'%20y2='16.65'%3E%3C/line%3E%3C/svg%3E");
       background-repeat: no-repeat;
       background-position: 10px center;
@@ -258,7 +258,7 @@
       margin-top: auto;
     }
     footer a {
-      color: #000;  /* Footer links in black */
+      color: #000;
       text-decoration: none;
       margin-right: 10px;
     }
@@ -357,10 +357,11 @@
     .source-logos {
       display: flex;
       align-items: center;
+      justify-content: center;
       margin: 20px auto;
     }
     .source-logos .logo {
-      width: 30px;  /* 40% smaller than 50px */
+      width: 30px;
       height: 30px;
       border: 1px solid black;
       border-radius: 50%;
@@ -369,7 +370,7 @@
       position: relative;
     }
     .source-logos .logo:not(:first-child) {
-      margin-left: -6px; /* 20% of 30px */
+      margin-left: -9px; /* 30% of 30px is 9px */
     }
     .source-logos .logo img {
       width: 100%;
@@ -397,7 +398,7 @@
     .source-logos .logo.more span {
       position: relative;
       color: white;
-      font-size: 12px; /* Adjusted for smaller circle */
+      font-size: 12px;
       font-weight: bold;
       z-index: 1;
     }
@@ -442,17 +443,8 @@
       </form>
       <div class="loading" id="loadingIndicator">Loading...</div>
     </div>
-    <!-- New Source Logos Block -->
-    <div class="source-logos">
-      <div class="logo"><img src="/assets/images/openai-logo.png" alt="OpenAI"></div>
-      <div class="logo"><img src="/assets/images/lennys-podcast-logo.png" alt="Lenny's Podcast"></div>
-      <div class="logo"><img src="/assets/images/figma-logo.png" alt="Figma"></div>
-      <div class="logo"><img src="/assets/images/linear-logo.png" alt="Linear"></div>
-      <div class="logo more">
-        <div class="inner"></div>
-        <span>+20</span>
-      </div>
-    </div>
+    <!-- Source Logos Block -->
+    <div class="source-logos" id="sourceLogos"></div>
   </div>
   <footer>
     <a href="privacy.html">Privacy Policy</a>
@@ -468,6 +460,7 @@
         const response = await fetch("assets/json/sources.json");
         const sourcesData = await response.json();
         allSources = sourcesData;
+        renderSourceLogos();
       } catch (error) {
         console.error("Error loading sources:", error);
       }
@@ -604,6 +597,20 @@
         alert("There was an error processing your subscription.");
       });
     });
+
+    /* Render source logos from sources.json */
+    function renderSourceLogos() {
+      // The desired sources
+      const desired = ["OpenAI", "Lenny's Podcast", "Figma", "Linear"];
+      const logos = allSources.filter(source => desired.includes(source.source));
+      let html = "";
+      logos.forEach(source => {
+        html += `<div class="logo"><img src="${source.logoURL}" alt="${source.source}"></div>`;
+      });
+      // Append the "more" circle
+      html += `<div class="logo more"><div class="inner"></div><span>+20</span></div>`;
+      document.getElementById("sourceLogos").innerHTML = html;
+    }
 
     /* --- Mobile Hamburger Menu JavaScript --- */
     document.getElementById("hamburgerButton").addEventListener("click", function(e) {
