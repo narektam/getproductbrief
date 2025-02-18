@@ -23,7 +23,7 @@
       flex-direction: column;
       min-height: 100vh;
     }
-    /* Header: text links instead of buttons */
+    /* Header styles */
     header {
       position: fixed;
       top: 0;
@@ -37,7 +37,7 @@
       justify-content: space-between;
       padding: 10px 20px;
     }
-    /* The ProductBrief link (home-btn) */
+    /* ProductBrief logo (home-btn) */
     header a.home-btn {
       text-decoration: none;
       font-size: 21px;
@@ -68,13 +68,13 @@
       flex: 1;
       padding-top: 70px; /* leave space for header */
     }
-    /* Page title placed above the card */
+    /* Page title */
     .page-title {
       text-align: center;
       font-size: 36px;
       color: #000;
       margin: 40px auto 20px;
-      font-weight: bold; /* make title bold */
+      font-weight: bold;
     }
     .container {
       max-width: 600px;
@@ -85,7 +85,7 @@
       box-sizing: border-box;
       position: relative;
     }
-    /* Search box inside the card */
+    /* Search box */
     .search-box {
       margin-bottom: 20px;
       position: relative;
@@ -107,7 +107,7 @@
       border: 1px solid #000;
       outline: none;
     }
-    /* Dropdown list for search results */
+    /* Search results dropdown */
     .search-results {
       position: absolute;
       top: calc(100% + 5px);
@@ -150,7 +150,7 @@
       margin-right: 10px;
       border-radius: 4px;
     }
-    /* Selected sources container */
+    /* Selected sources */
     .selected-sources {
       display: flex;
       flex-direction: column;
@@ -187,11 +187,11 @@
       flex-direction: column;
       gap: 15px;
     }
-    /* Hide the original sources container */
+    /* Hide original sources container */
     .sources {
       display: none;
     }
-    /* Email row: side-by-side email input and subscribe button */
+    /* Email row */
     .email-row {
       display: none;
       flex-direction: row;
@@ -235,7 +235,7 @@
       margin-top: 20px;
       display: none;
     }
-    /* Footer styling */
+    /* Footer */
     footer {
       background-color: #fff;
       padding: 20px;
@@ -251,9 +251,8 @@
       margin-right: 10px;
     }
 
-    /* --- New Styles for Mobile Hamburger Menu & Adjustments --- */
-
-    /* Custom hamburger icon with two lines */
+    /* --- Mobile Hamburger Menu & Adjustments --- */
+    /* Custom hamburger icon with two bars */
     .hamburger {
       display: none; /* hidden by default, shown on mobile */
       background: none;
@@ -261,7 +260,7 @@
       padding: 0;
       cursor: pointer;
       position: relative;
-      width: 26px; /* updated length */
+      width: 26px;
       height: 20px;
     }
     .hamburger .bar {
@@ -272,8 +271,8 @@
       background-color: #000;
       border-radius: 2px; /* rounded ends */
       transition: transform 0.3s, opacity 0.3s;
+      transform-origin: center;
     }
-    /* Position bars with a reduced vertical gap (approx. 7.7px gap) */
     .hamburger .bar:nth-child(1) {
       top: 3.15px;
     }
@@ -311,13 +310,18 @@
       font-size: 16px;
       text-decoration: none;
       color: #000;
+      font-weight: bold; /* Already Subscribed? link is bold */
     }
 
     /* Mobile adjustments */
     @media (max-width: 768px) {
+      header {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
       .hamburger {
         display: block;
-        margin-left: 10px; /* aligns with card container's left margin */
+        margin-left: 0; /* now flush with left edge */
       }
       .update-link {
         display: none;
@@ -329,14 +333,18 @@
         transform: translateX(-50%);
         margin-left: 0;
       }
-      /* Hide the empty h1 to avoid pushing the logo right */
       header h1 {
         display: none;
       }
-      /* Add side margins to the card container on mobile */
+      /* Card container with side margins */
       .container {
         width: calc(100% - 20px);
         margin: 0 10px 20px;
+      }
+      /* Add side margins to the page title */
+      .page-title {
+        margin-left: 10px;
+        margin-right: 10px;
       }
     }
   </style>
@@ -368,7 +376,7 @@
         <input type="text" id="searchInput" placeholder="Search for sources you want to add">
         <div class="search-results" id="searchResults"></div>
       </div>
-      <!-- Container for selected sources (large cards stacked vertically) -->
+      <!-- Container for selected sources (cards stacked vertically) -->
       <div class="selected-sources" id="selectedSources"></div>
       <form id="subscriptionForm">
         <!-- Email row container -->
@@ -405,7 +413,7 @@
     const searchResults = document.getElementById("searchResults");
     const selectedSourcesContainer = document.getElementById("selectedSources");
 
-    // Render search results from a list of sources
+    // Render search results from sources
     function renderSearchResults(sources) {
       searchResults.innerHTML = "";
       sources.forEach(source => {
@@ -421,7 +429,7 @@
       searchResults.style.display = sources.length ? "block" : "none";
     }
     
-    // When search box is focused and empty, show all sources (excluding already selected)
+    // Show all sources on focus if input is empty
     searchInput.addEventListener("focus", function() {
       if (this.value.trim() === "") {
         renderSearchResults(allSources.filter(source => 
@@ -446,28 +454,28 @@
       }
     });
 
-    // Hide search results if clicking outside the search box and results
+    // Hide search results if clicking outside
     document.addEventListener("click", function(e) {
       if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
         searchResults.style.display = "none";
       }
     });
 
-    // Function to add a selected source to the container as a large card
+    // Add selected source
     function addSelectedSource(source) {
       selectedSources.push(source);
       renderSelectedSources();
       updateEmailRowVisibility();
     }
 
-    // Function to remove a selected source
+    // Remove selected source
     function removeSelectedSource(sourceName) {
       selectedSources = selectedSources.filter(s => s.source !== sourceName);
       renderSelectedSources();
       updateEmailRowVisibility();
     }
 
-    // Render the selected sources container as large cards stacked vertically
+    // Render selected sources
     function renderSelectedSources() {
       selectedSourcesContainer.innerHTML = "";
       selectedSources.forEach(source => {
@@ -476,7 +484,7 @@
         div.innerHTML = `<img src="${source.logoURL}" alt="${source.source} Logo"> ${source.source} <span class="remove-source" data-source="${source.source}">&times;</span>`;
         selectedSourcesContainer.appendChild(div);
       });
-      // Attach click event to remove buttons
+      // Attach event to remove buttons
       document.querySelectorAll(".remove-source").forEach(button => {
         button.addEventListener("click", function() {
           const srcName = this.getAttribute("data-source");
@@ -485,13 +493,13 @@
       });
     }
 
-    // Update email row visibility based on selected sources
+    // Update email row visibility
     function updateEmailRowVisibility() {
       const emailRow = document.getElementById("emailRow");
       emailRow.style.display = selectedSources.length > 0 ? "flex" : "none";
     }
     
-    // Handle form submission (using your existing logic)
+    // Handle form submission
     document.getElementById("subscriptionForm").addEventListener("submit", function(e) {
       e.preventDefault();
       document.getElementById("loadingIndicator").style.display = "block";
@@ -542,16 +550,13 @@
       });
     });
 
-    /* --- New JavaScript for Mobile Hamburger Menu --- */
-
-    // Toggle the mobile menu when hamburger is clicked
+    /* --- Mobile Hamburger Menu JavaScript --- */
     document.getElementById("hamburgerButton").addEventListener("click", function(e) {
       e.stopPropagation();
       this.classList.toggle("open");
       document.getElementById("mobileMenu").classList.toggle("open");
     });
 
-    // Close mobile menu if clicking outside of it
     document.addEventListener("click", function(e) {
       var mobileMenu = document.getElementById("mobileMenu");
       var hamburgerButton = document.getElementById("hamburgerButton");
