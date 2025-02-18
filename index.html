@@ -239,7 +239,7 @@
       margin-top: auto;
     }
     footer a {
-      color: #000;  /* Set footer links to black */
+      color: #000;  /* Footer links in black */
       text-decoration: none;
       margin-right: 10px;
     }
@@ -273,7 +273,7 @@
     .hamburger .bar:nth-child(2) {
       top: 13.5px;
     }
-    /* When open, translate first then rotate so centers align */
+    /* When open, first translate then rotate so centers align perfectly */
     .hamburger.open .bar:nth-child(1) {
       transform: translateY(5px) rotate(45deg);
     }
@@ -336,6 +336,10 @@
       .page-title {
         margin-left: 10px;
         margin-right: 10px;
+      }
+      /* Adjust mobile menu padding so its content aligns with the hamburger button */
+      .mobile-menu {
+        padding: 20px 20px 20px 10px; /* Left padding set to 10px */
       }
       /* Push the mobile menu update link down so it doesn't overlap the hamburger (X) */
       .mobile-menu a {
