@@ -10,57 +10,66 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
   <link rel="manifest" href="/assets/images/site.webmanifest" />
   <style>
+    html, body {
+      overflow-x: hidden;
+    }
     body {
       background-color: #f2f2f2;
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
       color: #333;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }
-    /* Header styling: only navigation links */
+    /* Updated Header (from index page) */
     header {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       background-color: #ffffff;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      z-index: 1100;
+      border-bottom: 0.5px solid #f0faf3;
+      z-index: 1400;
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 10px 20px;
+      box-sizing: border-box;
     }
     header a.home-btn {
       text-decoration: none;
-      font-size: 14px;
-      background-color: #007BFF;
-      color: #fff;
-      padding: 8px 16px;
-      border-radius: 50px;
+      font-size: 21px;
+      color: #000;
+      font-weight: bold;
       margin-left: 20px;
+      background: none;
+      padding: 0;
     }
     header a.update-link {
       text-decoration: none;
       font-size: 14px;
-      color: #007BFF;
+      color: #000;  /* changed to black */
+      font-weight: bold;
+      background: none;
       padding: 8px 16px;
-      border: 1px solid #007BFF;
-      border-radius: 50px;
+      border: none;
       margin-right: 20px;
     }
     .main-content {
-      padding-top: 70px; /* space for header */
+      padding-top: 70px; /* space for fixed header */
+      flex: 1;
     }
+    /* Container for privacy content */
     .container {
       max-width: 800px;
       background-color: #fff;
-      margin: 50px auto;
+      margin: 50px auto 0;
       padding: 20px;
       border-radius: 6px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
-    /* Centered page title in body */
     .page-title {
       text-align: center;
       font-size: 24px;
@@ -71,27 +80,46 @@
       font-size: 16px;
       line-height: 1.6;
     }
-    .footer {
-      text-align: center;
-      margin-top: 40px;
+    /* Updated Footer (from index page) */
+    footer {
+      background-color: #fff;
+      padding: 20px;
+      border-top: 0.5px solid #f0faf3;
       font-size: 14px;
+      width: 100%;
+      text-align: left; /* left-aligned */
+      margin-top: auto;
     }
-    .footer a {
-      color: #007BFF;
+    footer a {
+      color: #000;  /* black links */
       text-decoration: none;
-      margin: 0 10px;
+      margin-right: 10px;
+    }
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      header {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+      .container {
+        width: calc(100% - 20px);
+        margin: 50px 10px 0;
+      }
+      footer {
+        padding: 20px 10px;
+      }
     }
   </style>
 </head>
 <body>
-  <!-- Header with navigation links -->
+  <!-- Updated Header -->
   <header>
     <a href="index.html" class="home-btn">ProductBrief</a>
     <a href="update.html" class="update-link">Already Subscribed?</a>
   </header>
+  
   <div class="main-content">
     <div class="container">
-      <!-- Page title in the body -->
       <div class="page-title">Privacy Policy - Get Product Brief</div>
       <div class="content">
         <h2>Introduction</h2>
@@ -123,10 +151,14 @@
           If you have any questions, please contact us.
         </p>
       </div>
-      <div class="footer">
-        <a href="index.html">Home</a>
-      </div>
     </div>
   </div>
+  
+  <!-- Updated Footer -->
+  <footer>
+    <a href="index.html">Home</a>
+    <a href="terms.html">Terms of Use</a>
+    <a href="privacy.html">Privacy Policy</a>
+  </footer>
 </body>
 </html>
