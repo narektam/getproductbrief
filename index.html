@@ -74,6 +74,7 @@
       font-size: 36px;
       color: #000;
       margin: 40px auto 20px;
+      font-weight: bold; /* make title bold */
     }
     .container {
       max-width: 600px;
@@ -260,29 +261,31 @@
       padding: 0;
       cursor: pointer;
       position: relative;
-      width: 30px; /* 50% longer than baseline */
+      width: 26px; /* updated length */
       height: 20px;
     }
     .hamburger .bar {
       position: absolute;
       left: 0;
-      width: 30px;
+      width: 26px;
       height: 3px;
       background-color: #000;
+      border-radius: 2px; /* rounded ends */
       transition: transform 0.3s, opacity 0.3s;
     }
+    /* Position bars with a reduced vertical gap (approx. 7.7px gap) */
     .hamburger .bar:nth-child(1) {
-      top: 0;
+      top: 3.15px;
     }
     .hamburger .bar:nth-child(2) {
-      bottom: 0;
+      top: 13.85px;
     }
     /* Transform into an X when open */
     .hamburger.open .bar:nth-child(1) {
-      transform: rotate(45deg) translate(5px, 5px);
+      transform: rotate(45deg) translate(4px, 4px);
     }
     .hamburger.open .bar:nth-child(2) {
-      transform: rotate(-45deg) translate(5px, -5px);
+      transform: rotate(-45deg) translate(4px, -4px);
     }
 
     /* Mobile menu styling: covers 30% of the viewport height */
@@ -314,7 +317,7 @@
     @media (max-width: 768px) {
       .hamburger {
         display: block;
-        margin-left: 10px; /* same as card container's left margin */
+        margin-left: 10px; /* aligns with card container's left margin */
       }
       .update-link {
         display: none;
@@ -325,6 +328,10 @@
         left: 50%;
         transform: translateX(-50%);
         margin-left: 0;
+      }
+      /* Hide the empty h1 to avoid pushing the logo right */
+      header h1 {
+        display: none;
       }
       /* Add side margins to the card container on mobile */
       .container {
