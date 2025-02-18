@@ -14,7 +14,7 @@
       overflow-x: hidden; /* Disable horizontal scrolling */
     }
     body {
-      background-color: #ffffff; /* overall page background white */
+      background-color: #ffffff;
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
@@ -44,21 +44,20 @@
       font-size: 21px;
       color: #000;
       font-weight: bold;
-      /* Remove default margin so that we can center it on mobile */
       margin: 0;
       background: none;
       padding: 0;
-      /* On desktop, it will be at the left by default */
+      /* Centering will be applied in mobile media query */
     }
-    /* Already Subscribed? link */
+    /* Already Subscribed? link (desktop) */
     header a.update-link {
       text-decoration: none;
       font-size: 14px;
       color: #000;
-      font-weight: bold;  /* Bold on all devices */
+      font-weight: bold;
       background: none;
       padding: 0;
-      margin-right: 20px; /* Ensures same spacing as left side */
+      margin-right: 20px;
     }
     .main-content {
       flex: 1;
@@ -183,7 +182,6 @@
       flex-direction: column;
       gap: 15px;
     }
-    /* Hide original sources container */
     .sources {
       display: none;
     }
@@ -265,7 +263,7 @@
       width: 26px;
       height: 3px;
       background-color: #000;
-      border-radius: 2px; /* rounded ends */
+      border-radius: 2px;
       transition: transform 0.3s, opacity 0.3s;
       transform-origin: center;
     }
@@ -282,8 +280,7 @@
     .hamburger.open .bar:nth-child(2) {
       transform: rotate(-45deg) translate(5px, -5px);
     }
-
-    /* Mobile menu styling: covers 30% of the viewport height */
+    /* Mobile menu styling */
     .mobile-menu {
       position: fixed;
       top: -30vh; /* hidden above viewport initially */
@@ -306,7 +303,7 @@
       font-size: 16px;
       text-decoration: none;
       color: #000;
-      font-weight: bold; /* Already Subscribed? link is bold */
+      font-weight: bold;
     }
 
     /* Mobile adjustments */
@@ -317,7 +314,8 @@
       }
       .hamburger {
         display: block;
-        margin-left: 0; /* now flush with left edge */
+        margin-left: 0; /* flush with left edge */
+        z-index: 1300; /* higher than mobile menu so X is visible */
       }
       .update-link {
         display: none;
@@ -334,17 +332,21 @@
         width: calc(100% - 20px);
         margin: 0 10px 20px;
       }
-      /* Add side margins to the page title */
+      /* Page title side margins */
       .page-title {
         margin-left: 10px;
         margin-right: 10px;
+      }
+      /* Push the mobile menu update link down so it doesn't overlap the hamburger (X) */
+      .mobile-menu a {
+        margin-top: 50px;
       }
     }
   </style>
 </head>
 <body>
   <header>
-    <!-- Hamburger button (visible only on mobile) -->
+    <!-- Hamburger button (visible on mobile) -->
     <button id="hamburgerButton" class="hamburger">
       <span class="bar"></span>
       <span class="bar"></span>
@@ -354,24 +356,20 @@
     <a href="update.html" class="update-link">Already Subscribed?</a>
   </header>
 
-  <!-- Mobile menu that slides down from the top -->
+  <!-- Mobile menu that slides down -->
   <div id="mobileMenu" class="mobile-menu">
     <a href="update.html" class="mobile-update-link">Already Subscribed?</a>
   </div>
 
   <div class="main-content">
-    <!-- Page title -->
     <div class="page-title">Subscribe to Get Product Brief</div>
     <div class="container">
-      <!-- Search box -->
       <div class="search-box">
         <input type="text" id="searchInput" placeholder="Search for sources you want to add">
         <div class="search-results" id="searchResults"></div>
       </div>
-      <!-- Selected sources container -->
       <div class="selected-sources" id="selectedSources"></div>
       <form id="subscriptionForm">
-        <!-- Email row -->
         <div class="email-row" id="emailRow">
           <input type="email" id="email" name="email" placeholder="Enter your email" required>
           <button type="submit">Subscribe</button>
@@ -389,7 +387,6 @@
     let allSources = [];
     let selectedSources = [];
 
-    // Load sources from JSON
     async function loadSources() {
       try {
         const response = await fetch("assets/json/sources.json");
@@ -405,7 +402,6 @@
     const searchResults = document.getElementById("searchResults");
     const selectedSourcesContainer = document.getElementById("selectedSources");
 
-    // Render search results
     function renderSearchResults(sources) {
       searchResults.innerHTML = "";
       sources.forEach(source => {
@@ -421,7 +417,6 @@
       searchResults.style.display = sources.length ? "block" : "none";
     }
     
-    // Show all sources on focus if input is empty
     searchInput.addEventListener("focus", function() {
       if (this.value.trim() === "") {
         renderSearchResults(allSources.filter(source => 
@@ -430,7 +425,6 @@
       }
     });
     
-    // Filter sources as user types
     searchInput.addEventListener("input", function() {
       const query = this.value.toLowerCase().trim();
       if (query === "") {
@@ -446,28 +440,24 @@
       }
     });
 
-    // Hide search results if clicking outside
     document.addEventListener("click", function(e) {
       if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
         searchResults.style.display = "none";
       }
     });
 
-    // Add a selected source
     function addSelectedSource(source) {
       selectedSources.push(source);
       renderSelectedSources();
       updateEmailRowVisibility();
     }
 
-    // Remove a selected source
     function removeSelectedSource(sourceName) {
       selectedSources = selectedSources.filter(s => s.source !== sourceName);
       renderSelectedSources();
       updateEmailRowVisibility();
     }
 
-    // Render selected sources
     function renderSelectedSources() {
       selectedSourcesContainer.innerHTML = "";
       selectedSources.forEach(source => {
@@ -484,13 +474,11 @@
       });
     }
 
-    // Update email row visibility
     function updateEmailRowVisibility() {
       const emailRow = document.getElementById("emailRow");
       emailRow.style.display = selectedSources.length > 0 ? "flex" : "none";
     }
     
-    // Handle form submission
     document.getElementById("subscriptionForm").addEventListener("submit", function(e) {
       e.preventDefault();
       document.getElementById("loadingIndicator").style.display = "block";
