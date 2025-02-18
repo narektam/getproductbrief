@@ -73,9 +73,9 @@
     /* Description under page title */
     .description {
       text-align: center;
-      font-size: 16px; /* updated from 14px to 16px */
+      font-size: 18px; /* Increased from 16px to 18px */
       color: #2b2c2e;
-      font-weight: normal;
+      font-weight: 500; /* Increased font weight by 100 (assuming normal=400) */
       margin: 0 10px 20px;
     }
     .container {
@@ -94,13 +94,17 @@
     }
     .search-box input[type="text"] {
       width: 100%;
-      padding: 10px;
+      padding: 10px 10px 10px 40px; /* extra left padding for the icon */
       font-size: 16px;
       height: 48px;
       border: none;
       border-radius: 4px;
       box-sizing: border-box;
       background-color: #fff;
+      /* Add the search icon as a background image */
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='black' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344l3.85 3.85-.708.708-3.85-3.85A6.5 6.5 0 1 1 11.742 10.344zM12 6.5a5.5 5.5 0 1 0-11 0 5.5 5.5 0 0 0 11 0z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: 10px center;
     }
     .search-box input[type="text"]::placeholder {
       color: #aaa;
