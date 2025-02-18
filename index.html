@@ -31,7 +31,7 @@
       width: 100%;
       background-color: #ffffff;
       border-bottom: 0.5px solid #f0faf3;
-      z-index: 1400; /* Raised z-index so header (and hamburger) appear above mobile menu */
+      z-index: 1400; /* Raised so header (and hamburger) appear above mobile menu */
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -239,7 +239,7 @@
       margin-top: auto;
     }
     footer a {
-      color: #000;  /* Changed to black */
+      color: #000;  /* Set footer links to black */
       text-decoration: none;
       margin-right: 10px;
     }
@@ -273,12 +273,12 @@
     .hamburger .bar:nth-child(2) {
       top: 13.5px;
     }
-    /* When open, move bars so their centers align at 10px */
+    /* When open, translate first then rotate so centers align */
     .hamburger.open .bar:nth-child(1) {
-      transform: rotate(45deg) translate(0, 5px);
+      transform: translateY(5px) rotate(45deg);
     }
     .hamburger.open .bar:nth-child(2) {
-      transform: rotate(-45deg) translate(0, -5px);
+      transform: translateY(-5px) rotate(-45deg);
     }
     /* Mobile menu styling: covers 30% of the viewport height */
     .mobile-menu {
