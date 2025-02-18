@@ -23,7 +23,7 @@
       flex-direction: column;
       min-height: 100vh;
     }
-    /* Header (UI from index.html without hamburger) */
+    /* Header – updated UI */
     header {
       position: fixed;
       top: 0;
@@ -38,6 +38,7 @@
       padding: 10px 20px;
       box-sizing: border-box;
     }
+    /* Home link remains */
     header a.home-btn {
       text-decoration: none;
       font-size: 21px;
@@ -47,7 +48,7 @@
       background: none;
       padding: 0;
     }
-    /* Auth link styled as plain text */
+    /* Auth link (for Sign Out) – now plain text with no border */
     header a.update-link {
       text-decoration: none;
       font-size: 14px;
@@ -55,20 +56,14 @@
       font-weight: bold;
       background: none;
       padding: 8px 16px;
-      /* Removed border and border-radius */
+      border: none;
+      border-radius: 0;
       margin-right: 20px;
     }
+    /* Main content */
     .main-content {
       flex: 1;
       padding-top: 70px;
-    }
-    /* Page title inside the card */
-    .page-title {
-      text-align: center;
-      font-size: 22px;
-      color: white;
-      margin: 20px auto 10px;
-      font-weight: bold;
     }
     /* Card container (same as index.html) */
     .container {
@@ -80,7 +75,15 @@
       box-sizing: border-box;
       position: relative;
     }
-    /* Search box & selected sources (from index.html) */
+    /* Page title inside container – updated text and styling */
+    .page-title {
+      text-align: center;
+      font-size: 22px;
+      color: white;
+      margin: 20px auto 10px;
+      font-weight: bold;
+    }
+    /* Search box styling (same as index.html) */
     .search-box {
       margin-bottom: 20px;
       position: relative;
@@ -147,6 +150,7 @@
       margin-right: 10px;
       border-radius: 4px;
     }
+    /* Selected sources – same design as in index.html */
     .selected-sources {
       display: flex;
       flex-direction: column;
@@ -154,7 +158,34 @@
       margin-bottom: 20px;
       width: 100%;
     }
-    /* Update form elements (email display, fallback input) remain unchanged */
+    .selected-source {
+      background-color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 10px;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      width: 100%;
+      font-size: 16px;
+    }
+    .selected-source img {
+      width: 24px;
+      height: 24px;
+      margin-right: 10px;
+      border-radius: 4px;
+    }
+    .selected-source .remove-source {
+      margin-left: auto;
+      padding-right: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      color: #000;
+    }
+    /* Update form – no changes to functionality */
+    form {
+      margin-top: 20px;
+    }
     #emailDisplayContainer {
       margin-bottom: 20px;
       display: none;
@@ -188,8 +219,12 @@
       border: 1px solid #ccc;
       border-radius: 4px;
     }
-    #email { display: none; }
-    /* Button color changed to black */
+    #email {
+      display: none;
+    }
+    /* Remove old sources checkboxes (they are not shown) */
+    
+    /* Button styling – update button is black */
     button {
       width: 100%;
       padding: 12px;
@@ -210,7 +245,7 @@
       margin-top: 20px;
       display: none;
     }
-    /* Footer (matches index.html) */
+    /* Footer – moved to bottom and links set to black */
     footer {
       background-color: #fff;
       padding: 20px;
@@ -218,14 +253,14 @@
       font-size: 14px;
       width: 100%;
       text-align: left;
-      margin-top: 20px;
+      margin-top: auto;
     }
     footer a {
       color: #000;
       text-decoration: none;
       margin-right: 10px;
     }
-    /* Mobile adjustments (similar to index.html) */
+    /* Mobile adjustments (same as index.html) */
     @media (max-width: 768px) {
       header {
         padding-left: 10px;
@@ -239,26 +274,25 @@
         padding: 20px 10px;
       }
     }
-    /* --- Source Logos Block (removed from update page as per request) --- */
-    /* --- Additional Text between Container and Logos removed --- */
   </style>
   
   <!-- Clerk SDK -->
   <script async crossorigin="anonymous" data-clerk-publishable-key="pk_test_bmF0aXZlLWliZXgtNDQuY2xlcmsuYWNjb3VudHMuZGV2JA" src="https://native-ibex-44.clerk.accounts.dev/npm/@clerk/clerk-js@latest/dist/clerk.browser.js" type="text/javascript"></script>
 </head>
 <body>
-  <!-- Clerk container overlay -->
+  <!-- Clerk container overlay (centered when user is not authenticated) -->
   <div id="clerk-container"></div>
   
   <header>
-    <!-- Removed hamburger menu -->
+    <!-- Note: Hamburger menu removed -->
     <a id="homeLink" href="#" class="home-btn">ProductBrief</a>
+    <!-- Removed Already Subscribed? link; auth link will show Sign Out without borders -->
     <a id="authLink" href="#" class="update-link"></a>
   </header>
   
   <div class="main-content">
     <div class="container" id="mainContainer">
-      <!-- Moved page title inside container with new styling -->
+      <!-- Moved page title inside container with updated styling -->
       <div class="page-title" style="color: white; font-size: 22px;">Update your preferences</div>
       <!-- Email display container for authenticated users -->
       <div id="emailDisplayContainer">
@@ -271,7 +305,7 @@
         <label for="emailInput">Email Address:</label>
         <input type="email" id="emailInput" name="email" placeholder="Enter your email" required>
       </div>
-      <!-- NEW: Search box and selected sources instead of checkboxes -->
+      <!-- NEW: Search box & selected sources (same design as index.html) -->
       <div class="search-box">
         <input type="text" id="searchInput" placeholder="Search for sources you want to add">
         <div class="search-results" id="searchResults"></div>
@@ -282,7 +316,6 @@
       </form>
       <div class="loading" id="loadingIndicator">Loading...</div>
     </div>
-    <!-- Note: Removed circle logos and "from the sources you follow" text -->
   </div>
   
   <footer>
@@ -294,13 +327,12 @@
     let allSources = [];
     let selectedSources = [];
     
-    // Load sources from sources.json for both search and logos (logos now not shown)
     async function loadSources() {
       try {
         const response = await fetch("assets/json/sources.json");
         const sourcesData = await response.json();
         allSources = sourcesData;
-        // We don't render circle logos on update page as per request.
+        // No logos are rendered on update page.
       } catch (error) {
         console.error("Error loading sources:", error);
       }
@@ -381,7 +413,7 @@
       });
     }
     
-    // Clerk initialization and authentication (same as before)
+    // Clerk initialization and authentication
     window.addEventListener('load', async function () {
       await Clerk.load();
       console.log("ClerkJS is loaded", Clerk.user);
@@ -407,12 +439,11 @@
         const userEmail = Clerk.user.primaryEmailAddress.emailAddress;
         document.getElementById("emailDisplay").textContent = userEmail;
         document.getElementById("email").value = userEmail;
-        // Load user preferences using the authenticated email
         loadUserPreferences(userEmail);
       } else {
         homeLink.href = "index.html";
-        authLink.textContent = "Already Subscribed?";
-        authLink.href = "update.html";
+        // Remove authLink from update page if not authenticated
+        authLink.style.display = "none";
         document.getElementById("mainContainer").style.display = "none";
         document.getElementById("clerk-container").style.display = "flex";
         Clerk.mountSignIn(document.getElementById("clerk-container"), {
@@ -460,7 +491,7 @@
               console.warn("Unexpected sources format:", sourcesData);
             }
             const savedSources = sourceString.split(",").map(s => s.trim());
-            // Instead of checkboxes, update the selected sources array and render it.
+            // Instead of checkboxes, update the selectedSources array and render it.
             selectedSources = allSources.filter(source => savedSources.includes(source.source));
             renderSelectedSources();
           } else {
