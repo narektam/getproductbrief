@@ -247,14 +247,70 @@
       text-decoration: none;
       margin-right: 10px;
     }
+
+    /* --- New Styles for Mobile Hamburger Menu --- */
+
+    /* Hamburger button styling */
+    .hamburger {
+      font-size: 24px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: none; /* visible on mobile only */
+    }
+
+    /* Mobile menu styling */
+    .mobile-menu {
+      position: fixed;
+      top: 0;
+      left: -250px; /* hidden off-screen initially */
+      width: 250px;
+      height: 100%;
+      background-color: #fff;
+      border-right: 1px solid #f0faf3;
+      z-index: 1200;
+      padding: 20px;
+      box-sizing: border-box;
+      transition: left 0.3s ease;
+    }
+    /* When open, slide the menu in */
+    .mobile-menu.open {
+      left: 0;
+    }
+    .mobile-menu a {
+      display: block;
+      padding: 10px 0;
+      font-size: 16px;
+      text-decoration: none;
+      color: #000;
+    }
+
+    /* On mobile devices: show hamburger and hide the desktop update link */
+    @media (max-width: 768px) {
+      .hamburger {
+        display: block;
+      }
+      .update-link {
+        display: none;
+      }
+    }
   </style>
 </head>
 <body>
   <header>
+    <!-- Hamburger button visible only on mobile -->
+    <button id="hamburgerButton" class="hamburger">&#9776;</button>
     <a href="index.html" class="home-btn">ProductBrief</a>
     <h1></h1>
+    <!-- Desktop update link (hidden on mobile) -->
     <a href="update.html" class="update-link">Already Subscribed?</a>
   </header>
+
+  <!-- Mobile menu that slides in from the left -->
+  <div id="mobileMenu" class="mobile-menu">
+    <a href="update.html" class="mobile-update-link">Already Subscribed?</a>
+  </div>
+
   <div class="main-content">
     <!-- Page title placed above the card -->
     <div class="page-title">Subscribe to Get Product Brief</div>
@@ -436,6 +492,23 @@
         console.error("Error submitting form:", error);
         alert("There was an error processing your subscription.");
       });
+    });
+
+    /* --- New JavaScript for Mobile Hamburger Menu --- */
+
+    // Toggle the mobile menu when hamburger is clicked
+    document.getElementById("hamburgerButton").addEventListener("click", function(e) {
+      e.stopPropagation(); // Prevent click from bubbling to document
+      document.getElementById("mobileMenu").classList.toggle("open");
+    });
+
+    // Close mobile menu if clicking outside of it
+    document.addEventListener("click", function(e) {
+      var mobileMenu = document.getElementById("mobileMenu");
+      var hamburgerButton = document.getElementById("hamburgerButton");
+      if (!mobileMenu.contains(e.target) && !hamburgerButton.contains(e.target)) {
+        mobileMenu.classList.remove("open");
+      }
     });
   </script>
 </body>
