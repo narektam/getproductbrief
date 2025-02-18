@@ -70,9 +70,6 @@
       margin: 40px auto 10px;
       font-weight: bold;
     }
-    /* Updated title text */
-    /* Change the text in the HTML below in the body section */
-    
     /* Description under page title */
     .description {
       text-align: center;
@@ -81,8 +78,13 @@
       font-weight: 500;
       margin: 0 10px 20px;
     }
-    /* Updated description text is in the HTML below */
-    
+    /* For desktop devices, add side margins equal to 15% of screen width */
+    @media (min-width: 769px) {
+      .description {
+        margin-left: 15vw;
+        margin-right: 15vw;
+      }
+    }
     .container {
       max-width: 600px;
       background-color: #f57b55;
@@ -106,7 +108,7 @@
       border-radius: 4px;
       box-sizing: border-box;
       background-color: #fff;
-      /* New uniform search icon */
+      /* Uniform search icon with a stroke-based SVG */
       background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='16'%20height='16'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='black'%20stroke-width='2'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Ccircle%20cx='11'%20cy='11'%20r='8'%3E%3C/circle%3E%3Cline%20x1='21'%20y1='21'%20x2='16.65'%20y2='16.65'%3E%3C/line%3E%3C/svg%3E");
       background-repeat: no-repeat;
       background-position: 10px center;
@@ -256,11 +258,10 @@
       margin-top: auto;
     }
     footer a {
-      color: #000;  /* Footer links in black */
+      color: #000;
       text-decoration: none;
       margin-right: 10px;
     }
-
     /* --- Mobile Hamburger Menu & Adjustments --- */
     /* Custom hamburger icon with two bars */
     .hamburger {
@@ -322,7 +323,6 @@
       color: #000;
       font-weight: bold;
     }
-
     /* Mobile adjustments */
     @media (max-width: 768px) {
       header {
@@ -385,9 +385,10 @@
   <div class="main-content">
     <!-- Updated title text -->
     <div class="page-title">Curated Product Insights, Every Two Weeks</div>
-    <!-- Updated description text -->
+    <!-- Updated description text with line break -->
     <p class="description">
-      Get a bi-weekly email digest of the most important product news, AI breakthroughs, podcasts, and company updates - from the sources you follow, all in one place. Free forever, no account required.
+      Get a bi-weekly email digest of product news, AI breakthroughs, podcasts, and more - from the sources you follow.<br>
+      Forever free, no account required.
     </p>
     <div class="container">
       <div class="search-box">
