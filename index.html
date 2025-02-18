@@ -31,7 +31,7 @@
       width: 100%;
       background-color: #ffffff;
       border-bottom: 0.5px solid #f0faf3;
-      z-index: 1100;
+      z-index: 1400; /* Raised z-index so header (and hamburger) appear above mobile menu */
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -47,7 +47,6 @@
       margin: 0;
       background: none;
       padding: 0;
-      /* Centering will be applied in mobile media query */
     }
     /* Already Subscribed? link (desktop) */
     header a.update-link {
@@ -280,7 +279,7 @@
     .hamburger.open .bar:nth-child(2) {
       transform: rotate(-45deg) translate(5px, -5px);
     }
-    /* Mobile menu styling */
+    /* Mobile menu styling: covers 30% of the viewport height */
     .mobile-menu {
       position: fixed;
       top: -30vh; /* hidden above viewport initially */
