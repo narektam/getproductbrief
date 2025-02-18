@@ -73,17 +73,16 @@
     .page-title {
       text-align: center;
       font-size: 24px;
-      color: #f57b55; /* changed from #007BFF */
+      color: #f57b55;
       margin-bottom: 20px;
     }
     .content {
       font-size: 16px;
       line-height: 1.6;
     }
-    /* Added extra paragraph under "How We Use Your Information" */
-    .content p.sponsored {
-      font-style: italic;
-      margin-top: 10px;
+    /* Under "How We Use Your Information", merged extra text */
+    .content h2 + p {
+      /* This rule applies to the first paragraph after an h2 */
     }
     /* Updated Footer (from index page) */
     footer {
@@ -137,10 +136,7 @@
         </p>
         <h2>How We Use Your Information</h2>
         <p>
-          We use your email and selected sources to send you our newsletter and to manage your subscription preferences.
-        </p>
-        <p class="sponsored">
-          Delivering sponsored content within our newsletters.
+          We use your email and selected sources to send you our newsletter and to manage your subscription preferences. Delivering sponsored content within our newsletters.
         </p>
         <h2>Data Security</h2>
         <p>
