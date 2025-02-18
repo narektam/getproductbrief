@@ -1,10 +1,26 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- ... (previous head content remains the same) ... -->
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Get Product Brief - Subscribe</title>
+  <link rel="icon" type="image/png" href="/assets/images/favicon.ico/favicon-96x96.png" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <link rel="manifest" href="/assets/images/site.webmanifest" />
   <style>
-    /* ... (previous styles remain the same until header section) ... */
-    
+    body {
+      background-color: #ffffff; /* overall page background white */
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+    }
+    /* Header: text links instead of buttons */
     header {
       position: fixed;
       top: 0;
@@ -18,134 +34,409 @@
       justify-content: space-between;
       padding: 10px 20px;
     }
-
-    /* Mobile menu button */
-    .menu-btn {
-      display: none;
-      background: none;
-      border: none;
-      padding: 10px;
-      cursor: pointer;
-      margin-right: 10px;
-    }
-
-    .menu-btn span {
-      display: block;
-      width: 25px;
-      height: 2px;
-      background-color: #000;
-      margin: 5px 0;
-      transition: 0.4s;
-    }
-
-    /* Side menu */
-    .side-menu {
-      position: fixed;
-      top: 0;
-      left: -250px;
-      width: 250px;
-      height: 100vh;
-      background-color: #ffffff;
-      z-index: 1200;
-      transition: 0.3s;
-      padding-top: 60px;
-      box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-    }
-
-    .side-menu.active {
-      left: 0;
-    }
-
-    .side-menu a {
-      display: block;
-      padding: 15px 20px;
+    header a.home-btn {
       text-decoration: none;
+      font-size: 21px; /* increased by 50% from 14px */
       color: #000;
-      font-size: 16px;
+      font-weight: bold;
+      margin-left: 20px;
+      /* Remove background and padding to look like text */
+      background: none;
+      padding: 0;
+      border: none;
     }
-
-    /* Overlay */
-    .menu-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
-      z-index: 1150;
-      display: none;
+    header h1 {
+      flex: 1;
+      text-align: center;
+      margin: 0;
+      font-size: 24px;
+      color: #007BFF;
     }
-
-    .menu-overlay.active {
-      display: block;
-    }
-
-    /* Desktop update link */
     header a.update-link {
       text-decoration: none;
-      font-size: 14px;
+      font-size: 14px; /* no increase here unless requested */
       color: #000;
+      /* Remove border, background and padding */
       background: none;
       padding: 0;
       border: none;
       margin-right: 20px;
     }
-
-    /* Media query for mobile devices */
-    @media screen and (max-width: 768px) {
-      .menu-btn {
-        display: block;
-      }
-
-      header a.update-link {
-        display: none;
-      }
-
-      header {
-        padding: 10px;
-      }
-
-      header a.home-btn {
-        margin-left: 10px;
-      }
+    .main-content {
+      flex: 1;
+      padding-top: 70px; /* leave space for header */
+    }
+    /* Page title placed above the card: increased font size and color black */
+    .page-title {
+      text-align: center;
+      font-size: 36px; /* increased by 50% from 24px */
+      color: #000;
+      margin: 40px auto 20px;
+    }
+    .container {
+      max-width: 600px;
+      background-color: #f57b55; /* card background remains f57b55 */
+      margin: 0 auto 20px;
+      padding: 20px;
+      border-radius: 6px;
+      box-sizing: border-box;
+      position: relative;
+    }
+    /* Search box inside the card */
+    .search-box {
+      margin-bottom: 20px;
+      position: relative;
+    }
+    .search-box input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      height: 48px; /* uniform height */
+      border: none; /* no border */
+      border-radius: 4px;
+      box-sizing: border-box;
+      background-color: #fff;
+    }
+    .search-box input[type="text"]::placeholder {
+      color: #aaa;
+    }
+    .search-box input[type="text"]:focus {
+      border: 1px solid #000;
+      outline: none;
+    }
+    /* Dropdown list for search results with fade overlay */
+    .search-results {
+      position: absolute;
+      top: calc(100% + 5px); /* 5px gap between search box and list */
+      left: 0;
+      right: 0;
+      background-color: #fff;
+      border: 1px solid #000;
+      border-top: none;
+      border-radius: 4px;
+      max-height: 216px; /* 4.5 items at 48px each */
+      overflow-y: auto;
+      z-index: 10;
+      display: none;
+    }
+    .search-results::after {
+      content: "";
+      position: sticky;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 24px; /* half of 48px */
+      background: linear-gradient(to bottom, rgba(255,255,255,0), rgba(255,255,255,1));
+      pointer-events: none;
+      border-bottom-left-radius: 4px;
+      border-bottom-right-radius: 4px;
+    }
+    .search-results div {
+      height: 48px; /* same height as selected source cards */
+      padding: 0 10px;
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+    }
+    .search-results div:hover {
+      background-color: #f0f0f0;
+    }
+    .search-results img {
+      width: 24px;
+      height: 24px;
+      margin-right: 10px;
+      border-radius: 4px;
+    }
+    /* Selected sources container: vertical stack, full width, reduced gap */
+    .selected-sources {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      margin-bottom: 20px;
+      width: 100%;
+    }
+    .selected-source {
+      background-color: #fff;
+      border: none;  /* no border */
+      border-radius: 4px;
+      padding: 10px;
+      box-sizing: border-box;
+      display: flex;
+      align-items: center;
+      width: 100%;
+      font-size: 16px;
+    }
+    .selected-source img {
+      width: 24px;
+      height: 24px;
+      margin-right: 10px;
+      border-radius: 4px;
+    }
+    .selected-source .remove-source {
+      margin-left: auto;
+      padding-right: 10px;
+      cursor: pointer;
+      font-weight: bold;
+      color: #000;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    /* Hide the original sources container */
+    .sources {
+      display: none;
+    }
+    /* Email row: email input and subscribe button side-by-side */
+    .email-row {
+      display: none;
+      flex-direction: row;
+      gap: 10px;
+      align-items: center;
+    }
+    .email-row input {
+      flex: 1;
+      padding: 10px;
+      font-size: 16px;
+      height: 48px; /* uniform height */
+      border: none; /* no border */
+      border-radius: 4px;
+      background-color: #fff;
+      box-sizing: border-box;
+    }
+    .email-row input::placeholder {
+      color: #aaa;
+    }
+    .email-row input:focus {
+      border: 1px solid #000;
+      outline: none;
+    }
+    .email-row button {
+      padding: 10px 16px;
+      font-size: 14px;
+      height: 48px; /* same height as email input */
+      background-color: #000;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .email-row button:hover {
+      background-color: #333;
+    }
+    .loading {
+      text-align: center;
+      font-size: 16px;
+      color: #000;
+      margin-top: 20px;
+      display: none;
+    }
+    /* Footer: dedicated area at the very bottom, left-aligned, with thin border */
+    footer {
+      background-color: #fff;
+      padding: 20px;
+      border-top: 0.5px solid #f0faf3;
+      font-size: 14px;
+      width: 100%;
+      text-align: left;
+      margin-top: auto;
+    }
+    footer a {
+      color: #007BFF;
+      text-decoration: none;
+      margin-right: 10px;
     }
   </style>
 </head>
 <body>
   <header>
-    <button class="menu-btn" id="menuBtn">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
     <a href="index.html" class="home-btn">ProductBrief</a>
     <h1></h1>
     <a href="update.html" class="update-link">Already Subscribed?</a>
   </header>
-
-  <!-- Side menu -->
-  <div class="side-menu" id="sideMenu">
-    <a href="update.html">Already Subscribed?</a>
+  <div class="main-content">
+    <!-- Page title placed above the card -->
+    <div class="page-title">Subscribe to Get Product Brief</div>
+    <div class="container">
+      <!-- Search box inside the card -->
+      <div class="search-box">
+        <input type="text" id="searchInput" placeholder="Search for sources you want to add">
+        <div class="search-results" id="searchResults"></div>
+      </div>
+      <!-- Container for selected sources (large cards stacked vertically) -->
+      <div class="selected-sources" id="selectedSources"></div>
+      <form id="subscriptionForm">
+        <!-- Email row container: contains the email input and subscribe button side-by-side -->
+        <div class="email-row" id="emailRow">
+          <input type="email" id="email" name="email" placeholder="Enter your email" required>
+          <button type="submit">Subscribe</button>
+        </div>
+      </form>
+      <div class="loading" id="loadingIndicator">Loading...</div>
+    </div>
   </div>
-
-  <!-- Overlay -->
-  <div class="menu-overlay" id="menuOverlay"></div>
-
-  <!-- Add this script just before the closing body tag -->
+  <footer>
+    <a href="privacy.html">Privacy Policy</a>
+    <a href="terms.html">Terms of Use</a>
+  </footer>
+  
   <script>
-    // Menu functionality
-    const menuBtn = document.getElementById('menuBtn');
-    const sideMenu = document.getElementById('sideMenu');
-    const menuOverlay = document.getElementById('menuOverlay');
+    let allSources = [];
+    let selectedSources = [];
 
-    function toggleMenu() {
-      sideMenu.classList.toggle('active');
-      menuOverlay.classList.toggle('active');
-      document.body.style.overflow = sideMenu.classList.contains('active') ? 'hidden' : '';
+    // Load sources from JSON and store in allSources
+    async function loadSources() {
+      try {
+        const response = await fetch("assets/json/sources.json");
+        const sourcesData = await response.json();
+        allSources = sourcesData;
+      } catch (error) {
+        console.error("Error loading sources:", error);
+      }
+    }
+    loadSources();
+    
+    const searchInput = document.getElementById("searchInput");
+    const searchResults = document.getElementById("searchResults");
+    const selectedSourcesContainer = document.getElementById("selectedSources");
+
+    // Render search results from a list of sources
+    function renderSearchResults(sources) {
+      searchResults.innerHTML = "";
+      sources.forEach(source => {
+        const div = document.createElement("div");
+        div.innerHTML = `<img src="${source.logoURL}" alt="${source.source} Logo"> ${source.source}`;
+        div.addEventListener("click", function() {
+          addSelectedSource(source);
+          searchInput.value = "";
+          searchResults.style.display = "none";
+        });
+        searchResults.appendChild(div);
+      });
+      searchResults.style.display = sources.length ? "block" : "none";
+    }
+    
+    // When search box is focused and empty, show all sources (excluding already selected)
+    searchInput.addEventListener("focus", function() {
+      if (this.value.trim() === "") {
+        renderSearchResults(allSources.filter(source => 
+          !selectedSources.some(sel => sel.source === source.source)
+        ));
+      }
+    });
+    
+    // Filter sources as user types
+    searchInput.addEventListener("input", function() {
+      const query = this.value.toLowerCase().trim();
+      if (query === "") {
+        renderSearchResults(allSources.filter(source => 
+          !selectedSources.some(sel => sel.source === source.source)
+        ));
+      } else {
+        const results = allSources.filter(source =>
+          source.source.toLowerCase().includes(query) &&
+          !selectedSources.some(sel => sel.source === source.source)
+        );
+        renderSearchResults(results);
+      }
+    });
+
+    // Hide search results if clicking outside the search box and results
+    document.addEventListener("click", function(e) {
+      if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+        searchResults.style.display = "none";
+      }
+    });
+
+    // Function to add a selected source to the container as a large card
+    function addSelectedSource(source) {
+      selectedSources.push(source);
+      renderSelectedSources();
+      updateEmailRowVisibility();
     }
 
-    menuBtn.addEventListener('click', toggleMenu);
-    menuOverlay.addEventListener('click', toggleMenu);
+    // Function to remove a selected source
+    function removeSelectedSource(sourceName) {
+      selectedSources = selectedSources.filter(s => s.source !== sourceName);
+      renderSelectedSources();
+      updateEmailRowVisibility();
+    }
+
+    // Render the selected sources container as large cards stacked vertically
+    function renderSelectedSources() {
+      selectedSourcesContainer.innerHTML = "";
+      selectedSources.forEach(source => {
+        const div = document.createElement("div");
+        div.className = "selected-source";
+        div.innerHTML = `<img src="${source.logoURL}" alt="${source.source} Logo"> ${source.source} <span class="remove-source" data-source="${source.source}">&times;</span>`;
+        selectedSourcesContainer.appendChild(div);
+      });
+      // Attach click event to remove buttons
+      document.querySelectorAll(".remove-source").forEach(button => {
+        button.addEventListener("click", function() {
+          const srcName = this.getAttribute("data-source");
+          removeSelectedSource(srcName);
+        });
+      });
+    }
+
+    // Update email row visibility based on selected sources
+    function updateEmailRowVisibility() {
+      const emailRow = document.getElementById("emailRow");
+      emailRow.style.display = selectedSources.length > 0 ? "flex" : "none";
+    }
+    
+    // Handle form submission (using your existing logic)
+    document.getElementById("subscriptionForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      document.getElementById("loadingIndicator").style.display = "block";
+      
+      const email = document.getElementById("email").value;
+      const sourcesPayload = [ selectedSources.map(s => s.source).join(",") ];
+      const today = new Date().toISOString().split("T")[0];
+      const payload = {
+        email: email,
+        sources: sourcesPayload,
+        submission_date: today,
+        update_date: today,
+        submission_status: "Active"
+      };
+      
+      fetch("https://narektamoyan.app.n8n.cloud/webhook/add-subscription", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      })
+      .then(response => {
+        document.getElementById("loadingIndicator").style.display = "none";
+        return response.text();
+      })
+      .then(text => {
+        let data = {};
+        try {
+          data = text ? JSON.parse(text) : {};
+        } catch (err) {
+          console.error("Error parsing JSON:", err);
+        }
+        if (data.error && data.error === "existing_subscriber") {
+          alert("Already Subscribed\nThis email is already subscribed. To edit your preferences, click the Update your brief button from your emails.");
+        } else if (data.error) {
+          alert("There was an error processing your subscription.");
+        } else {
+          alert("Thank you for subscribing!");
+          document.getElementById("subscriptionForm").reset();
+          selectedSources = [];
+          renderSelectedSources();
+          updateEmailRowVisibility();
+        }
+      })
+      .catch(error => {
+        document.getElementById("loadingIndicator").style.display = "none";
+        console.error("Error submitting form:", error);
+        alert("There was an error processing your subscription.");
+      });
+    });
   </script>
 </body>
 </html>
