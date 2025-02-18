@@ -73,18 +73,20 @@
     .page-title {
       text-align: center;
       font-size: 24px;
-      color: #f57b55; /* changed from #007BFF */
+      color: #f57b55; /* changed from blue to card container color */
       margin-bottom: 20px;
     }
     .content {
       font-size: 16px;
       line-height: 1.6;
     }
-    /* Added text under Use of Service section */
-    .content p.sponsored {
-      font-style: italic;
-      margin-top: 10px;
+    /* Merge sponsored text into "Use of Service" section */
+    .content h2 + p {
+      /* The paragraph immediately following an h2 */
     }
+    /* For example, in "Use of Service", combine the two paragraphs: */
+    /* (See below in the body content) */
+    
     /* Updated Footer (from index page) */
     footer {
       background-color: #fff;
@@ -133,10 +135,7 @@
         </p>
         <h2>Use of Service</h2>
         <p>
-          Our service provides curated product insights via a free newsletter. You agree to use it for personal, non-commercial purposes only.
-        </p>
-        <p class="sponsored">
-          Delivering sponsored content within our newsletters.
+          Our service provides curated product insights via a free newsletter. You agree to use it for personal, non-commercial purposes only. Delivering sponsored content within our newsletters.
         </p>
         <h2>User Responsibilities</h2>
         <p>
