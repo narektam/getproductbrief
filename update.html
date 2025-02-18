@@ -4,70 +4,137 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Update Your Subscription - Get Product Brief</title>
+  <link rel="icon" type="image/png" href="/assets/images/favicon.ico/favicon-96x96.png" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="/assets/images/favicon.svg" />
+  <link rel="shortcut icon" href="/assets/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/apple-touch-icon.png" />
+  <link rel="manifest" href="/assets/images/site.webmanifest" />
   <style>
+    html, body {
+      overflow-x: hidden; /* Disable horizontal scrolling */
+    }
     body {
-      background-color: #f2f2f2;
+      background-color: #ffffff;
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
       color: #333;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }
-    /* Fixed header styling */
+    /* Header styling (updated UI from index.html) */
     header {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       background-color: #ffffff;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      z-index: 1100;
+      border-bottom: 0.5px solid #f0faf3;
+      z-index: 1400;
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 10px 20px;
+      box-sizing: border-box;
     }
+    /* Hamburger button (for mobile) */
+    .hamburger {
+      display: none;
+      background: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      position: relative;
+      width: 26px;
+      height: 20px;
+    }
+    .hamburger .bar {
+      position: absolute;
+      left: 0;
+      width: 26px;
+      height: 3px;
+      background-color: #000;
+      border-radius: 2px;
+      transition: transform 0.3s, opacity 0.3s;
+      transform-origin: center;
+    }
+    .hamburger .bar:nth-child(1) { top: 3.5px; }
+    .hamburger .bar:nth-child(2) { top: 13.5px; }
+    .hamburger.open .bar:nth-child(1) {
+      transform: translateY(5px) rotate(45deg);
+    }
+    .hamburger.open .bar:nth-child(2) {
+      transform: translateY(-5px) rotate(-45deg);
+    }
+    /* Home link styling */
     header a.home-btn {
       text-decoration: none;
-      font-size: 14px;
-      background-color: #007BFF;
-      color: #fff;
-      padding: 8px 16px;
-      border-radius: 50px;
-      margin-left: 20px;
+      font-size: 21px;
+      color: #000;
+      font-weight: bold;
+      margin: 0;
+      background: none;
+      padding: 0;
     }
-    header a#authLink {
+    /* Auth link styling */
+    header a.update-link {
       text-decoration: none;
       font-size: 14px;
-      color: #007BFF;
+      color: #000;
+      font-weight: bold;
+      background: none;
       padding: 8px 16px;
       border: 1px solid #007BFF;
       border-radius: 50px;
       margin-right: 20px;
     }
+    /* Main content */
     .main-content {
-      padding-top: 70px; /* leave space for header */
+      flex: 1;
+      padding-top: 70px; /* leave space for fixed header */
     }
-    /* Container for authenticated content */
+    /* Card container styling (updated to match index.html) */
     .container {
       max-width: 600px;
-      background-color: #fff;
-      margin: 50px auto;
+      background-color: #f57b55;
+      margin: 40px auto 20px; /* slightly reduced top margin */
       padding: 20px;
       border-radius: 6px;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-      display: none; /* shown only when authenticated */
+      box-sizing: border-box;
+      position: relative;
     }
-    /* Page title in body */
+    /* Page title in card */
     .page-title {
       text-align: center;
-      font-size: 24px;
-      color: #007BFF;
-      margin-bottom: 20px;
+      font-size: 36px;
+      color: #f57b55;
+      margin: 0 auto 10px;
+      font-weight: bold;
     }
+    /* (For update.html, we keep the text "Update Your Subscription - Get Product Brief") */
+    /* Update the color of the page title if needed (you can keep it as is or adjust) */
+    
+    /* Footer styling (updated from index.html) */
+    footer {
+      background-color: #fff;
+      padding: 20px;
+      border-top: 0.5px solid #f0faf3;
+      font-size: 14px;
+      width: 100%;
+      text-align: left;
+      margin-top: 20px;
+    }
+    footer a {
+      color: #000;
+      text-decoration: none;
+      margin-right: 10px;
+    }
+    /* Additional styling for update.html form remains mostly intact */
     form {
       margin-top: 20px;
     }
-    /* Email display container for authenticated users */
+    /* Styling for email display and fallback containers (as in original update.html) */
     #emailDisplayContainer {
       margin-bottom: 20px;
       display: none;
@@ -85,7 +152,6 @@
       border-radius: 4px;
       background-color: #e9ecef;
     }
-    /* Fallback email input container */
     #emailInputContainer {
       margin-bottom: 20px;
       display: none;
@@ -101,10 +167,6 @@
       font-size: 16px;
       border: 1px solid #ccc;
       border-radius: 4px;
-    }
-    /* Hidden email field for submission when authenticated */
-    #email {
-      display: none;
     }
     /* Sources container for checkboxes */
     .sources {
@@ -146,17 +208,7 @@
       margin-top: 20px;
       display: none;
     }
-    .footer {
-      text-align: center;
-      margin-top: 20px;
-      font-size: 14px;
-    }
-    .footer a {
-      color: #007BFF;
-      text-decoration: none;
-      margin: 0 10px;
-    }
-    /* Clerk container overlay styling */
+    /* Clerk container overlay remains unchanged */
     #clerk-container {
       position: fixed;
       top: 0;
@@ -169,6 +221,86 @@
       align-items: center;
       justify-content: center;
     }
+    
+    /* Responsive adjustments for mobile (same as index.html) */
+    @media (max-width: 768px) {
+      header {
+        padding-left: 10px;
+        padding-right: 10px;
+      }
+      .hamburger {
+        display: block;
+        margin-left: 0;
+        z-index: 1300;
+      }
+      .update-link {
+        display: none;
+      }
+      .home-btn {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        margin: 0 !important;
+      }
+      .container {
+        width: calc(100% - 20px);
+        margin: 40px 10px 20px;
+      }
+      .mobile-menu {
+        padding: 20px 20px 20px 10px;
+      }
+      .mobile-menu a {
+        margin-top: 37.5px;
+      }
+    }
+    
+    /* --- Source Logos Block (UI from index.html) --- */
+    .source-logos {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 20px auto;
+    }
+    .source-logos .logo {
+      width: 30px;
+      height: 30px;
+      border: 2px solid black; /* Updated border thickness is now 2px */
+      border-radius: 50%;
+      overflow: hidden;
+      background: white;
+      position: relative;
+    }
+    .source-logos .logo:not(:first-child) {
+      margin-left: -9px; /* 30% of 30px = 9px overlap */
+    }
+    .source-logos .logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    /* Special styling for the last "more" circle */
+    .source-logos .logo.more {
+      background-color: black;
+      border: 2px solid black;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .source-logos .logo.more span {
+      position: relative;
+      color: white;
+      font-size: 12px;
+      font-weight: bold;
+      z-index: 1;
+    }
+    /* Additional text between container and logos */
+    .source-follow-text {
+      text-align: center;
+      font-size: 18px;
+      color: #333;
+      font-weight: 200;
+      margin: 10px 0 20px;
+    }
   </style>
   
   <!-- Clerk SDK -->
@@ -179,15 +311,21 @@
   <div id="clerk-container"></div>
   
   <header>
-    <!-- Home link will be set dynamically based on authentication -->
+    <!-- Hamburger button (visible on mobile) -->
+    <button id="hamburgerButton" class="hamburger">
+      <span class="bar"></span>
+      <span class="bar"></span>
+    </button>
+    <!-- Home link set dynamically based on authentication -->
     <a id="homeLink" href="#" class="home-btn">ProductBrief</a>
+    <!-- Auth link set dynamically (Sign Out or Already Subscribed?) -->
     <a id="authLink" href="#" class="update-link"></a>
   </header>
   
   <div class="main-content">
-    <!-- Main container, shown only when authenticated -->
+    <!-- Main container (card) -->
     <div class="container" id="mainContainer">
-      <!-- Page title in body -->
+      <!-- Page title -->
       <div class="page-title">Update Your Subscription - Get Product Brief</div>
       <form id="updateForm">
         <!-- Email display container for authenticated users -->
@@ -215,10 +353,14 @@
         <a href="terms.html">Terms of Use</a>
       </div>
     </div>
+    <!-- Additional text between container and logos -->
+    <p class="source-follow-text">from the sources you follow</p>
+    <!-- Source Logos Block (populated dynamically) -->
+    <div class="source-logos" id="sourceLogos"></div>
   </div>
   
   <script>
-    // Function to load dynamic sources from JSON and populate checkboxes
+    // Load sources for checkboxes (for updating preferences)
     async function loadSources() {
       try {
         const response = await fetch("assets/json/sources.json");
@@ -237,8 +379,6 @@
         console.error("Error loading sources:", error);
       }
     }
-    
-    // Load sources on page load
     loadSources();
     
     // Global flag for preference loading
@@ -272,7 +412,6 @@
               console.warn("Unexpected sources format:", sourcesData);
             }
             const selectedSources = sourceString.split(",").map(s => s.trim());
-            // Reveal the sources container and update checkboxes
             document.getElementById("sourcesContainer").style.display = "block";
             const checkboxes = document.querySelectorAll("#sourcesContainer input[name='sources']");
             checkboxes.forEach(checkbox => {
@@ -303,41 +442,30 @@
       const authLink = document.getElementById("authLink");
       if (Clerk.user) {
         // For authenticated users:
-        // Set home link to update.html so clicking it keeps them on the update page.
         homeLink.href = "update.html";
-        // Update auth link to "Sign Out" with sign-out functionality.
         authLink.textContent = "Sign Out";
         authLink.href = "#";
         authLink.addEventListener("click", async function () {
           await Clerk.signOut();
           window.location.href = "index.html";
         });
-        // Show main container and update form.
         document.getElementById("clerk-container").style.display = "none";
         document.getElementById("mainContainer").style.display = "block";
-        // Hide fallback email input and disable it.
-        const emailInputContainer = document.getElementById("emailInputContainer");
-        emailInputContainer.style.display = "none";
+        document.getElementById("emailInputContainer").style.display = "none";
         const emailInput = document.getElementById("emailInput");
         if(emailInput) {
           emailInput.disabled = true;
           emailInput.removeAttribute("required");
         }
-        // Show email display container.
         document.getElementById("emailDisplayContainer").style.display = "block";
         const userEmail = Clerk.user.primaryEmailAddress.emailAddress;
         document.getElementById("emailDisplay").textContent = userEmail;
         document.getElementById("email").value = userEmail;
-        // Automatically load user preferences using the authenticated email.
         loadUserPreferences(userEmail);
       } else {
-        // For non-authenticated users:
-        // Set home link to index.html so clicking it takes them to the subscription page.
         homeLink.href = "index.html";
-        // Update auth link to "Already Subscribed?" linking to update.html.
         authLink.textContent = "Already Subscribed?";
         authLink.href = "update.html";
-        // Hide main container and show Clerk sign-in overlay.
         document.getElementById("mainContainer").style.display = "none";
         document.getElementById("clerk-container").style.display = "flex";
         Clerk.mountSignIn(document.getElementById("clerk-container"), {
@@ -357,7 +485,7 @@
       }
     });
     
-    // Handle update form submission (for updating preferences)
+    // Handle update form submission
     document.getElementById("updateForm").addEventListener("submit", function(e) {
       e.preventDefault();
       document.getElementById("loadingIndicator").style.display = "block";
@@ -398,6 +526,46 @@
         console.error("Error updating preferences:", error);
         alert("An error occurred while processing your request.");
       });
+    });
+    
+    /* Render source logos from sources.json for circle logos block */
+    function renderSourceLogos() {
+      // Desired sources in order:
+      const desired = [
+        "Reforge",
+        "Y Combinator",
+        "Stripe",
+        "Anthropic",
+        "OpenAI",
+        "Lenny's Podcast",
+        "Figma",
+        "Linear"
+      ];
+      const logos = allSources.filter(source => desired.includes(source.source))
+                              .sort((a, b) => desired.indexOf(a.source) - desired.indexOf(b.source));
+      let html = "";
+      logos.forEach(source => {
+        html += `<div class="logo"><img src="${source.logoURL}" alt="${source.source}"></div>`;
+      });
+      // Append the "more" circle
+      html += `<div class="logo more"><span>+20</span></div>`;
+      document.getElementById("sourceLogos").innerHTML = html;
+    }
+    
+    /* --- Mobile Hamburger Menu JavaScript --- */
+    document.getElementById("hamburgerButton").addEventListener("click", function(e) {
+      e.stopPropagation();
+      this.classList.toggle("open");
+      document.getElementById("mobileMenu").classList.toggle("open");
+    });
+    
+    document.addEventListener("click", function(e) {
+      const mobileMenu = document.getElementById("mobileMenu");
+      const hamburgerButton = document.getElementById("hamburgerButton");
+      if (!mobileMenu.contains(e.target) && !hamburgerButton.contains(e.target)) {
+        mobileMenu.classList.remove("open");
+        hamburgerButton.classList.remove("open");
+      }
     });
   </script>
 </body>
