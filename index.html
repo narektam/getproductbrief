@@ -239,7 +239,7 @@
       margin-top: auto;
     }
     footer a {
-      color: #007BFF;
+      color: #000;  /* Changed to black */
       text-decoration: none;
       margin-right: 10px;
     }
@@ -266,18 +266,19 @@
       transition: transform 0.3s, opacity 0.3s;
       transform-origin: center;
     }
+    /* Adjusted positions for symmetry */
     .hamburger .bar:nth-child(1) {
-      top: 3.15px;
+      top: 3.5px;
     }
     .hamburger .bar:nth-child(2) {
-      top: 13.85px;
+      top: 13.5px;
     }
-    /* Transform into an X when open */
+    /* When open, move bars so their centers align at 10px */
     .hamburger.open .bar:nth-child(1) {
-      transform: rotate(45deg) translate(5px, 5px);
+      transform: rotate(45deg) translate(0, 5px);
     }
     .hamburger.open .bar:nth-child(2) {
-      transform: rotate(-45deg) translate(5px, -5px);
+      transform: rotate(-45deg) translate(0, -5px);
     }
     /* Mobile menu styling: covers 30% of the viewport height */
     .mobile-menu {
