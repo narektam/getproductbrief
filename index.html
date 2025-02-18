@@ -273,7 +273,7 @@
     .hamburger .bar:nth-child(2) {
       top: 13.5px;
     }
-    /* When open, first translate then rotate so centers align perfectly */
+    /* When open, translate first then rotate so centers align perfectly */
     .hamburger.open .bar:nth-child(1) {
       transform: translateY(5px) rotate(45deg);
     }
@@ -343,7 +343,7 @@
       }
       /* Push the mobile menu update link down so it doesn't overlap the hamburger (X) */
       .mobile-menu a {
-        margin-top: 50px;
+        margin-top: 37.5px; /* Reduced vertical space by 25% from 50px */
       }
     }
   </style>
