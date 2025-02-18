@@ -50,7 +50,7 @@
     header a.update-link {
       text-decoration: none;
       font-size: 14px;
-      color: #000;  /* changed to black */
+      color: #000;
       font-weight: bold;
       background: none;
       padding: 8px 16px;
@@ -58,27 +58,32 @@
       margin-right: 20px;
     }
     .main-content {
-      padding-top: 70px; /* space for fixed header */
+      padding-top: 70px; /* space for header */
       flex: 1;
     }
-    /* Container for privacy content */
     .container {
       max-width: 800px;
       background-color: #fff;
-      margin: 50px auto 0;
+      margin: 50px auto;
       padding: 20px;
       border-radius: 6px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
+    /* Updated page title color */
     .page-title {
       text-align: center;
       font-size: 24px;
-      color: #007BFF;
+      color: #f57b55; /* changed from #007BFF */
       margin-bottom: 20px;
     }
     .content {
       font-size: 16px;
       line-height: 1.6;
+    }
+    /* Added extra paragraph under "How We Use Your Information" */
+    .content p.sponsored {
+      font-style: italic;
+      margin-top: 10px;
     }
     /* Updated Footer (from index page) */
     footer {
@@ -87,15 +92,14 @@
       border-top: 0.5px solid #f0faf3;
       font-size: 14px;
       width: 100%;
-      text-align: left; /* left-aligned */
+      text-align: left;
       margin-top: auto;
     }
     footer a {
-      color: #000;  /* black links */
+      color: #000;
       text-decoration: none;
       margin-right: 10px;
     }
-    /* Responsive adjustments */
     @media (max-width: 768px) {
       header {
         padding-left: 10px;
@@ -103,7 +107,7 @@
       }
       .container {
         width: calc(100% - 20px);
-        margin: 50px 10px 0;
+        margin: 50px 10px;
       }
       footer {
         padding: 20px 10px;
@@ -120,6 +124,7 @@
   
   <div class="main-content">
     <div class="container">
+      <!-- Page title -->
       <div class="page-title">Privacy Policy - Get Product Brief</div>
       <div class="content">
         <h2>Introduction</h2>
@@ -133,6 +138,9 @@
         <h2>How We Use Your Information</h2>
         <p>
           We use your email and selected sources to send you our newsletter and to manage your subscription preferences.
+        </p>
+        <p class="sponsored">
+          Delivering sponsored content within our newsletters.
         </p>
         <h2>Data Security</h2>
         <p>
@@ -154,7 +162,6 @@
     </div>
   </div>
   
-  <!-- Updated Footer -->
   <footer>
     <a href="index.html">Home</a>
     <a href="terms.html">Terms of Use</a>
