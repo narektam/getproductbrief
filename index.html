@@ -36,6 +36,7 @@
       align-items: center;
       justify-content: space-between;
       padding: 10px 20px;
+      box-sizing: border-box;
     }
     /* ProductBrief logo (home-btn) */
     header a.home-btn {
@@ -43,26 +44,21 @@
       font-size: 21px;
       color: #000;
       font-weight: bold;
-      margin-left: 20px;
+      /* Remove default margin so that we can center it on mobile */
+      margin: 0;
       background: none;
       padding: 0;
-      border: none;
+      /* On desktop, it will be at the left by default */
     }
-    header h1 {
-      flex: 1;
-      text-align: center;
-      margin: 0;
-      font-size: 24px;
-      color: #007BFF;
-    }
+    /* Already Subscribed? link */
     header a.update-link {
       text-decoration: none;
       font-size: 14px;
       color: #000;
+      font-weight: bold;  /* Bold on all devices */
       background: none;
       padding: 0;
-      border: none;
-      margin-right: 20px;
+      margin-right: 20px; /* Ensures same spacing as left side */
     }
     .main-content {
       flex: 1;
@@ -281,10 +277,10 @@
     }
     /* Transform into an X when open */
     .hamburger.open .bar:nth-child(1) {
-      transform: rotate(45deg) translate(4px, 4px);
+      transform: rotate(45deg) translate(5px, 5px);
     }
     .hamburger.open .bar:nth-child(2) {
-      transform: rotate(-45deg) translate(4px, -4px);
+      transform: rotate(-45deg) translate(5px, -5px);
     }
 
     /* Mobile menu styling: covers 30% of the viewport height */
@@ -331,10 +327,7 @@
         position: absolute;
         left: 50%;
         transform: translateX(-50%);
-        margin-left: 0;
-      }
-      header h1 {
-        display: none;
+        margin: 0 !important;
       }
       /* Card container with side margins */
       .container {
@@ -351,14 +344,13 @@
 </head>
 <body>
   <header>
-    <!-- Hamburger button visible only on mobile -->
+    <!-- Hamburger button (visible only on mobile) -->
     <button id="hamburgerButton" class="hamburger">
       <span class="bar"></span>
       <span class="bar"></span>
     </button>
     <a href="index.html" class="home-btn">ProductBrief</a>
-    <h1></h1>
-    <!-- Desktop update link (hidden on mobile) -->
+    <!-- Desktop Already Subscribed? link -->
     <a href="update.html" class="update-link">Already Subscribed?</a>
   </header>
 
@@ -368,18 +360,18 @@
   </div>
 
   <div class="main-content">
-    <!-- Page title placed above the card -->
+    <!-- Page title -->
     <div class="page-title">Subscribe to Get Product Brief</div>
     <div class="container">
-      <!-- Search box inside the card -->
+      <!-- Search box -->
       <div class="search-box">
         <input type="text" id="searchInput" placeholder="Search for sources you want to add">
         <div class="search-results" id="searchResults"></div>
       </div>
-      <!-- Container for selected sources (cards stacked vertically) -->
+      <!-- Selected sources container -->
       <div class="selected-sources" id="selectedSources"></div>
       <form id="subscriptionForm">
-        <!-- Email row container -->
+        <!-- Email row -->
         <div class="email-row" id="emailRow">
           <input type="email" id="email" name="email" placeholder="Enter your email" required>
           <button type="submit">Subscribe</button>
@@ -397,7 +389,7 @@
     let allSources = [];
     let selectedSources = [];
 
-    // Load sources from JSON and store in allSources
+    // Load sources from JSON
     async function loadSources() {
       try {
         const response = await fetch("assets/json/sources.json");
@@ -413,7 +405,7 @@
     const searchResults = document.getElementById("searchResults");
     const selectedSourcesContainer = document.getElementById("selectedSources");
 
-    // Render search results from sources
+    // Render search results
     function renderSearchResults(sources) {
       searchResults.innerHTML = "";
       sources.forEach(source => {
@@ -461,14 +453,14 @@
       }
     });
 
-    // Add selected source
+    // Add a selected source
     function addSelectedSource(source) {
       selectedSources.push(source);
       renderSelectedSources();
       updateEmailRowVisibility();
     }
 
-    // Remove selected source
+    // Remove a selected source
     function removeSelectedSource(sourceName) {
       selectedSources = selectedSources.filter(s => s.source !== sourceName);
       renderSelectedSources();
@@ -484,7 +476,6 @@
         div.innerHTML = `<img src="${source.logoURL}" alt="${source.source} Logo"> ${source.source} <span class="remove-source" data-source="${source.source}">&times;</span>`;
         selectedSourcesContainer.appendChild(div);
       });
-      // Attach event to remove buttons
       document.querySelectorAll(".remove-source").forEach(button => {
         button.addEventListener("click", function() {
           const srcName = this.getAttribute("data-source");
@@ -558,8 +549,8 @@
     });
 
     document.addEventListener("click", function(e) {
-      var mobileMenu = document.getElementById("mobileMenu");
-      var hamburgerButton = document.getElementById("hamburgerButton");
+      const mobileMenu = document.getElementById("mobileMenu");
+      const hamburgerButton = document.getElementById("hamburgerButton");
       if (!mobileMenu.contains(e.target) && !hamburgerButton.contains(e.target)) {
         mobileMenu.classList.remove("open");
         hamburgerButton.classList.remove("open");
