@@ -31,14 +31,13 @@
       width: 100%;
       background-color: #ffffff;
       border-bottom: 0.5px solid #f0faf3;
-      z-index: 1400; /* Raised so header (and hamburger) appear above mobile menu */
+      z-index: 1400;
       display: flex;
       align-items: center;
       justify-content: space-between;
       padding: 10px 20px;
       box-sizing: border-box;
     }
-    /* ProductBrief logo (home-btn) */
     header a.home-btn {
       text-decoration: none;
       font-size: 21px;
@@ -48,7 +47,6 @@
       background: none;
       padding: 0;
     }
-    /* Already Subscribed? link (desktop) */
     header a.update-link {
       text-decoration: none;
       font-size: 14px;
@@ -60,17 +58,15 @@
     }
     .main-content {
       flex: 1;
-      padding-top: 70px; /* leave space for header */
+      padding-top: 70px;
     }
-    /* Page title */
     .page-title {
       text-align: center;
       font-size: 36px;
-      color: #f57b55; /* Matches card container */
+      color: #f57b55;
       margin: 40px auto 10px;
       font-weight: bold;
     }
-    /* Description under page title */
     .description {
       text-align: center;
       font-size: 18px;
@@ -78,7 +74,6 @@
       font-weight: 500;
       margin: 0 10px 20px;
     }
-    /* Desktop: add side margins equal to 15% of viewport width */
     @media (min-width: 769px) {
       .description {
         margin-left: 15vw;
@@ -94,14 +89,14 @@
       box-sizing: border-box;
       position: relative;
     }
-    /* Search box */
+    /* Set search box margin-bottom to 0 by default */
     .search-box {
-      margin-bottom: 20px; /* This will be overridden via JS when no source is selected */
+      margin-bottom: 0;
       position: relative;
     }
     .search-box input[type="text"] {
       width: 100%;
-      padding: 10px 10px 10px 40px; /* extra left padding for the icon */
+      padding: 10px 10px 10px 40px;
       font-size: 16px;
       height: 48px;
       border: none;
@@ -119,7 +114,6 @@
       border: 1px solid #000;
       outline: none;
     }
-    /* Search results dropdown */
     .search-results {
       position: absolute;
       top: calc(100% + 5px);
@@ -162,7 +156,6 @@
       margin-right: 10px;
       border-radius: 4px;
     }
-    /* Selected sources */
     .selected-sources {
       display: flex;
       flex-direction: column;
@@ -202,7 +195,6 @@
     .sources {
       display: none;
     }
-    /* Email row */
     .email-row {
       display: none;
       flex-direction: row;
@@ -246,7 +238,6 @@
       margin-top: 20px;
       display: none;
     }
-    /* Footer */
     footer {
       background-color: #fff;
       padding: 20px;
@@ -263,7 +254,7 @@
     }
     /* --- Mobile Hamburger Menu & Adjustments --- */
     .hamburger {
-      display: none; /* hidden by default, shown on mobile */
+      display: none;
       background: none;
       border: none;
       padding: 0;
@@ -296,7 +287,7 @@
     }
     .mobile-menu {
       position: fixed;
-      top: -30vh; /* hidden above viewport initially */
+      top: -30vh;
       left: 0;
       width: 100%;
       height: 30vh;
@@ -325,8 +316,8 @@
       }
       .hamburger {
         display: block;
-        margin-left: 0; /* flush with left edge */
-        z-index: 1300; /* higher than mobile menu so X is visible */
+        margin-left: 0;
+        z-index: 1300;
       }
       .update-link {
         display: none;
@@ -346,10 +337,10 @@
         margin-right: 10px;
       }
       .mobile-menu {
-        padding: 20px 20px 20px 10px; /* Left padding set to 10px */
+        padding: 20px 20px 20px 10px;
       }
       .mobile-menu a {
-        margin-top: 37.5px; /* Reduced vertical space by 25% from 50px */
+        margin-top: 37.5px;
       }
     }
     /* --- Source Logos --- */
@@ -362,24 +353,23 @@
     .source-logos .logo {
       width: 30px;
       height: 30px;
-      border: 2px solid #c7c7c7; /* Updated border color */
+      border: 2px solid #c7c7c7;
       border-radius: 50%;
       overflow: hidden;
       background: white;
       position: relative;
     }
     .source-logos .logo:not(:first-child) {
-      margin-left: -9px; /* 30% of 30px is 9px */
+      margin-left: -9px;
     }
     .source-logos .logo img {
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
-    /* Special styling for the last circle */
     .source-logos .logo.more {
       background-color: black;
-      border: 2px solid #c7c7c7; /* Updated border color */
+      border: 2px solid #c7c7c7;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -391,7 +381,6 @@
       font-weight: bold;
       z-index: 1;
     }
-    /* --- Additional Text between Container and Logos --- */
     .source-follow-text {
       text-align: center;
       font-size: 18px;
@@ -420,18 +409,16 @@
       max-width: 400px;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
     }
-    /* Popup title and message left aligned */
     #popupTitle {
       text-align: left;
       font-weight: bold;
-      font-size: 20px; /* increased by 4px */
+      font-size: 20px;
       margin-bottom: 10px;
     }
     #popupMessage {
       text-align: left;
       font-size: 16px;
     }
-    /* Close button right aligned */
     #popupClose {
       margin-top: 20px;
       display: block;
@@ -454,19 +441,16 @@
       <span class="bar"></span>
     </button>
     <a href="index.html" class="home-btn">ProductBrief</a>
-    <!-- Desktop Already Subscribed? link -->
     <a href="update.html" class="update-link">Already Subscribed?</a>
   </header>
 
-  <!-- Mobile menu that slides down -->
+  <!-- Mobile menu -->
   <div id="mobileMenu" class="mobile-menu">
     <a href="update.html" class="mobile-update-link">Already Subscribed?</a>
   </div>
 
   <div class="main-content">
-    <!-- Updated title text -->
     <div class="page-title">Curated Product Insights, Every Two Weeks</div>
-    <!-- Updated description text with line break -->
     <p class="description">
       Get a bi-weekly email digest of product news, AI breakthroughs, podcasts, and more.<br>
       Forever free, no account required.
@@ -485,9 +469,7 @@
       </form>
       <div class="loading" id="loadingIndicator">Loading...</div>
     </div>
-    <!-- Additional text between container and logos -->
     <p class="source-follow-text">from the sources you follow</p>
-    <!-- Source Logos Block -->
     <div class="source-logos" id="sourceLogos"></div>
   </div>
   <footer>
@@ -600,13 +582,9 @@
       const emailRow = document.getElementById("emailRow");
       emailRow.style.display = selectedSources.length > 0 ? "flex" : "none";
       
-      // When no source is selected, adjust search box margin to create equal spacing
+      // Adjust the search box margin: if no sources are selected, margin-bottom is 0; otherwise, 20px.
       const searchBox = document.querySelector('.search-box');
-      if (selectedSources.length === 0) {
-        searchBox.style.marginBottom = "0px";
-      } else {
-        searchBox.style.marginBottom = "20px";
-      }
+      searchBox.style.marginBottom = selectedSources.length === 0 ? "0px" : "20px";
     }
     
     document.getElementById("subscriptionForm").addEventListener("submit", function(e) {
@@ -659,21 +637,17 @@
       });
     });
 
-    /* Function to show the custom popup modal */
     function showPopup(title, message) {
       document.getElementById("popupTitle").innerText = title;
       document.getElementById("popupMessage").innerText = message;
       document.getElementById("popupModal").style.display = "block";
     }
 
-    /* Close button for the popup modal */
     document.getElementById("popupClose").addEventListener("click", function() {
       document.getElementById("popupModal").style.display = "none";
     });
 
-    /* Render source logos from sources.json */
     function renderSourceLogos() {
-      // Desired sources in order:
       const desired = [
         "Reforge",
         "Y Combinator",
@@ -684,19 +658,16 @@
         "Figma",
         "Linear"
       ];
-      // Filter allSources for desired ones and sort by order in desired array
       const logos = allSources.filter(source => desired.includes(source.source))
                               .sort((a, b) => desired.indexOf(a.source) - desired.indexOf(b.source));
       let html = "";
       logos.forEach(source => {
         html += `<div class="logo"><img src="${source.logoURL}" alt="${source.source}"></div>`;
       });
-      // Append the "more" circle
       html += `<div class="logo more"><span>+20</span></div>`;
       document.getElementById("sourceLogos").innerHTML = html;
     }
 
-    /* --- Mobile Hamburger Menu JavaScript --- */
     document.getElementById("hamburgerButton").addEventListener("click", function(e) {
       e.stopPropagation();
       this.classList.toggle("open");
@@ -711,6 +682,9 @@
         hamburgerButton.classList.remove("open");
       }
     });
+
+    // Call updateEmailRowVisibility on page load to set the initial search box margin.
+    updateEmailRowVisibility();
   </script>
 </body>
 </html>
