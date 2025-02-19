@@ -418,11 +418,24 @@
       padding: 20px;
       border-radius: 6px;
       max-width: 400px;
-      text-align: center;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
     }
+    /* Popup title and message left aligned */
+    #popupTitle {
+      text-align: left;
+      font-weight: bold;
+      font-size: 20px; /* increased by 4px */
+      margin-bottom: 10px;
+    }
+    #popupMessage {
+      text-align: left;
+      font-size: 16px;
+    }
+    /* Close button right aligned */
     #popupClose {
       margin-top: 20px;
+      display: block;
+      margin-left: auto;
       padding: 10px 20px;
       background-color: #f57b55;
       color: #fff;
@@ -485,6 +498,7 @@
   <!-- Popup Modal -->
   <div id="popupModal" class="popup-modal">
     <div class="popup-content">
+      <div id="popupTitle"></div>
       <div id="popupMessage"></div>
       <button id="popupClose">Close</button>
     </div>
@@ -619,11 +633,11 @@
           console.error("Error parsing JSON:", err);
         }
         if (data.error && data.error === "existing_subscriber") {
-          showPopup("Already Subscribed\nThis email is already subscribed. To edit your preferences, click the Update your brief button from your emails.");
+          showPopup("Already Subscribed", "This email is already subscribed. To edit your preferences, click the Update your brief button from your emails.");
         } else if (data.error) {
-          showPopup("There was an error processing your subscription.");
+          showPopup("Error", "There was an error processing your subscription.");
         } else {
-          showPopup("Thank you for subscribing!");
+          showPopup("Success!", "You've been successfully subscribed to ProductBrief, and we've sent you a welcome email! If you can't find it, please check your spam folder.");
           document.getElementById("subscriptionForm").reset();
           selectedSources = [];
           renderSelectedSources();
@@ -633,12 +647,13 @@
       .catch(error => {
         document.getElementById("loadingIndicator").style.display = "none";
         console.error("Error submitting form:", error);
-        showPopup("There was an error processing your subscription.");
+        showPopup("Error", "There was an error processing your subscription.");
       });
     });
 
     /* Function to show the custom popup modal */
-    function showPopup(message) {
+    function showPopup(title, message) {
+      document.getElementById("popupTitle").innerText = title;
       document.getElementById("popupMessage").innerText = message;
       document.getElementById("popupModal").style.display = "block";
     }
