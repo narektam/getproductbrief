@@ -11,7 +11,7 @@
   <link rel="manifest" href="/assets/images/site.webmanifest" />
   <style>
     html, body {
-      overflow-x: hidden; /* Disable horizontal scrolling */
+      overflow-x: hidden;
     }
     body {
       background-color: #ffffff;
@@ -23,7 +23,7 @@
       flex-direction: column;
       min-height: 100vh;
     }
-    /* Header styles */
+    /* Header */
     header {
       position: fixed;
       top: 0;
@@ -44,7 +44,6 @@
       color: #000;
       font-weight: bold;
       margin: 0;
-      background: none;
       padding: 0;
     }
     header a.update-link {
@@ -52,7 +51,6 @@
       font-size: 14px;
       color: #000;
       font-weight: bold;
-      background: none;
       padding: 0;
       margin-right: 20px;
     }
@@ -89,15 +87,15 @@
       box-sizing: border-box;
       position: relative;
     }
-    /* Search Box Styles */
+    /* Search Box */
     .search-box {
-      margin: 0; /* No extra margin so that container's padding creates equal spacing */
+      margin: 0;
       position: relative;
     }
     .search-box input[type="text"] {
       margin: 0;
       width: 100%;
-      padding: 10px 10px 10px 40px; /* extra left padding for the icon */
+      padding: 10px 10px 10px 40px;
       font-size: 16px;
       height: 48px;
       border: none;
@@ -189,44 +187,6 @@
       font-weight: bold;
       color: #000;
     }
-    /* Request Form (New Capability) */
-    .source-request {
-      display: none;
-      flex-direction: row;
-      gap: 10px;
-      align-items: center;
-      margin-top: 10px;
-    }
-    .source-request input {
-      flex: 1;
-      padding: 10px;
-      font-size: 16px;
-      height: 48px;
-      border: none;
-      border-radius: 4px;
-      background-color: #fff;
-      box-sizing: border-box;
-    }
-    .source-request input::placeholder {
-      color: #aaa;
-    }
-    .source-request input:focus {
-      border: 1px solid #000;
-      outline: none;
-    }
-    .source-request button {
-      padding: 10px 16px;
-      font-size: 14px;
-      height: 48px;
-      background-color: #000;
-      color: #fff;
-      border: none;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    .source-request button:hover {
-      background-color: #333;
-    }
     form {
       display: flex;
       flex-direction: column;
@@ -292,7 +252,7 @@
       text-decoration: none;
       margin-right: 10px;
     }
-    /* --- Mobile Hamburger Menu --- */
+    /* Mobile Hamburger Menu */
     .hamburger {
       display: none;
       background: none;
@@ -383,7 +343,7 @@
         margin-top: 37.5px;
       }
     }
-    /* --- Source Logos --- */
+    /* Source Logos */
     .source-logos {
       display: flex;
       align-items: center;
@@ -428,7 +388,7 @@
       font-weight: 200;
       margin: 10px 0 20px;
     }
-    /* --- Popup Modal Styles --- */
+    /* Popup Modal (for messages) */
     .popup-modal {
       display: none;
       position: fixed;
@@ -471,6 +431,75 @@
       cursor: pointer;
       font-size: 16px;
     }
+    /* Request Modal (for source requests) */
+    #requestModal {
+      display: none;
+      position: fixed;
+      z-index: 1600;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0, 0, 0, 0.4);
+    }
+    #requestModal .popup-content {
+      background-color: #fff;
+      color: #000;
+      margin: 20% auto;
+      padding: 20px;
+      border-radius: 6px;
+      max-width: 400px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+      display: flex;
+      flex-direction: column;
+      gap: 15px;
+    }
+    #requestModal h2 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: bold;
+      text-align: left;
+    }
+    #requestModal input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      font-size: 16px;
+      height: 48px;
+      border: none;
+      border-radius: 4px;
+      background-color: #fff;
+      box-sizing: border-box;
+    }
+    #requestModal input[type="text"]::placeholder {
+      color: #aaa;
+    }
+    #requestModal input[type="text"]:focus {
+      border: 1px solid #000;
+      outline: none;
+    }
+    #requestModal button {
+      padding: 10px 16px;
+      font-size: 14px;
+      height: 48px;
+      background-color: #000;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    #requestModal button:hover {
+      background-color: #333;
+    }
+    #requestClose {
+      margin-top: 10px;
+      align-self: flex-end;
+      background-color: transparent;
+      border: none;
+      font-size: 16px;
+      cursor: pointer;
+      color: #000;
+    }
   </style>
 </head>
 <body>
@@ -500,13 +529,7 @@
         <input type="text" id="searchInput" placeholder="Search for sources you want to add">
         <div class="search-results" id="searchResults"></div>
       </div>
-      <!-- Selected sources (hidden when empty) -->
       <div class="selected-sources" id="selectedSources"></div>
-      <!-- New Source Request Form (hidden by default) -->
-      <div class="source-request" id="sourceRequest" style="display: none;">
-        <input type="text" id="requestInput" placeholder="Enter the source name you want to request">
-        <button id="requestButton" type="button">Send a Request</button>
-      </div>
       <form id="subscriptionForm">
         <div class="email-row" id="emailRow">
           <input type="email" id="email" name="email" placeholder="Enter your email" required>
@@ -523,12 +546,22 @@
     <a href="terms.html">Terms of Use</a>
   </footer>
 
-  <!-- Popup Modal -->
+  <!-- Popup Modal for messages -->
   <div id="popupModal" class="popup-modal">
     <div class="popup-content">
       <div id="popupTitle"></div>
       <div id="popupMessage"></div>
       <button id="popupClose">Close</button>
+    </div>
+  </div>
+
+  <!-- Request Modal for source requests -->
+  <div id="requestModal">
+    <div class="popup-content">
+      <button id="requestClose">&times;</button>
+      <h2>Request a Source</h2>
+      <input type="text" id="requestInput" placeholder="Enter the source name you want to request">
+      <button id="requestButton" type="button">Send a Request</button>
     </div>
   </div>
   
@@ -551,12 +584,12 @@
     const searchInput = document.getElementById("searchInput");
     const searchResults = document.getElementById("searchResults");
     const selectedSourcesContainer = document.getElementById("selectedSources");
-    const sourceRequest = document.getElementById("sourceRequest");
+    const requestModal = document.getElementById("requestModal");
     
-    // Not Found Icon (24x24) as data URL (SVG)
+    // Not Found Icon (24x24 SVG)
     const notFoundIcon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cline x1='8' y1='8' x2='16' y2='16'/%3E%3Cline x1='16' y1='8' x2='8' y2='16'/%3E%3C/svg%3E";
-
-    // Modified input event: if no matches, show "not found" item.
+    
+    // When user types in search box:
     searchInput.addEventListener("input", function() {
       const query = this.value.toLowerCase().trim();
       if (query === "") {
@@ -575,7 +608,7 @@
         }
       }
     });
-
+    
     searchInput.addEventListener("focus", function() {
       if (this.value.trim() === "") {
         renderSearchResults(allSources.filter(source => 
@@ -583,13 +616,13 @@
         ));
       }
     });
-
+    
     document.addEventListener("click", function(e) {
       if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
         searchResults.style.display = "none";
       }
     });
-
+    
     function renderSearchResults(sources) {
       searchResults.innerHTML = "";
       sources.forEach(source => {
@@ -604,34 +637,34 @@
       });
       searchResults.style.display = sources.length ? "block" : "none";
     }
-
+    
+    // Render a single "not found" item as one line of text.
     function renderNotFoundItem() {
       searchResults.innerHTML = "";
       const div = document.createElement("div");
-      // The text with bold "Send a Request"
-      div.innerHTML = `<img src="${notFoundIcon}" alt="Not Found Icon"> Can't find your source? <b>Send a Request</b> and we'll add it as soon as we can!`;
+      div.innerHTML = `<img src="${notFoundIcon}" alt="Not Found Icon"> Can't find your source? Send a request and we'll consider adding it.`;
       div.addEventListener("click", function() {
-        // Clear search results and input, and show the source request form.
-        searchResults.style.display = "none";
+        // Clear search input/results and open the request modal popup.
         searchInput.value = "";
-        sourceRequest.style.display = "flex";
+        searchResults.style.display = "none";
+        openRequestModal();
       });
       searchResults.appendChild(div);
       searchResults.style.display = "block";
     }
-
+    
     function addSelectedSource(source) {
       selectedSources.push(source);
       renderSelectedSources();
       updateEmailRowVisibility();
     }
-
+    
     function removeSelectedSource(sourceName) {
       selectedSources = selectedSources.filter(s => s.source !== sourceName);
       renderSelectedSources();
       updateEmailRowVisibility();
     }
-
+    
     function renderSelectedSources() {
       selectedSourcesContainer.innerHTML = "";
       selectedSources.forEach(source => {
@@ -647,20 +680,17 @@
         });
       });
     }
-
+    
     function updateEmailRowVisibility() {
       const emailRow = document.getElementById("emailRow");
       emailRow.style.display = selectedSources.length > 0 ? "flex" : "none";
       
-      // Adjust search box bottom margin: if no sources are selected, no extra margin.
+      // Adjust search-box margin and hide selected-sources container if empty.
       const searchBox = document.querySelector('.search-box');
       searchBox.style.marginBottom = selectedSources.length === 0 ? "0px" : "20px";
-      
-      // Hide selected-sources container if empty.
       selectedSourcesContainer.style.display = selectedSources.length === 0 ? "none" : "flex";
     }
     
-    // Email subscription submission remains unchanged.
     document.getElementById("subscriptionForm").addEventListener("submit", function(e) {
       e.preventDefault();
       document.getElementById("loadingIndicator").style.display = "block";
@@ -711,8 +741,7 @@
       });
     });
     
-    // Request Form: "Send a Request" functionality.
-    // Format current date as "Feb-19-2025"
+    // Utility: Format current date as "Feb-19-2025"
     function getFormattedDate() {
       const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
       const now = new Date();
@@ -722,10 +751,20 @@
       return `${month}-${day}-${year}`;
     }
     
+    // Open the request modal popup
+    function openRequestModal() {
+      document.getElementById("requestModal").style.display = "block";
+    }
+    
+    // Close the request modal popup
+    function closeRequestModal() {
+      document.getElementById("requestModal").style.display = "none";
+    }
+    
+    // When user clicks "Send a Request" in the request modal:
     document.getElementById("requestButton").addEventListener("click", function() {
       const requestInput = document.getElementById("requestInput");
       const sourceName = requestInput.value.trim();
-      // Validate: text between 2 and 50 characters.
       if (sourceName.length < 2 || sourceName.length > 50) {
         showPopup("Error", "Please enter a valid source name between 2 and 50 characters.");
         return;
@@ -742,27 +781,31 @@
       })
       .then(response => response.text())
       .then(text => {
-        // On success, show popup and hide/clear the request form.
         showPopup("Request Submitted!", "Thank you for sending your request. We'll review it and consider adding to our list in the next few weeks.");
         requestInput.value = "";
-        sourceRequest.style.display = "none";
+        closeRequestModal();
       })
       .catch(error => {
         console.error("Error sending source request:", error);
         showPopup("Error", "There was an error sending your request.");
       });
     });
-
+    
+    // Close button for the request modal
+    document.getElementById("requestClose").addEventListener("click", function() {
+      closeRequestModal();
+    });
+    
     function showPopup(title, message) {
       document.getElementById("popupTitle").innerText = title;
       document.getElementById("popupMessage").innerText = message;
       document.getElementById("popupModal").style.display = "block";
     }
-
+    
     document.getElementById("popupClose").addEventListener("click", function() {
       document.getElementById("popupModal").style.display = "none";
     });
-
+    
     function renderSourceLogos() {
       const desired = [
         "Reforge",
@@ -783,13 +826,13 @@
       html += `<div class="logo more"><span>+20</span></div>`;
       document.getElementById("sourceLogos").innerHTML = html;
     }
-
+    
     document.getElementById("hamburgerButton").addEventListener("click", function(e) {
       e.stopPropagation();
       this.classList.toggle("open");
       document.getElementById("mobileMenu").classList.toggle("open");
     });
-
+    
     document.addEventListener("click", function(e) {
       const mobileMenu = document.getElementById("mobileMenu");
       const hamburgerButton = document.getElementById("hamburgerButton");
@@ -798,7 +841,7 @@
         hamburgerButton.classList.remove("open");
       }
     });
-
+    
     // Set initial state
     updateEmailRowVisibility();
   </script>
