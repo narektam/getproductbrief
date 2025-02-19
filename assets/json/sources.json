@@ -34,5 +34,21 @@
   {
     "source": "Y Combinator",
     "logoURL": "https://img.logo.dev/ycombinator.com"
+  },
+  {
+    "source": "Replit",
+    "logoURL": "https://img.logo.dev/replit.com"
+  },
+  {
+    "source": "Cursor",
+    "logoURL": "https://img.logo.dev/cursor.com"
+  },
+  {
+    "source": "Notion",
+    "logoURL": "https://img.logo.dev/notion.so"
+  },
+  {
+    "source": "Arc",
+    "logoURL": "https://img.logo.dev/thebrowser.company"
   }
 ]
