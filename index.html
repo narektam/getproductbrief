@@ -89,12 +89,14 @@
       box-sizing: border-box;
       position: relative;
     }
-    /* Set search box margin-bottom to 0 by default */
+    /* Remove default margins on search box and input */
     .search-box {
+      margin-top: 0;
       margin-bottom: 0;
       position: relative;
     }
     .search-box input[type="text"] {
+      margin: 0;
       width: 100%;
       padding: 10px 10px 10px 40px;
       font-size: 16px;
@@ -252,7 +254,7 @@
       text-decoration: none;
       margin-right: 10px;
     }
-    /* --- Mobile Hamburger Menu & Adjustments --- */
+    /* --- Mobile Hamburger Menu --- */
     .hamburger {
       display: none;
       background: none;
@@ -582,7 +584,8 @@
       const emailRow = document.getElementById("emailRow");
       emailRow.style.display = selectedSources.length > 0 ? "flex" : "none";
       
-      // Adjust the search box margin: if no sources are selected, margin-bottom is 0; otherwise, 20px.
+      // When no sources are selected, set search box bottom margin to 0.
+      // Otherwise, add a 20px margin below it.
       const searchBox = document.querySelector('.search-box');
       searchBox.style.marginBottom = selectedSources.length === 0 ? "0px" : "20px";
     }
@@ -683,7 +686,7 @@
       }
     });
 
-    // Call updateEmailRowVisibility on page load to set the initial search box margin.
+    // Ensure initial state is set
     updateEmailRowVisibility();
   </script>
 </body>
