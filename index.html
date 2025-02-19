@@ -467,7 +467,7 @@
       font-weight: bold;
       text-align: left;
     }
-    /* Input field: add visible border */
+    /* Input field with visible border */
     #requestModal input[type="text"] {
       width: 100%;
       padding: 10px;
@@ -497,13 +497,23 @@
     #requestModal button:hover {
       background-color: #333;
     }
-    /* Simple X button for closing the Request Modal */
+    /* Simple X button styling for Request Modal */
     #requestClose {
       background: none;
       border: none;
+      padding: 0;
+      margin: 0;
+      -webkit-appearance: none;
       font-size: 24px;
       cursor: pointer;
       color: #000;
+    }
+    /* Inline error message in Request Modal */
+    #requestError {
+      color: red;
+      font-size: 14px;
+      display: none;
+      text-align: left;
     }
   </style>
 </head>
@@ -567,6 +577,7 @@
         <h2>Request a Source</h2>
         <button id="requestClose">&times;</button>
       </div>
+      <div id="requestError"></div>
       <input type="text" id="requestInput" placeholder="Enter the source name you want to request">
       <button id="requestButton" type="button">Send a Request</button>
     </div>
@@ -759,15 +770,19 @@
     
     function closeRequestModal() {
       document.getElementById("requestModal").style.display = "none";
+      document.getElementById("requestError").style.display = "none";
     }
     
     document.getElementById("requestButton").addEventListener("click", function() {
       const requestInput = document.getElementById("requestInput");
+      const errorDiv = document.getElementById("requestError");
       const sourceName = requestInput.value.trim();
       if (sourceName.length < 2 || sourceName.length > 50) {
-        showPopup("Error", "Please enter a valid source name between 2 and 50 characters.");
+        errorDiv.innerText = "Please enter a valid source name between 2 and 50 characters.";
+        errorDiv.style.display = "block";
         return;
       }
+      errorDiv.style.display = "none";
       const payload = {
         source: sourceName,
         date: getFormattedDate()
