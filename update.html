@@ -443,6 +443,28 @@
     let allSources = [];
     let selectedSources = [];
     
+    // Existing Not Found icon (24x24 SVG)
+    const notFoundIcon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cline x1='8' y1='8' x2='16' y2='16'/%3E%3Cline x1='16' y1='8' x2='8' y2='16'/%3E%3C/svg%3E";
+    // New icons for Select All and Unselect All options (24x24 SVG)
+    const selectAllIcon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='3' width='18' height='18' rx='2' ry='2'/%3E%3Cpolyline points='3 12 8 17 21 4'/%3E%3C/svg%3E";
+    const unselectAllIcon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='3' y='3' width='18' height='18' rx='2' ry='2'/%3E%3Cline x1='8' y1='12' x2='16' y2='12'/%3E%3C/svg%3E";
+    
+    function toggleSelectAll() {
+      const allSelected = (allSources.length > 0 && selectedSources.length === allSources.length);
+      if (allSelected) {
+        // Unselect all
+        selectedSources = [];
+      } else {
+        // Add all sources not already selected
+        allSources.forEach(source => {
+          if (!selectedSources.some(sel => sel.source === source.source)) {
+            selectedSources.push(source);
+          }
+        });
+      }
+      renderSelectedSources();
+    }
+    
     async function loadSources() {
       try {
         const response = await fetch("assets/json/sources.json");
@@ -457,9 +479,6 @@
     const searchInput = document.getElementById("searchInput");
     const searchResults = document.getElementById("searchResults");
     const selectedSourcesContainer = document.getElementById("selectedSources");
-    
-    // Not Found Icon (24x24 SVG)
-    const notFoundIcon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cline x1='8' y1='8' x2='16' y2='16'/%3E%3Cline x1='16' y1='8' x2='8' y2='16'/%3E%3C/svg%3E";
     
     searchInput.addEventListener("input", function() {
       const query = this.value.toLowerCase().trim();
@@ -496,6 +515,19 @@
     
     function renderSearchResults(sources) {
       searchResults.innerHTML = "";
+      // Always add the "Select All"/"Unselect All" option at the top.
+      const allSelected = (allSources.length > 0 && selectedSources.length === allSources.length);
+      const selectAllOptionText = allSelected ? "Unselect All" : "Select All";
+      const selectAllOptionIcon = allSelected ? unselectAllIcon : selectAllIcon;
+      const selectAllDiv = document.createElement("div");
+      selectAllDiv.innerHTML = `<img src="${selectAllOptionIcon}" alt="${selectAllOptionText} Logo"> ${selectAllOptionText}`;
+      selectAllDiv.addEventListener("click", function() {
+        toggleSelectAll();
+        searchInput.value = "";
+        searchResults.style.display = "none";
+      });
+      searchResults.appendChild(selectAllDiv);
+      // Then add each filtered source.
       sources.forEach(source => {
         const div = document.createElement("div");
         div.innerHTML = `<img src="${source.logoURL}" alt="${source.source} Logo"> ${source.source}`;
@@ -506,11 +538,25 @@
         });
         searchResults.appendChild(div);
       });
-      searchResults.style.display = sources.length ? "block" : "none";
+      searchResults.style.display = "block";
     }
     
     function renderNotFoundItem() {
       searchResults.innerHTML = "";
+      // Add the "Select All"/"Unselect All" option first.
+      const allSelected = (allSources.length > 0 && selectedSources.length === allSources.length);
+      const selectAllOptionText = allSelected ? "Unselect All" : "Select All";
+      const selectAllOptionIcon = allSelected ? unselectAllIcon : selectAllIcon;
+      const selectAllDiv = document.createElement("div");
+      selectAllDiv.innerHTML = `<img src="${selectAllOptionIcon}" alt="${selectAllOptionText} Logo"> ${selectAllOptionText}`;
+      selectAllDiv.addEventListener("click", function() {
+        toggleSelectAll();
+        searchInput.value = "";
+        searchResults.style.display = "none";
+      });
+      searchResults.appendChild(selectAllDiv);
+      
+      // Then add the "Not Found" option.
       const div = document.createElement("div");
       div.innerHTML = `<img src="${notFoundIcon}" alt="Not Found Icon"> Can't find your source? Send a request and we'll consider adding it.`;
       div.addEventListener("click", function() {
