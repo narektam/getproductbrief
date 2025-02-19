@@ -23,6 +23,19 @@
       flex-direction: column;
       min-height: 100vh;
     }
+    /* Clerk container overlay – centers the Clerk sign‑in widget */
+    #clerk-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #ffffff;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
     /* Header (updated UI) */
     header {
       position: fixed;
@@ -48,7 +61,7 @@
       background: none;
       padding: 0;
     }
-    /* Auth link now plain text (for Sign Out) */
+    /* Auth link (for Sign Out) */
     header a.update-link {
       text-decoration: none;
       font-size: 14px;
@@ -71,7 +84,7 @@
       margin: 20px auto 10px;
       font-weight: bold;
     }
-    /* Card container styling (same as index.html) */
+    /* Card container styling */
     .container {
       max-width: 600px;
       background-color: #f57b55;
@@ -283,20 +296,22 @@
     #requestModal .popup-content {
       background-color: #fff;
       color: #000;
-      margin: 20% auto;
+      width: 90vw;
+      max-width: 400px;
       padding: 20px;
       border-radius: 6px;
-      max-width: 400px;
       box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
       display: flex;
       flex-direction: column;
       gap: 15px;
+      margin: 10vh auto;
     }
     /* Header for Request Modal: title and X button aligned */
     #requestModal .request-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      width: 100%;
     }
     #requestModal h2 {
       margin: 0;
@@ -346,6 +361,8 @@
       color: #000 !important;
       display: inline-block !important;
       line-height: 1 !important;
+      /* Ensure X is aligned to the right in the header */
+      margin-left: auto;
     }
     /* Inline error message in Request Modal */
     #requestError {
@@ -361,19 +378,6 @@
       color: #3d3d3d;
       font-weight: 200;
       margin: 10px 0 20px;
-    }
-    /* Mobile adjustments for Request Modal */
-    @media (max-width: 768px) {
-      #requestModal .popup-content {
-        width: 90%;
-        margin: 20% auto;
-      }
-      #requestModal .request-header {
-        width: 100%;
-      }
-      #requestClose {
-        margin-left: auto !important;
-      }
     }
   </style>
   
