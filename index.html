@@ -159,6 +159,7 @@
       border-radius: 4px;
     }
     .selected-sources {
+      /* When sources are selected this div will be shown */
       display: flex;
       flex-direction: column;
       gap: 5px;
@@ -462,6 +463,7 @@
         <input type="text" id="searchInput" placeholder="Search for sources you want to add">
         <div class="search-results" id="searchResults"></div>
       </div>
+      <!-- The selected-sources div will be hidden when empty -->
       <div class="selected-sources" id="selectedSources"></div>
       <form id="subscriptionForm">
         <div class="email-row" id="emailRow">
@@ -584,10 +586,12 @@
       const emailRow = document.getElementById("emailRow");
       emailRow.style.display = selectedSources.length > 0 ? "flex" : "none";
       
-      // When no sources are selected, set search box bottom margin to 0.
-      // Otherwise, add a 20px margin below it.
       const searchBox = document.querySelector('.search-box');
+      // When no sources are selected, remove extra bottom margin from search-box...
       searchBox.style.marginBottom = selectedSources.length === 0 ? "0px" : "20px";
+      
+      // And hide the selected-sources container when empty.
+      selectedSourcesContainer.style.display = selectedSources.length === 0 ? "none" : "flex";
     }
     
     document.getElementById("subscriptionForm").addEventListener("submit", function(e) {
@@ -686,7 +690,7 @@
       }
     });
 
-    // Ensure initial state is set
+    // Set initial state
     updateEmailRowVisibility();
   </script>
 </body>
