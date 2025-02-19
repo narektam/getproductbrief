@@ -362,7 +362,7 @@
     .source-logos .logo {
       width: 30px;
       height: 30px;
-      border: 2px solid black; /* Updated to 2px border */
+      border: 2px solid #c7c7c7; /* Updated border color */
       border-radius: 50%;
       overflow: hidden;
       background: white;
@@ -379,7 +379,7 @@
     /* Special styling for the last circle */
     .source-logos .logo.more {
       background-color: black;
-      border: 2px solid black; /* Updated to 2px border */
+      border: 2px solid #c7c7c7; /* Updated border color */
       display: flex;
       align-items: center;
       justify-content: center;
@@ -633,7 +633,7 @@
           console.error("Error parsing JSON:", err);
         }
         if (data.error && data.error === "existing_subscriber") {
-          showPopup("Already Subscribed", "This email is already subscribed. To edit your preferences, click the Update your brief button from your emails.");
+          showPopup("Already Subscribed", "This email is already subscribed. To edit your preferences, click on Already Subscribed? button from the menu.");
         } else if (data.error) {
           showPopup("Error", "There was an error processing your subscription.");
         } else {
