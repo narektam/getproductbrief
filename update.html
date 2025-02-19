@@ -267,15 +267,6 @@
       footer {
         padding: 20px 10px;
       }
-      /* For mobile, adjust request modal to have margins */
-      #requestModal .popup-content {
-        max-width: 90%;
-        margin: 20% auto;
-      }
-      /* Ensure the X button in the request modal is on the right */
-      #requestClose {
-        margin-left: auto !important;
-      }
     }
     /* --- Request Modal Styles (added for update page) --- */
     #requestModal {
@@ -370,6 +361,19 @@
       color: #3d3d3d;
       font-weight: 200;
       margin: 10px 0 20px;
+    }
+    /* Mobile adjustments for Request Modal */
+    @media (max-width: 768px) {
+      #requestModal .popup-content {
+        width: 90%;
+        margin: 20% auto;
+      }
+      #requestModal .request-header {
+        width: 100%;
+      }
+      #requestClose {
+        margin-left: auto !important;
+      }
     }
   </style>
   
