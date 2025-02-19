@@ -524,7 +524,7 @@
       margin: 0 auto 20px;
       max-width: 600px;
       background-color: #fff;
-      border: 1px solid #f0faf3;
+      border: 2px solid #f0faf3; /* Thicker border for visibility */
       border-radius: 6px;
       padding: 20px;
       box-sizing: border-box;
@@ -535,9 +535,19 @@
       margin-bottom: 10px;
     }
     .gmail-icon {
-      width: 32px;
-      height: 32px;
+      height: 24px; /* preserve aspect ratio */
+      width: auto;
       margin-right: 10px;
+    }
+    /* Wrap To: line and Subject line together in a column */
+    .newsletter-info {
+      display: flex;
+      flex-direction: column;
+    }
+    .to-line {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 2px;
     }
     .subject-line {
       font-size: 16px;
@@ -565,6 +575,9 @@
       .newsletter-header {
         flex-direction: row;
         justify-content: flex-start;
+      }
+      .to-line {
+        font-size: 13px;
       }
       .subject-line {
         font-size: 14px;
@@ -614,13 +627,15 @@
     <!-- Sample Newsletter Preview Container -->
     <div class="newsletter-preview-container">
       <div class="newsletter-header">
-        <!-- Replace with your own Gmail icon -->
         <img
           src="/assets/images/gmail-icon.png"
           alt="Gmail Icon"
           class="gmail-icon"
         />
-        <span class="subject-line">Subject: Your Bi-Weekly Product Brief</span>
+        <div class="newsletter-info">
+          <div class="to-line">To: you@company.com</div>
+          <div class="subject-line">Subject: Your Weekly ChangeLog</div>
+        </div>
       </div>
       <div class="newsletter-screenshot-container">
         <!-- Replace with your actual newsletter screenshot -->
