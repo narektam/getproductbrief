@@ -96,7 +96,7 @@
     }
     /* Search box */
     .search-box {
-      margin-bottom: 20px;
+      margin-bottom: 20px; /* This will be overridden via JS when no source is selected */
       position: relative;
     }
     .search-box input[type="text"] {
@@ -599,6 +599,14 @@
     function updateEmailRowVisibility() {
       const emailRow = document.getElementById("emailRow");
       emailRow.style.display = selectedSources.length > 0 ? "flex" : "none";
+      
+      // When no source is selected, adjust search box margin to create equal spacing
+      const searchBox = document.querySelector('.search-box');
+      if (selectedSources.length === 0) {
+        searchBox.style.marginBottom = "0px";
+      } else {
+        searchBox.style.marginBottom = "20px";
+      }
     }
     
     document.getElementById("subscriptionForm").addEventListener("submit", function(e) {
