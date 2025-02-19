@@ -89,23 +89,22 @@
       box-sizing: border-box;
       position: relative;
     }
-    /* Remove default margins on search box and input */
+    /* Search Box Styles */
     .search-box {
-      margin-top: 0;
-      margin-bottom: 0;
+      margin: 0; /* No extra margin so that container's padding creates equal spacing */
       position: relative;
     }
     .search-box input[type="text"] {
       margin: 0;
       width: 100%;
-      padding: 10px 10px 10px 40px;
+      padding: 10px 10px 10px 40px; /* extra left padding for the icon */
       font-size: 16px;
       height: 48px;
       border: none;
       border-radius: 4px;
       box-sizing: border-box;
       background-color: #fff;
-      background-image: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='16'%20height='16'%20viewBox='0%200%2024%2024'%20fill='none'%20stroke='black'%20stroke-width='2'%20stroke-linecap='round'%20stroke-linejoin='round'%3E%3Ccircle%20cx='11'%20cy='11'%20r='8'%3E%3C/circle%3E%3Cline%20x1='21'%20y1='21'%20x2='16.65'%20y2='16.65'%3E%3C/line%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/circle%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'%3E%3C/line%3E%3C/svg%3E");
       background-repeat: no-repeat;
       background-position: 10px center;
     }
@@ -158,8 +157,8 @@
       margin-right: 10px;
       border-radius: 4px;
     }
+    /* Selected Sources */
     .selected-sources {
-      /* When sources are selected this div will be shown */
       display: flex;
       flex-direction: column;
       gap: 5px;
@@ -189,6 +188,44 @@
       cursor: pointer;
       font-weight: bold;
       color: #000;
+    }
+    /* Request Form (New Capability) */
+    .source-request {
+      display: none;
+      flex-direction: row;
+      gap: 10px;
+      align-items: center;
+      margin-top: 10px;
+    }
+    .source-request input {
+      flex: 1;
+      padding: 10px;
+      font-size: 16px;
+      height: 48px;
+      border: none;
+      border-radius: 4px;
+      background-color: #fff;
+      box-sizing: border-box;
+    }
+    .source-request input::placeholder {
+      color: #aaa;
+    }
+    .source-request input:focus {
+      border: 1px solid #000;
+      outline: none;
+    }
+    .source-request button {
+      padding: 10px 16px;
+      font-size: 14px;
+      height: 48px;
+      background-color: #000;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .source-request button:hover {
+      background-color: #333;
     }
     form {
       display: flex;
@@ -463,8 +500,13 @@
         <input type="text" id="searchInput" placeholder="Search for sources you want to add">
         <div class="search-results" id="searchResults"></div>
       </div>
-      <!-- The selected-sources div will be hidden when empty -->
+      <!-- Selected sources (hidden when empty) -->
       <div class="selected-sources" id="selectedSources"></div>
+      <!-- New Source Request Form (hidden by default) -->
+      <div class="source-request" id="sourceRequest" style="display: none;">
+        <input type="text" id="requestInput" placeholder="Enter the source name you want to request">
+        <button id="requestButton" type="button">Send a Request</button>
+      </div>
       <form id="subscriptionForm">
         <div class="email-row" id="emailRow">
           <input type="email" id="email" name="email" placeholder="Enter your email" required>
@@ -509,6 +551,44 @@
     const searchInput = document.getElementById("searchInput");
     const searchResults = document.getElementById("searchResults");
     const selectedSourcesContainer = document.getElementById("selectedSources");
+    const sourceRequest = document.getElementById("sourceRequest");
+    
+    // Not Found Icon (24x24) as data URL (SVG)
+    const notFoundIcon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cline x1='8' y1='8' x2='16' y2='16'/%3E%3Cline x1='16' y1='8' x2='8' y2='16'/%3E%3C/svg%3E";
+
+    // Modified input event: if no matches, show "not found" item.
+    searchInput.addEventListener("input", function() {
+      const query = this.value.toLowerCase().trim();
+      if (query === "") {
+        renderSearchResults(allSources.filter(source => 
+          !selectedSources.some(sel => sel.source === source.source)
+        ));
+      } else {
+        const results = allSources.filter(source =>
+          source.source.toLowerCase().includes(query) &&
+          !selectedSources.some(sel => sel.source === source.source)
+        );
+        if (results.length > 0) {
+          renderSearchResults(results);
+        } else {
+          renderNotFoundItem();
+        }
+      }
+    });
+
+    searchInput.addEventListener("focus", function() {
+      if (this.value.trim() === "") {
+        renderSearchResults(allSources.filter(source => 
+          !selectedSources.some(sel => sel.source === source.source)
+        ));
+      }
+    });
+
+    document.addEventListener("click", function(e) {
+      if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+        searchResults.style.display = "none";
+      }
+    });
 
     function renderSearchResults(sources) {
       searchResults.innerHTML = "";
@@ -524,35 +604,21 @@
       });
       searchResults.style.display = sources.length ? "block" : "none";
     }
-    
-    searchInput.addEventListener("focus", function() {
-      if (this.value.trim() === "") {
-        renderSearchResults(allSources.filter(source => 
-          !selectedSources.some(sel => sel.source === source.source)
-        ));
-      }
-    });
-    
-    searchInput.addEventListener("input", function() {
-      const query = this.value.toLowerCase().trim();
-      if (query === "") {
-        renderSearchResults(allSources.filter(source => 
-          !selectedSources.some(sel => sel.source === source.source)
-        ));
-      } else {
-        const results = allSources.filter(source =>
-          source.source.toLowerCase().includes(query) &&
-          !selectedSources.some(sel => sel.source === source.source)
-        );
-        renderSearchResults(results);
-      }
-    });
 
-    document.addEventListener("click", function(e) {
-      if (!searchInput.contains(e.target) && !searchResults.contains(e.target)) {
+    function renderNotFoundItem() {
+      searchResults.innerHTML = "";
+      const div = document.createElement("div");
+      // The text with bold "Send a Request"
+      div.innerHTML = `<img src="${notFoundIcon}" alt="Not Found Icon"> Can't find your source? <b>Send a Request</b> and we'll add it as soon as we can!`;
+      div.addEventListener("click", function() {
+        // Clear search results and input, and show the source request form.
         searchResults.style.display = "none";
-      }
-    });
+        searchInput.value = "";
+        sourceRequest.style.display = "flex";
+      });
+      searchResults.appendChild(div);
+      searchResults.style.display = "block";
+    }
 
     function addSelectedSource(source) {
       selectedSources.push(source);
@@ -586,14 +652,15 @@
       const emailRow = document.getElementById("emailRow");
       emailRow.style.display = selectedSources.length > 0 ? "flex" : "none";
       
+      // Adjust search box bottom margin: if no sources are selected, no extra margin.
       const searchBox = document.querySelector('.search-box');
-      // When no sources are selected, remove extra bottom margin from search-box...
       searchBox.style.marginBottom = selectedSources.length === 0 ? "0px" : "20px";
       
-      // And hide the selected-sources container when empty.
+      // Hide selected-sources container if empty.
       selectedSourcesContainer.style.display = selectedSources.length === 0 ? "none" : "flex";
     }
     
+    // Email subscription submission remains unchanged.
     document.getElementById("subscriptionForm").addEventListener("submit", function(e) {
       e.preventDefault();
       document.getElementById("loadingIndicator").style.display = "block";
@@ -641,6 +708,48 @@
         document.getElementById("loadingIndicator").style.display = "none";
         console.error("Error submitting form:", error);
         showPopup("Error", "There was an error processing your subscription.");
+      });
+    });
+    
+    // Request Form: "Send a Request" functionality.
+    // Format current date as "Feb-19-2025"
+    function getFormattedDate() {
+      const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+      const now = new Date();
+      const month = months[now.getMonth()];
+      const day = now.getDate();
+      const year = now.getFullYear();
+      return `${month}-${day}-${year}`;
+    }
+    
+    document.getElementById("requestButton").addEventListener("click", function() {
+      const requestInput = document.getElementById("requestInput");
+      const sourceName = requestInput.value.trim();
+      // Validate: text between 2 and 50 characters.
+      if (sourceName.length < 2 || sourceName.length > 50) {
+        showPopup("Error", "Please enter a valid source name between 2 and 50 characters.");
+        return;
+      }
+      const payload = {
+        source: sourceName,
+        date: getFormattedDate()
+      };
+      
+      fetch("https://narektamoyan.app.n8n.cloud/webhook/add-source-request", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      })
+      .then(response => response.text())
+      .then(text => {
+        // On success, show popup and hide/clear the request form.
+        showPopup("Request Submitted!", "Thank you for sending your request. We'll review it and consider adding to our list in the next few weeks.");
+        requestInput.value = "";
+        sourceRequest.style.display = "none";
+      })
+      .catch(error => {
+        console.error("Error sending source request:", error);
+        showPopup("Error", "There was an error sending your request.");
       });
     });
 
