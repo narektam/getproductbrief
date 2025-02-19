@@ -388,7 +388,7 @@
       font-weight: 200;
       margin: 10px 0 20px;
     }
-    /* Popup Modal (for messages) */
+    /* Popup Modal for messages */
     .popup-modal {
       display: none;
       position: fixed;
@@ -431,7 +431,7 @@
       cursor: pointer;
       font-size: 16px;
     }
-    /* Request Modal (for source requests) */
+    /* Request Modal for source requests */
     #requestModal {
       display: none;
       position: fixed;
@@ -455,18 +455,25 @@
       flex-direction: column;
       gap: 15px;
     }
+    /* Header for Request Modal: title and X button aligned */
+    #requestModal .request-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
     #requestModal h2 {
       margin: 0;
       font-size: 20px;
       font-weight: bold;
       text-align: left;
     }
+    /* Input field: add visible border */
     #requestModal input[type="text"] {
       width: 100%;
       padding: 10px;
       font-size: 16px;
       height: 48px;
-      border: none;
+      border: 1px solid #000;
       border-radius: 4px;
       background-color: #fff;
       box-sizing: border-box;
@@ -475,7 +482,6 @@
       color: #aaa;
     }
     #requestModal input[type="text"]:focus {
-      border: 1px solid #000;
       outline: none;
     }
     #requestModal button {
@@ -491,12 +497,11 @@
     #requestModal button:hover {
       background-color: #333;
     }
+    /* Simple X button for closing the Request Modal */
     #requestClose {
-      margin-top: 10px;
-      align-self: flex-end;
-      background-color: transparent;
+      background: none;
       border: none;
-      font-size: 16px;
+      font-size: 24px;
       cursor: pointer;
       color: #000;
     }
@@ -558,8 +563,10 @@
   <!-- Request Modal for source requests -->
   <div id="requestModal">
     <div class="popup-content">
-      <button id="requestClose">&times;</button>
-      <h2>Request a Source</h2>
+      <div class="request-header">
+        <h2>Request a Source</h2>
+        <button id="requestClose">&times;</button>
+      </div>
       <input type="text" id="requestInput" placeholder="Enter the source name you want to request">
       <button id="requestButton" type="button">Send a Request</button>
     </div>
@@ -589,7 +596,6 @@
     // Not Found Icon (24x24 SVG)
     const notFoundIcon = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='12' cy='12' r='10'/%3E%3Cline x1='8' y1='8' x2='16' y2='16'/%3E%3Cline x1='16' y1='8' x2='8' y2='16'/%3E%3C/svg%3E";
     
-    // When user types in search box:
     searchInput.addEventListener("input", function() {
       const query = this.value.toLowerCase().trim();
       if (query === "") {
@@ -638,13 +644,11 @@
       searchResults.style.display = sources.length ? "block" : "none";
     }
     
-    // Render a single "not found" item as one line of text.
     function renderNotFoundItem() {
       searchResults.innerHTML = "";
       const div = document.createElement("div");
       div.innerHTML = `<img src="${notFoundIcon}" alt="Not Found Icon"> Can't find your source? Send a request and we'll consider adding it.`;
       div.addEventListener("click", function() {
-        // Clear search input/results and open the request modal popup.
         searchInput.value = "";
         searchResults.style.display = "none";
         openRequestModal();
@@ -685,7 +689,6 @@
       const emailRow = document.getElementById("emailRow");
       emailRow.style.display = selectedSources.length > 0 ? "flex" : "none";
       
-      // Adjust search-box margin and hide selected-sources container if empty.
       const searchBox = document.querySelector('.search-box');
       searchBox.style.marginBottom = selectedSources.length === 0 ? "0px" : "20px";
       selectedSourcesContainer.style.display = selectedSources.length === 0 ? "none" : "flex";
@@ -741,7 +744,6 @@
       });
     });
     
-    // Utility: Format current date as "Feb-19-2025"
     function getFormattedDate() {
       const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
       const now = new Date();
@@ -751,17 +753,14 @@
       return `${month}-${day}-${year}`;
     }
     
-    // Open the request modal popup
     function openRequestModal() {
       document.getElementById("requestModal").style.display = "block";
     }
     
-    // Close the request modal popup
     function closeRequestModal() {
       document.getElementById("requestModal").style.display = "none";
     }
     
-    // When user clicks "Send a Request" in the request modal:
     document.getElementById("requestButton").addEventListener("click", function() {
       const requestInput = document.getElementById("requestInput");
       const sourceName = requestInput.value.trim();
@@ -791,7 +790,6 @@
       });
     });
     
-    // Close button for the request modal
     document.getElementById("requestClose").addEventListener("click", function() {
       closeRequestModal();
     });
@@ -842,7 +840,6 @@
       }
     });
     
-    // Set initial state
     updateEmailRowVisibility();
   </script>
 </body>
