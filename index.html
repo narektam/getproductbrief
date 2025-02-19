@@ -499,28 +499,76 @@
       background-color: #333;
     }
     /* Simple X button styling for Request Modal */
-    /* Simple X button styling for Request Modal */
-    /* Simple X button styling for Request Modal */
     #requestClose {
       background: transparent !important;
       border: none !important;
       padding: 0 !important;
       margin: 0 !important;
       -webkit-appearance: none !important;
-      font-size: 34px !important; /* increased by 40% from 24px */
+      font-size: 34px !important;
       cursor: pointer !important;
       color: #000 !important;
       display: inline-block !important;
       line-height: 1 !important;
     }
-
-
     /* Inline error message in Request Modal */
     #requestError {
       color: red;
       font-size: 14px;
       display: none;
       text-align: left;
+    }
+
+    /* Newsletter Preview Container */
+    .newsletter-preview-container {
+      margin: 0 auto 20px;
+      max-width: 600px;
+      background-color: #fff;
+      border: 1px solid #f0faf3;
+      border-radius: 6px;
+      padding: 20px;
+      box-sizing: border-box;
+    }
+    .newsletter-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .gmail-icon {
+      width: 32px;
+      height: 32px;
+      margin-right: 10px;
+    }
+    .subject-line {
+      font-size: 16px;
+      color: #333;
+      font-weight: bold;
+    }
+    .newsletter-screenshot-container {
+      text-align: center;
+      background-color: #fff;
+      width: 100%;
+    }
+    .newsletter-screenshot {
+      width: 100%;
+      height: auto;
+      max-width: 100%;
+      border-radius: 6px;
+      border: 1px solid #f0faf3;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    @media (max-width: 768px) {
+      .newsletter-preview-container {
+        margin: 0 10px 20px;
+        width: auto;
+      }
+      .newsletter-header {
+        flex-direction: row;
+        justify-content: flex-start;
+      }
+      .subject-line {
+        font-size: 14px;
+      }
     }
   </style>
 </head>
@@ -562,7 +610,29 @@
     </div>
     <p class="source-follow-text">from the sources you follow</p>
     <div class="source-logos" id="sourceLogos"></div>
+
+    <!-- Sample Newsletter Preview Container -->
+    <div class="newsletter-preview-container">
+      <div class="newsletter-header">
+        <!-- Replace with your own Gmail icon -->
+        <img
+          src="/assets/images/gmail-icon.png"
+          alt="Gmail Icon"
+          class="gmail-icon"
+        />
+        <span class="subject-line">Subject: Your Weekly ChangeLog</span>
+      </div>
+      <div class="newsletter-screenshot-container">
+        <!-- Replace with your actual newsletter screenshot -->
+        <img
+          src="/assets/images/email-sample.png"
+          alt="Sample Newsletter"
+          class="newsletter-screenshot"
+        />
+      </div>
+    </div>
   </div>
+
   <footer>
     <a href="privacy.html">Privacy Policy</a>
     <a href="terms.html">Terms of Use</a>
