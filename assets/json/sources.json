@@ -50,5 +50,30 @@
   {
     "source": "Arc",
     "logoURL": "https://img.logo.dev/thebrowser.company"
+  },
+  {
+    "source": "Perplexity",
+    "logoURL": "https://img.logo.dev/perplexity.ai"
+  },
+  {
+    "source": "X.ai",
+    "logoURL": "https://img.logo.dev/x.ai"
+  },
+  {
+    "source": "Miro",
+    "logoURL": "https://img.logo.dev/miro.com"
+  },
+  {
+    "source": "Whimsical",
+    "logoURL": "https://img.logo.dev/whimsical.com"
+  },
+  {
+    "source": "Google Workspace",
+    "logoURL": "https://img.logo.dev/google.com"
+  },
+  {
+    "source": "Elena Verna",
+    "logoURL": "https://img.logo.dev/substack.com"
   }
+  
 ]
